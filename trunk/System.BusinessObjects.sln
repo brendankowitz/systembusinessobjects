@@ -1,0 +1,65 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 9.00
+# Visual Studio 2005
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BusinessObject.Framework", "System.BusinessObjects.Framework\BusinessObject.Framework.csproj", "{419FB51B-44D5-4611-B6D4-3154CC8EDCCA}"
+	ProjectSection(WebsiteProperties) = preProject
+		Debug.AspNetCompiler.Debug = "True"
+		Release.AspNetCompiler.Debug = "False"
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Examples", "Examples", "{820971AE-F0C0-470B-8151-765C684055C0}"
+	ProjectSection(WebsiteProperties) = preProject
+		Debug.AspNetCompiler.Debug = "True"
+		Release.AspNetCompiler.Debug = "False"
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sample.Facade", "Examples\Sample.Facade\Sample.Facade.csproj", "{42A626BC-6877-4FF7-9C8A-C9C95B30D54D}"
+	ProjectSection(WebsiteProperties) = preProject
+		Debug.AspNetCompiler.Debug = "True"
+		Release.AspNetCompiler.Debug = "False"
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sample.BusinessObjects", "Examples\Sample.BusinessObjects\Sample.BusinessObjects.csproj", "{0B8E754A-1587-4031-ABDB-43324DC917EA}"
+	ProjectSection(WebsiteProperties) = preProject
+		Debug.AspNetCompiler.Debug = "True"
+		Release.AspNetCompiler.Debug = "False"
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sample.UI.AddressBook", "Examples\Sample.UI.AddressBook\Sample.UI.AddressBook.csproj", "{AB994279-8969-4622-80CD-8F0017B2533B}"
+	ProjectSection(WebsiteProperties) = preProject
+		Debug.AspNetCompiler.Debug = "True"
+		Release.AspNetCompiler.Debug = "False"
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{419FB51B-44D5-4611-B6D4-3154CC8EDCCA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{419FB51B-44D5-4611-B6D4-3154CC8EDCCA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{419FB51B-44D5-4611-B6D4-3154CC8EDCCA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{419FB51B-44D5-4611-B6D4-3154CC8EDCCA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{42A626BC-6877-4FF7-9C8A-C9C95B30D54D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{42A626BC-6877-4FF7-9C8A-C9C95B30D54D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{42A626BC-6877-4FF7-9C8A-C9C95B30D54D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{42A626BC-6877-4FF7-9C8A-C9C95B30D54D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0B8E754A-1587-4031-ABDB-43324DC917EA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0B8E754A-1587-4031-ABDB-43324DC917EA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0B8E754A-1587-4031-ABDB-43324DC917EA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0B8E754A-1587-4031-ABDB-43324DC917EA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AB994279-8969-4622-80CD-8F0017B2533B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AB994279-8969-4622-80CD-8F0017B2533B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AB994279-8969-4622-80CD-8F0017B2533B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AB994279-8969-4622-80CD-8F0017B2533B}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{42A626BC-6877-4FF7-9C8A-C9C95B30D54D} = {820971AE-F0C0-470B-8151-765C684055C0}
+		{0B8E754A-1587-4031-ABDB-43324DC917EA} = {820971AE-F0C0-470B-8151-765C684055C0}
+		{AB994279-8969-4622-80CD-8F0017B2533B} = {820971AE-F0C0-470B-8151-765C684055C0}
+	EndGlobalSection
+EndGlobal
