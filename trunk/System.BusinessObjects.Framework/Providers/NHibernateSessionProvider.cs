@@ -14,6 +14,7 @@ namespace System.BusinessObjects.Providers
         private static NHibernate.Cfg.Configuration cfg;
 
         static object syncObj = new object();
+        static object syncObjConfig = new object();
 
         public NHibernateSessionProvider()
         {
@@ -26,7 +27,7 @@ namespace System.BusinessObjects.Providers
 
             if (cfg == null)
             {
-                lock (syncObj)
+                lock (syncObjConfig)
                 {
                     cfg = new NHibernate.Cfg.Configuration();
                     cfg.Configure();
@@ -34,7 +35,7 @@ namespace System.BusinessObjects.Providers
             }
             if (sessionFactory == null)
             {
-                lock (syncObj)
+                lock (syncObjConfig)
                 {
                     sessionFactory = cfg.BuildSessionFactory();
                 }
@@ -48,9 +49,13 @@ namespace System.BusinessObjects.Providers
         {
             get
             {
-                if (provider == null)
-                    provider = ProviderHelper.LoadDefaultProvider<NHibernateSessionProvider>("NHibernateSessionProvider");
-                return provider;
+                lock (syncObj)
+                {
+                    if (provider == null)
+                        provider =
+                            ProviderHelper.LoadDefaultProvider<NHibernateSessionProvider>("NHibernateSessionProvider");
+                    return provider;
+                }
             }
         }
 
@@ -61,9 +66,13 @@ namespace System.BusinessObjects.Providers
         {
             get
             {
-                if(providers == null)
-                    providers = ProviderHelper.LoadProviderCollection<NHibernateSessionProvider>("NHibernateSessionProvider");
-                return providers;
+                lock (syncObj)
+                {
+                    if (providers == null)
+                        providers =
+                            ProviderHelper.LoadProviderCollection<NHibernateSessionProvider>("NHibernateSessionProvider");
+                    return providers;
+                }
             }
         }
 

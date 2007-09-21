@@ -7,32 +7,53 @@ namespace System.BusinessObjects.Data
 {
     public class NHibernateAspContextProvider : NHibernateSessionProvider
     {
+        static object syncObj = new object();
+
         public override NHibernate.ISession CurrentSession
         {
             get 
             {
-                ISession currentSession = HttpContext.Current.Items[CurrentSessionKey] as ISession;
-
-                if (currentSession == null)
+                lock (syncObj)
                 {
-                    currentSession = sessionFactory.OpenSession();
-                    HttpContext.Current.Items[CurrentSessionKey] = currentSession;
+                    ISession currentSession = HttpContext.Current.Items[CurrentSessionKey] as ISession;
+
+                    if (currentSession == null)
+                    {
+                        currentSession = sessionFactory.OpenSession();
+                        HttpContext.Current.Items[CurrentSessionKey] = currentSession;
+                    }
+
+                    return currentSession;
                 }
-               
-                return currentSession;
             }
         }
 
         public override void CloseSession()
         {
-            CurrentSession.Close();
+            lock (syncObj)
+            {
+                if (HttpContext.Current.Items.Contains(CurrentSessionKey))
+                {
+                    ISession currentSession = HttpContext.Current.Items[CurrentSessionKey] as ISession;
+                    if (currentSession != null)
+                    {
+                        currentSession.Flush();
+                        currentSession.Close();
+                        currentSession.Dispose();
+                    }
+                    HttpContext.Current.Items.Remove(CurrentSessionKey);
+                }
+            }
         }
 
         public override void CloseSessionFactory()
         {
-            if (sessionFactory != null)
+            lock (syncObj)
             {
-                sessionFactory.Close();
+                if (sessionFactory != null)
+                {
+                    sessionFactory.Close();
+                }
             }
         }
     }

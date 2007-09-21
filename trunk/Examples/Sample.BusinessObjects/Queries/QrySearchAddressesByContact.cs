@@ -12,6 +12,7 @@ namespace Sample.BusinessObjects.Queries
 
             IQuery qry = NHibernateSessionProvider.Provider.CurrentSession.CreateQuery(sql);
             qry.SetParameter("personid", personID);
+            qry.SetCacheable(false);
 
             return qry;
         }
