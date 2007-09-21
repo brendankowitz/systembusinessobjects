@@ -46,10 +46,6 @@ namespace Sample.UI.AddressBook
                 {
                     person.Addresses.Remove(toDelete);
                     person.Save();
-
-                    //tell nhibernate that we no longer need to know about this address because it
-                    //is not unlinked.
-                    NHibernateSessionProvider.Provider.CurrentSession.Evict(toDelete);
                 }
             }
         }

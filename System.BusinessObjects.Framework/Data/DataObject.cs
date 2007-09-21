@@ -202,6 +202,7 @@ namespace System.BusinessObjects.Data
                 if(OnDeleting != null)
                     OnDeleting(this, new EventArgs());
                 NHibernateSessionProvider.Provider.CurrentSession.Delete(this);
+                NHibernateSessionProvider.Provider.CurrentSession.Flush();
                 if(OnDeleted != null)
                     OnDeleted(this, new EventArgs());
             }

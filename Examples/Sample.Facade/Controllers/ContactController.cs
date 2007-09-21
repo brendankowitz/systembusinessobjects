@@ -4,6 +4,8 @@ using System.ComponentModel;
 using System.Data;
 using Sample.BusinessObjects.Contacts;
 using Sample.BusinessObjects.Queries;
+using System.BusinessObjects.Providers;
+using Iesi.Collections.Generic;
 
 namespace Sample.Facade.Controllers
 {
@@ -51,9 +53,10 @@ namespace Sample.Facade.Controllers
         #region Address Members
 
         [DataObjectMethod(DataObjectMethodType.Select)]
-        public IList<Address> SearchAddresses(int personID)
+        public ISet<Address> SearchAddresses(int personID)
         {
-            return Address.Search(QrySearchAddressesByContact.Query(personID));
+            //return Address.Search(QrySearchAddressesByContact.Query(personID));
+            return Person.Load(personID).Addresses;
         }
 
         [DataObjectMethod(DataObjectMethodType.Insert)]
@@ -78,6 +81,7 @@ namespace Sample.Facade.Controllers
         [DataObjectMethod(DataObjectMethodType.Delete)]
         public void DeleteAddress(Address obj)
         {
+            NHibernateSessionProvider.Provider.CurrentSession.Evict(obj);
             obj.Delete();
             obj.Save();
         }
