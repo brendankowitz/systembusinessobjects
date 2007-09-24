@@ -36,6 +36,7 @@ namespace Sample.Facade.Controllers
         [DataObjectMethod(DataObjectMethodType.Update)]
         public void UpdatePerson(Person obj)
         {
+            Person.Evict(obj.ID);
             obj.Save();
         }
 
@@ -44,6 +45,8 @@ namespace Sample.Facade.Controllers
         {
             if (SearchAddresses(obj.ID).Count > 0)
                 throw new DataException("Remove the child addresses before deleting the person");
+
+            Person.Evict(obj.ID);
             obj.Delete();
             obj.Save();
         }
@@ -53,13 +56,12 @@ namespace Sample.Facade.Controllers
         #region Address Members
 
         [DataObjectMethod(DataObjectMethodType.Select)]
-        public ISet<Address> SearchAddresses(int personID)
+        public IList<Address> SearchAddresses(int personID)
         {
-            //return Address.Search(QrySearchAddressesByContact.Query(personID));
-            return Person.Load(personID).Addresses;
+            return Address.Search(QrySearchAddressesByContact.Query(personID));
         }
 
-        [DataObjectMethod(DataObjectMethodType.Insert)]
+        [DataObjectMethod(DataObjectMethodType.Select)]
         public Address FetchAddress(int ID)
         {
             return Address.Load(ID);
@@ -81,7 +83,7 @@ namespace Sample.Facade.Controllers
         [DataObjectMethod(DataObjectMethodType.Delete)]
         public void DeleteAddress(Address obj)
         {
-            NHibernateSessionProvider.Provider.CurrentSession.Evict(obj);
+            Address.Evict(obj.ID);
             obj.Delete();
             obj.Save();
         }

@@ -36,7 +36,7 @@ namespace System.BusinessObjects.Validation
         }
 
         /// <summary>
-        /// Compares that a property is less then the expected.
+        /// Compares that a property is less then the expected value by using IComparable.
         /// </summary>
         public static ValidatorTemplate Less<R>(DataObject obj, string propertyName, R expected) where R : IComparable
         {
@@ -74,9 +74,9 @@ namespace System.BusinessObjects.Validation
                 message = string.Empty;
                 object curVal = info.GetValue(obj, null);
 
-                if (curVal is string)
+                if (info.PropertyType == typeof(string))
                 {
-                    if (string.IsNullOrEmpty((string)curVal))
+                    if (string.IsNullOrEmpty(curVal as string))
                     {
                         retval = false;
                         message = string.Format("{0} has an empty value where a value was expected.", propertyName);
@@ -93,6 +93,11 @@ namespace System.BusinessObjects.Validation
                     }
                     else
                         retval = true;
+                }
+                else if(curVal == null)
+                {
+                    retval = false;
+                    message = string.Format("{0} has an empty value where a value was expected.", propertyName);
                 }
                 else
                 {
@@ -143,12 +148,12 @@ namespace System.BusinessObjects.Validation
                 message = string.Empty;
                 object curVal = info.GetValue(obj, null);
 
-                if (curVal is string)
+                if (info.PropertyType == typeof(string))
                 {
                     if (string.IsNullOrEmpty((string)curVal) || ((string)curVal).Length < expected)
                     {
                         retval = false;
-                        message = string.Format("{0} has a length of {1} where a length of {2} was expected.", propertyName, propertyName == null ? 0 : ((string)curVal).Length, expected);
+                        message = string.Format("{0} has a length of {1} where a length of {2} was expected.", propertyName, curVal == null ? 0 : ((string)curVal).Length, expected);
                     }
                     else
                         retval = true;
@@ -186,17 +191,17 @@ namespace System.BusinessObjects.Validation
                 message = string.Empty;
                 object curVal = info.GetValue(obj, null);
 
-                if (curVal is string)
+                if (info.PropertyType == typeof(string))
                 {
                     if (string.IsNullOrEmpty((string)curVal) || ((string)curVal).Length > expected)
                     {
                         retval = false;
-                        message = string.Format("{0} has a length of {1} where a length less than {2} was expected.", propertyName, propertyName == null ? 0 : ((string)curVal).Length, expected);
+                        message = string.Format("{0} has a length of {1}, a length of {2} or less was expected.", propertyName, curVal == null ? 0 : ((string)curVal).Length, expected);
                     }
                     else
                         retval = true;
                 }
-                else if (curVal is ICollection)
+                else if (info.PropertyType == typeof(ICollection))
                 {
                     if (((ICollection)curVal).Count > expected)
                     {
@@ -205,6 +210,10 @@ namespace System.BusinessObjects.Validation
                     }
                     else
                         retval = true;
+                }
+                else if(curVal == null)
+                {
+                    
                 }
                 else
                 {
