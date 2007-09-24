@@ -1,7 +1,6 @@
 using System;
 using System.Web.UI.WebControls;
 using Sample.BusinessObjects.Contacts;
-using System.BusinessObjects.Providers;
 
 namespace Sample.UI.AddressBook
 {

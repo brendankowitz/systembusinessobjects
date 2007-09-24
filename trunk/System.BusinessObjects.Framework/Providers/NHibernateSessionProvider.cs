@@ -14,32 +14,36 @@ namespace System.BusinessObjects.Providers
         private static NHibernate.Cfg.Configuration cfg;
 
         static object syncObj = new object();
-        static object syncObjConfig = new object();
 
         public NHibernateSessionProvider()
         {
             
         }
 
+        public static ISessionFactory CurrentFactory
+        {
+            get
+            {
+                lock (syncObj)
+                {
+                    if (sessionFactory == null)
+                    {
+                        if (cfg == null)
+                        {
+                            cfg = new NHibernate.Cfg.Configuration();
+                            cfg.Configure();
+                        }
+                        sessionFactory = cfg.BuildSessionFactory();
+                    }
+                }
+                return sessionFactory;
+            }
+        }
+
         public override void Initialize(string name, System.Collections.Specialized.NameValueCollection config)
         {
             base.Initialize(name, config);
 
-            if (cfg == null)
-            {
-                lock (syncObjConfig)
-                {
-                    cfg = new NHibernate.Cfg.Configuration();
-                    cfg.Configure();
-                }
-            }
-            if (sessionFactory == null)
-            {
-                lock (syncObjConfig)
-                {
-                    sessionFactory = cfg.BuildSessionFactory();
-                }
-            }
         }
 
         /// <summary>
@@ -49,13 +53,9 @@ namespace System.BusinessObjects.Providers
         {
             get
             {
-                lock (syncObj)
-                {
-                    if (provider == null)
-                        provider =
-                            ProviderHelper.LoadDefaultProvider<NHibernateSessionProvider>("NHibernateSessionProvider");
-                    return provider;
-                }
+                if (provider == null)
+                    provider = ProviderHelper.LoadDefaultProvider<NHibernateSessionProvider>("NHibernateSessionProvider");
+                return provider;
             }
         }
 
@@ -66,13 +66,9 @@ namespace System.BusinessObjects.Providers
         {
             get
             {
-                lock (syncObj)
-                {
-                    if (providers == null)
-                        providers =
-                            ProviderHelper.LoadProviderCollection<NHibernateSessionProvider>("NHibernateSessionProvider");
-                    return providers;
-                }
+                if(providers == null)
+                    providers = ProviderHelper.LoadProviderCollection<NHibernateSessionProvider>("NHibernateSessionProvider");
+                return providers;
             }
         }
 

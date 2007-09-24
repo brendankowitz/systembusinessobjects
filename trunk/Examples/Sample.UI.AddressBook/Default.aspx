@@ -74,13 +74,11 @@
                 <FooterStyle BackColor="#5D7B9D" Font-Bold="True" ForeColor="White" />
                 <RowStyle BackColor="#F7F6F3" ForeColor="#333333" />
                 <Columns>
-                    <asp:BoundField DataField="ID" HeaderText="ID" InsertVisible="False" ReadOnly="True"
-                        SortExpression="ID" Visible="False" />
                     <asp:BoundField DataField="Address1" HeaderText="Address1" SortExpression="Address1" />
                     <asp:BoundField DataField="Suburb" HeaderText="Suburb" SortExpression="Suburb" />
                     <asp:BoundField DataField="State" HeaderText="State" SortExpression="State" />
                     <asp:BoundField DataField="Postcode" HeaderText="Postcode" SortExpression="Postcode" />
-                    <asp:CommandField ShowDeleteButton="True" ShowEditButton="True" ButtonType="Button" />
+                    <asp:CommandField ButtonType="Button" ShowDeleteButton="True" ShowEditButton="True" />
                 </Columns>
                 <PagerStyle BackColor="#284775" ForeColor="White" HorizontalAlign="Center" />
                 <SelectedRowStyle BackColor="#E2DED6" Font-Bold="True" ForeColor="#333333" />

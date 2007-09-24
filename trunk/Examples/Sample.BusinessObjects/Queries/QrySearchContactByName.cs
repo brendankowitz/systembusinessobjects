@@ -25,7 +25,6 @@ namespace Sample.BusinessObjects.Queries
             }
 
             qry.AddOrder(Order.Asc("FirstName"));
-            qry.SetCacheable(false);
 
             return qry;
         }

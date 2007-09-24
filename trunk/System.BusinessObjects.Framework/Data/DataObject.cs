@@ -11,13 +11,13 @@ namespace System.BusinessObjects.Data
 {
     /// <summary>
     /// An abstract class that provides core business object funcationality.
+    /// </summary>
     /// <remarks>
     /// Core functionality targets specifically:
     /// 1. tracking/cloning an object's persistance state
     /// 2. providing basic persistance functionality
     /// 3. implementing the built-in binding interfaces for use with .net's built-in datacontrols (ie. GridView)
     /// </remarks>
-    /// </summary>
     [Serializable]
     public abstract class DataObject : ICloneable, IEditableObject, IDataErrorInfo, INotifyPropertyChanged
     {
@@ -61,6 +61,30 @@ namespace System.BusinessObjects.Data
             Update,
             Delete,
             None
+        }
+        #endregion
+
+        #region Get / Set ForeignKeys
+        /// <summary>
+        /// Sets a foriegn key's ID
+        /// </summary>
+        public static void SetForeignKey(string keyName, object val, DataObject obj)
+        {
+            if (val == null && obj.foreignKeys.ContainsKey(keyName))
+                obj.foreignKeys.Remove(keyName);
+            else if (val != null)
+                obj.foreignKeys[keyName] = val;
+        }
+
+        /// <summary>
+        /// Gets a forign key's ID
+        /// </summary>
+        public static object GetForeignKey(string keyName, DataObject obj)
+        {
+            object retval;
+            if (obj.foreignKeys.TryGetValue(keyName.ToLower(), out retval))
+                return retval;
+            return null;
         }
         #endregion
 
@@ -202,7 +226,6 @@ namespace System.BusinessObjects.Data
                 if(OnDeleting != null)
                     OnDeleting(this, new EventArgs());
                 NHibernateSessionProvider.Provider.CurrentSession.Delete(this);
-                NHibernateSessionProvider.Provider.CurrentSession.Flush();
                 if(OnDeleted != null)
                     OnDeleted(this, new EventArgs());
             }
@@ -294,6 +317,15 @@ namespace System.BusinessObjects.Data
         {
             throw new NotImplementedException("Load not implemented at abstract DataObject level");
         }
+
+        /// <summary>
+        /// Evicts the current object from NHibernate's session cache
+        /// </summary>
+        public virtual void Evict()
+        {
+            if (NHibernateSessionProvider.Provider.CurrentSession != null)
+                NHibernateSessionProvider.Provider.CurrentSession.Evict(this);
+        }
         #endregion
 
         #region ICloneable
@@ -344,16 +376,35 @@ namespace System.BusinessObjects.Data
                 {
                     AddValidationRules();
 
-                    //DatabaseFieldAttribute attrib = null;
-                    //foreach (PropertyDescriptor prop in TypeDescriptor.GetProperties(this))
-                    //{
-                    //    attrib = (DatabaseFieldAttribute)prop.Attributes[typeof(DatabaseFieldAttribute)];
-                    //    if (attrib != null && attrib.LengthSpecified)
-                    //    {
-                    //        ValidationRule rule = new ValidationRule(GeneralAssertionTemplate.LengthLess(this, prop.Name, attrib.Length));
-                    //        validationRules.Add(rule);
-                    //    }
-                    //}
+                    ValidationLengthAttribute lengthAttrib;
+                    ValidationNotEmptyAttribute notEmptyAttrib;
+                    foreach (PropertyDescriptor prop in TypeDescriptor.GetProperties(this))
+                    {
+                       lengthAttrib = (ValidationLengthAttribute)prop.Attributes[typeof(ValidationLengthAttribute)];
+                        notEmptyAttrib = (ValidationNotEmptyAttribute)prop.Attributes[typeof(ValidationNotEmptyAttribute)];
+                        if (lengthAttrib != null)
+                        {
+                            if (lengthAttrib._maxLengthSpecified)
+                            {
+                                ValidationRule rule =
+                                    new ValidationRule(
+                                        GeneralAssertionTemplate.LengthLess(this, prop.Name, lengthAttrib.MaxLength));
+                                validationRules.Add(rule);
+                            }
+                            if(lengthAttrib._minLengthSpecified)
+                            {
+                                ValidationRule rule =
+                                    new ValidationRule(
+                                        GeneralAssertionTemplate.LengthGreater(this, prop.Name, lengthAttrib.MinLength));
+                                validationRules.Add(rule);
+                            }
+                        }
+                        if (notEmptyAttrib != null)
+                        {
+                            ValidationRule rule = new ValidationRule(GeneralAssertionTemplate.IsNotEmpty(this, prop.Name));
+                            validationRules.Add(rule);
+                        }
+                    }
                 }
 
                 return validationRules;
@@ -430,12 +481,6 @@ namespace System.BusinessObjects.Data
 
     /// <summary>
     /// An abstract class that provides core business object funcationality.
-    /// <remarks>
-    /// Core functionality targets specifically:
-    /// 1. tracking/cloning an object's persistance state
-    /// 2. providing basic persistance functionality
-    /// 3. implementing the built-in binding interfaces for use with .net's built-in datacontrols (ie. GridView)
-    /// </remarks>
     /// </summary>
     [Serializable]
     public abstract class DataObject<T> : DataObject
@@ -479,6 +524,18 @@ namespace System.BusinessObjects.Data
             foreach (T item in list)
                 item.SetLoadRowState();
             return list;
+        }
+
+        /// <summary>
+        /// Evicts an existing instance of this business object from NHibernate's session cache
+        /// </summary>
+        public static void Evict(int ID)
+        {
+            T existingObj = NHibernateSessionProvider.Provider.CurrentSession.Get<T>(ID);
+            if (existingObj != null)
+            {
+                existingObj.Evict();
+            }
         }
     }
 }

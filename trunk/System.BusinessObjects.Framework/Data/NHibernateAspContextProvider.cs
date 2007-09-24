@@ -2,58 +2,57 @@
 using System.BusinessObjects.Providers;
 using NHibernate;
 using System.Web;
+using NHibernate.Context;
 
 namespace System.BusinessObjects.Data
 {
     public class NHibernateAspContextProvider : NHibernateSessionProvider
     {
-        static object syncObj = new object();
-
         public override NHibernate.ISession CurrentSession
         {
             get 
             {
-                lock (syncObj)
+                ISession session = null;
+                try
                 {
-                    ISession currentSession = HttpContext.Current.Items[CurrentSessionKey] as ISession;
-
-                    if (currentSession == null)
-                    {
-                        currentSession = sessionFactory.OpenSession();
-                        HttpContext.Current.Items[CurrentSessionKey] = currentSession;
-                    }
-
-                    return currentSession;
+                    session = CurrentFactory.GetCurrentSession();
                 }
+                catch
+                {
+                    session = BindNewSession();
+                }
+                return session;
             }
+        }
+
+        public ISession BindNewSession()
+        {
+            if (HttpContext.Current != null)
+            {
+                ISession newSession = CurrentFactory.OpenSession();
+                ManagedWebSessionContext.Bind(HttpContext.Current, newSession);
+                return newSession;
+            }
+            return null;
+        }
+
+        public void UnbindSession()
+        {
+            ManagedWebSessionContext.Unbind(HttpContext.Current, CurrentFactory);
         }
 
         public override void CloseSession()
         {
-            lock (syncObj)
-            {
-                if (HttpContext.Current.Items.Contains(CurrentSessionKey))
-                {
-                    ISession currentSession = HttpContext.Current.Items[CurrentSessionKey] as ISession;
-                    if (currentSession != null)
-                    {
-                        currentSession.Flush();
-                        currentSession.Close();
-                        currentSession.Dispose();
-                    }
-                    HttpContext.Current.Items.Remove(CurrentSessionKey);
-                }
-            }
+            CurrentSession.Close();
+            CurrentSession.Dispose();
+            UnbindSession();
         }
 
         public override void CloseSessionFactory()
         {
-            lock (syncObj)
+            if (sessionFactory != null)
             {
-                if (sessionFactory != null)
-                {
-                    sessionFactory.Close();
-                }
+                sessionFactory.Close();
             }
         }
     }
