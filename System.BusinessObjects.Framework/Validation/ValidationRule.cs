@@ -1,8 +1,4 @@
 using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Reflection;
-using System.BusinessObjects.Data;
 
 namespace System.BusinessObjects.Validation
 {
@@ -14,6 +10,7 @@ namespace System.BusinessObjects.Validation
     /// <returns>True if the rule is valid, False if it has been broken</returns>
     public delegate bool ValidatorTemplate(out string propertyName, out string message);
 
+    [Serializable]
     public class ValidationRule
     {
         ValidatorTemplate _rule;
