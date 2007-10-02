@@ -28,7 +28,7 @@ namespace System.BusinessObjects.Data
 
                 if (threadData == null)
                 {
-                    currentSession = CurrentFactory.OpenSession();
+                    currentSession = sessionFactory.OpenSession();
                 }
 
                 if (slot != null)

@@ -1,4 +1,3 @@
-using System.BusinessObjects.Validation;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -6,11 +5,12 @@ using System.IO;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Security.Permissions;
 using System.BusinessObjects.Providers;
+using System.BusinessObjects.Validation;
 
 namespace System.BusinessObjects.Data
 {
     /// <summary>
-    /// An abstract class that provides core business object funcationality.
+    /// An abstract class that provides core business object functionality.
     /// </summary>
     /// <remarks>
     /// Core functionality targets specifically:
@@ -37,7 +37,7 @@ namespace System.BusinessObjects.Data
         protected DataRowState _rowstateOriginal;
         protected DataRowState _rowstate = DataRowState.Detached;
         [NonSerialized]
-        protected ValidationRuleCollection validationRules = new ValidationRuleCollection();
+        protected ValidationRuleCollection validationRules;
         #endregion
 
         #region Public Properties
@@ -61,6 +61,13 @@ namespace System.BusinessObjects.Data
             Update,
             Delete,
             None
+        }
+        #endregion
+
+        #region .ctor
+        public DataObject()
+        {
+            validationRules = new ValidationRuleCollection(this);
         }
         #endregion
 
@@ -125,7 +132,7 @@ namespace System.BusinessObjects.Data
         }
 
         /// <summary>
-        /// Sets a properties value in the internal property store.
+        /// Sets a property value in the internal property store.
         /// If a null is passed the property will be reset and removed.
         /// </summary>
         /// <param name="keyName">Property name of whos value is to be set</param>
@@ -476,11 +483,13 @@ namespace System.BusinessObjects.Data
         }
 
         #endregion
-
     }
 
+    #region DataObject<T> Generic Extensions
     /// <summary>
-    /// An abstract class that provides core business object funcationality.
+    /// An abstract class that provides core business object functionality.
+    /// This generic class provides extensions to create a strongly typed interface
+    /// for the inherited class.
     /// </summary>
     [Serializable]
     public abstract class DataObject<T> : DataObject
@@ -500,7 +509,8 @@ namespace System.BusinessObjects.Data
         public static new T Load(int Id)
         {
             T newObj = NHibernateSessionProvider.Provider.CurrentSession.Get<T>(Id);
-            newObj.SetLoadRowState();
+            if(newObj != null)
+                newObj.SetLoadRowState();
             return newObj;
         }
 
@@ -538,4 +548,5 @@ namespace System.BusinessObjects.Data
             }
         }
     }
+    #endregion
 }

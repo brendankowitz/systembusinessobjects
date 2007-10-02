@@ -7,15 +7,12 @@ using System.BusinessObjects.Providers;
 
 namespace System.BusinessObjects.Controls
 {
-    /// <summary>
-    /// This control extends a DropDownList with the ability to Bind business objects to it.
-    /// </summary>
     [NonVisualControl]
     public class BindableDropDownListExtender : WebControl
     {
         private string _attachTo;
         /// <summary>
-        /// Specifies the DropDownList to attach to
+        /// Specifies the ObjectDataSource to attach to
         /// </summary>
         public string AttachTo
         {
@@ -23,9 +20,6 @@ namespace System.BusinessObjects.Controls
             set { _attachTo = value; }
         }
 
-        /// <summary>
-        /// Use <%# Bind("BusinessObjectProperty") %>
-        /// </summary>
         public object BoundValue
         {
             get
