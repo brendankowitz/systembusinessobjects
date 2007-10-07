@@ -6,16 +6,17 @@ using System.Security;
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("Compact Lite DataAccess Foundation")]
-[assembly: AssemblyDescription("Compact Lite DataAccess Foundation")]
+[assembly: AssemblyTitle("Compact Lite BusinessObject Framework for NHibernate")]
+[assembly: AssemblyDescription("Compact Lite BusinessObject Framework for NHibernate")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("kowitz.net")]
+[assembly: AssemblyCompany("http://www.kowitz.net")]
 [assembly: AssemblyProduct("DataAccess Foundation")]
 [assembly: AssemblyCopyright("Copyright under BSD License 2007")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 [assembly: SecurityPermission(SecurityAction.RequestMinimum, Execution = true)]
-[assembly: AllowPartiallyTrustedCallersAttribute()]
+[assembly: AllowPartiallyTrustedCallersAttribute]
+[assembly: ReflectionPermission(SecurityAction.RequestMinimum)]
 
 // Setting ComVisible to false makes the types in this assembly not visible 
 // to COM components.  If you need to access a type in this assembly from 

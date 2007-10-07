@@ -1,4 +1,5 @@
 using System.Configuration.Provider;
+using System.Security.Permissions;
 using NHibernate;
 using System.Diagnostics;
 
@@ -11,7 +12,7 @@ namespace System.BusinessObjects.Providers
 
         protected const string CurrentSessionKey = "nhibernate.current_session";
         protected static ISessionFactory sessionFactory;
-        private static NHibernate.Cfg.Configuration cfg;
+        protected static NHibernate.Cfg.Configuration cfg;
 
         static object syncObj = new object();
 
@@ -20,6 +21,7 @@ namespace System.BusinessObjects.Providers
             
         }
 
+        
         public static ISessionFactory CurrentFactory
         {
             get
@@ -30,7 +32,7 @@ namespace System.BusinessObjects.Providers
                     {
                         if (cfg == null)
                         {
-                            cfg = new NHibernate.Cfg.Configuration();
+                            cfg = new NHibernate.Cfg.Configuration();                           
                             cfg.Configure();
                         }
                         sessionFactory = cfg.BuildSessionFactory();

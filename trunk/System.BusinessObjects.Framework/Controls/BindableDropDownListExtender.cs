@@ -7,6 +7,9 @@ using System.BusinessObjects.Providers;
 
 namespace System.BusinessObjects.Controls
 {
+    /// <summary>
+    /// Allows a BusinessObject property to be bound to a listbox.
+    /// </summary>
     [NonVisualControl]
     public class BindableDropDownListExtender : WebControl
     {
