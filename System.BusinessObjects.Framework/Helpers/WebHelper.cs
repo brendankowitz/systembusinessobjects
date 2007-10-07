@@ -1,3 +1,4 @@
+using System.Web;
 using System.Web.UI;
 using System.Collections.Generic;
 
@@ -61,5 +62,36 @@ namespace System.BusinessObjects.Helpers
             }
             return foundControls;
         }
+
+        /// <summary>
+        /// Returns the current trust level for the asp.net hosting
+        /// </summary>
+        /// <remarks>taken from http://blogs.msdn.com/dmitryr/archive/2007/01/23/finding-out-the-current-trust-level-in-asp-net.aspx</remarks>
+        public static AspNetHostingPermissionLevel GetCurrentTrustLevel()
+        {
+            foreach (AspNetHostingPermissionLevel trustLevel in
+                    new AspNetHostingPermissionLevel[] {
+                AspNetHostingPermissionLevel.Unrestricted,
+                AspNetHostingPermissionLevel.High,
+                AspNetHostingPermissionLevel.Medium,
+                AspNetHostingPermissionLevel.Low,
+                AspNetHostingPermissionLevel.Minimal 
+            })
+            {
+                try
+                {
+                    new AspNetHostingPermission(trustLevel).Demand();
+                }
+                catch (Security.SecurityException)
+                {
+                    continue;
+                }
+
+                return trustLevel;
+            }
+
+            return AspNetHostingPermissionLevel.None;
+        }
+
     }
 }

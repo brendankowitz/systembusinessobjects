@@ -3,7 +3,7 @@ using System.ComponentModel;
 using System.Data;
 using System.IO;
 using System.Runtime.Serialization.Formatters.Binary;
-using System.Security.Permissions;
+
 using System.BusinessObjects.Providers;
 using System.BusinessObjects.Validation;
 
@@ -30,14 +30,12 @@ namespace System.BusinessObjects.Data
         #endregion
 
         #region Protected Variables
-        protected IDictionary<string, object> foreignKeys = new Dictionary<string, object>();
         protected IDictionary<string, object> dataValue = new Dictionary<string, object>();
-        protected IDictionary<string, object> oldDataValue = null;
-        protected IDictionary<string, object> oldForeignKeys = null;
         protected DataRowState _rowstateOriginal;
         protected DataRowState _rowstate = DataRowState.Detached;
         [NonSerialized]
         protected ValidationRuleCollection validationRules;
+        private bool _autoFlush = true;
         #endregion
 
         #region Public Properties
@@ -48,6 +46,15 @@ namespace System.BusinessObjects.Data
         {
             set { _rowstate = value; }
             get { return _rowstate; }
+        }
+
+        /// <summary>
+        /// Specifies if this object should automatically flush changes to the persistance layer as they are called
+        /// </summary>
+        public virtual bool AutoFlush
+        {
+            get { return _autoFlush; }
+            set{ _autoFlush = value; }
         }
         #endregion
 
@@ -68,30 +75,6 @@ namespace System.BusinessObjects.Data
         public DataObject()
         {
             validationRules = new ValidationRuleCollection(this);
-        }
-        #endregion
-
-        #region Get / Set ForeignKeys
-        /// <summary>
-        /// Sets a foriegn key's ID
-        /// </summary>
-        public static void SetForeignKey(string keyName, object val, DataObject obj)
-        {
-            if (val == null && obj.foreignKeys.ContainsKey(keyName))
-                obj.foreignKeys.Remove(keyName);
-            else if (val != null)
-                obj.foreignKeys[keyName] = val;
-        }
-
-        /// <summary>
-        /// Gets a forign key's ID
-        /// </summary>
-        public static object GetForeignKey(string keyName, DataObject obj)
-        {
-            object retval;
-            if (obj.foreignKeys.TryGetValue(keyName.ToLower(), out retval))
-                return retval;
-            return null;
         }
         #endregion
 
@@ -191,8 +174,6 @@ namespace System.BusinessObjects.Data
             if (_rowstate == DataRowState.Unchanged || _rowstate == DataRowState.Added)
             {
                 _rowstateOriginal = _rowstate;
-                oldDataValue = (IDictionary<string, object>)binarySerialiseClone(dataValue);
-                oldForeignKeys = (IDictionary<string, object>)binarySerialiseClone(foreignKeys);
                 _rowstate = DataRowState.Modified;
             }
         }
@@ -203,8 +184,6 @@ namespace System.BusinessObjects.Data
         public virtual void AcceptChanges()
         {
             _rowstateOriginal = _rowstate;
-            oldDataValue = null;
-            oldForeignKeys = null;
         }
 
         /// <summary>
@@ -212,12 +191,13 @@ namespace System.BusinessObjects.Data
         /// </summary>
         public virtual void RejectChanges()
         {
-            if (oldDataValue != null)
-            {
-                _rowstate = _rowstateOriginal;
-                dataValue = oldDataValue;
-                foreignKeys = oldForeignKeys;
-            }
+            //if (oldDataValue != null)
+            //{
+            NHibernateSessionProvider.Provider.CurrentSession.Refresh(this);
+            _rowstate = _rowstateOriginal;
+                //dataValue = oldDataValue;
+                //foreignKeys = oldForeignKeys;
+            //}
         }
         #endregion
 
@@ -250,7 +230,8 @@ namespace System.BusinessObjects.Data
                 if (OnSaving != null)
                     OnSaving(this, new EventArgs());
                 NHibernateSessionProvider.Provider.CurrentSession.Update(this);
-                NHibernateSessionProvider.Provider.CurrentSession.Flush();
+                if (AutoFlush)
+                    NHibernateSessionProvider.Provider.CurrentSession.Flush();
                 if (OnSaved != null)
                     OnSaved(this, new EventArgs());
             }
@@ -344,7 +325,7 @@ namespace System.BusinessObjects.Data
             return binarySerialiseClone(this);
         }
 
-        [SecurityPermissionAttribute(SecurityAction.Demand, SerializationFormatter = true)]
+        //[SecurityPermissionAttribute(SecurityAction.Demand, SerializationFormatter = true)]
         internal static object binarySerialiseClone(object obj)
         {
             MemoryStream stream = new MemoryStream();
@@ -534,6 +515,28 @@ namespace System.BusinessObjects.Data
             foreach (T item in list)
                 item.SetLoadRowState();
             return list;
+        }
+
+        /// <summary>
+        /// Gets a strongly typed business object based on NHibernate criteria
+        /// </summary>
+        public static T Fetch(NHibernate.ICriteria criteria)
+        {
+            T item = criteria.UniqueResult<T>();
+            if(item != null)
+                item.SetLoadRowState();
+            return item;
+        }
+
+        /// <summary>
+        /// Gets a strongly typed business object based on an NHibernate Query
+        /// </summary>
+        public static T Fetch(NHibernate.IQuery query)
+        {
+            T item = query.UniqueResult<T>();
+            if (item != null)
+                item.SetLoadRowState();
+            return item;
         }
 
         /// <summary>
