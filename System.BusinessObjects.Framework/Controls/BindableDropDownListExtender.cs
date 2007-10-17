@@ -36,7 +36,7 @@ namespace System.BusinessObjects.Controls
             }
             set 
             {
-                if (value != null)
+                if (value != null && attachToControl != null)
                 {
                     foreach(PropertyDescriptor info in TypeDescriptor.GetProperties(value))
                     {
@@ -48,7 +48,7 @@ namespace System.BusinessObjects.Controls
                         }
                     }
                 }
-                else
+                else if(attachToControl != null)
                 {
                     attachToControl.SelectedIndex = -1;   
                 }
@@ -86,9 +86,9 @@ namespace System.BusinessObjects.Controls
             }
         }
 
-        protected override void OnInit(EventArgs e)
+        protected override void OnLoad(EventArgs e)
         {
-            base.OnInit(e);
+            base.OnLoad(e);
             attachToControl = WebHelper.FindNestedWebControl(Page.Controls, AttachTo) as DropDownList;
         }
     }
