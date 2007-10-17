@@ -1,7 +1,7 @@
 using NHibernate;
-using System.BusinessObjects.Providers;
-using Sample.BusinessObjects.Contacts;
 using NHibernate.Expression;
+using Sample.BusinessObjects.Contacts;
+using System.BusinessObjects.Transactions;
 
 namespace Sample.BusinessObjects.Queries
 {
@@ -16,7 +16,7 @@ namespace Sample.BusinessObjects.Queries
         /// <param name="name">Name of the contact to search for</param>
         public static ICriteria Query(string name)
         {
-            ICriteria qry = NHibernateSessionProvider.Provider.CurrentSession.CreateCriteria(typeof(Person));
+            ICriteria qry = UnitOfWork.CurrentSession.CreateCriteria(typeof(Person));
 
             if(!string.IsNullOrEmpty(name))
             {

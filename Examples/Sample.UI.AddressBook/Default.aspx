@@ -124,6 +124,7 @@
             </asp:Panel>
             <cc1:WebValidationControlExtender ID="WebValidationControlExtender1" runat="server"
                 AttachTo="ObjectDataSourceAddress" />
+            <asp:ValidationSummary ID="ValidationSummary1" runat="server" />
         </asp:Panel>
         <br />
     </form>

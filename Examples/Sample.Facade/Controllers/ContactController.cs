@@ -1,11 +1,8 @@
-using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using Sample.BusinessObjects.Contacts;
 using Sample.BusinessObjects.Queries;
-using System.BusinessObjects.Providers;
-using Iesi.Collections.Generic;
 
 namespace Sample.Facade.Controllers
 {

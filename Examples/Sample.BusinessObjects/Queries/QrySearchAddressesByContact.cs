@@ -1,6 +1,7 @@
 using NHibernate;
 
 using System.BusinessObjects.Providers;
+using System.BusinessObjects.Transactions;
 
 namespace Sample.BusinessObjects.Queries
 {
@@ -10,7 +11,7 @@ namespace Sample.BusinessObjects.Queries
         {
             string sql = "select address from Person p join p.Addresses as address where p.ID = :personid";
 
-            IQuery qry = NHibernateSessionProvider.Provider.CurrentSession.CreateQuery(sql);
+            IQuery qry = UnitOfWork.CurrentSession.CreateQuery(sql);
             qry.SetParameter("personid", personID);
             qry.SetFlushMode(FlushMode.Commit);
 

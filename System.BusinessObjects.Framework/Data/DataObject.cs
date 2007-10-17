@@ -4,7 +4,6 @@ using System.Data;
 using System.IO;
 using System.Runtime.Serialization.Formatters.Binary;
 
-using System.BusinessObjects.Providers;
 using System.BusinessObjects.Validation;
 using System.BusinessObjects.Transactions;
 
@@ -194,7 +193,7 @@ namespace System.BusinessObjects.Data
         {
             //if (oldDataValue != null)
             //{
-            NHibernateSessionProvider.Provider.CurrentSession.Refresh(this);
+            UnitOfWork.CurrentSession.Refresh(this);
             _rowstate = _rowstateOriginal;
                 //dataValue = oldDataValue;
                 //foreignKeys = oldForeignKeys;
