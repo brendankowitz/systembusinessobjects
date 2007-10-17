@@ -64,12 +64,15 @@
     <Compile Include="Providers\GenericProviderCollection.cs" />
     <Compile Include="Providers\NHibernateSessionProvider.cs" />
     <Compile Include="Providers\ProviderHelper.cs" />
+    <Compile Include="Transactions\IUnitOfWork.cs" />
+    <Compile Include="Transactions\UnitOfWork.cs" />
     <Compile Include="Validation\GeneralAssertionRules.cs" />
     <Compile Include="Validation\ValidationAttributes.cs" />
     <Compile Include="Validation\ValidationHelper.cs" />
     <Compile Include="Validation\ValidationRule.cs" />
     <Compile Include="Validation\ValidationRuleCollection.cs" />
     <Compile Include="Validation\WebValidationControl.cs" />
+    <Compile Include="With\With.Transaction.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

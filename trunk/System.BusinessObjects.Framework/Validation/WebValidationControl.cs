@@ -43,10 +43,15 @@ namespace System.BusinessObjects.Validation
                 base.Render(writer);
             }
         }
-
-        protected override void  OnInit(EventArgs e)
+    
+        /// <summary>
+        /// Accessing controls such as LoginView on the OnInit event causes them not to
+        /// render correctly. This is why the events are now hooked up during onload.
+        /// </summary>
+        protected override void  OnLoad(EventArgs e)
         {
- 	         base.OnInit(e);
+ 	        base.OnLoad(e);
+
             attachToControl = WebHelper.FindNestedWebControl(Page.Controls, AttachTo);
  
             if(attachToControl != null) //hook up events
