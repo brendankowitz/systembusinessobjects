@@ -1,6 +1,7 @@
 using System;
 using System.Web.UI.WebControls;
 using Sample.BusinessObjects.Contacts;
+using System.BusinessObjects.With;
 
 namespace Sample.UI.AddressBook
 {
@@ -19,10 +20,18 @@ namespace Sample.UI.AddressBook
         #region Maintain Edited Person->Address Relationships
         void ObjectDataSourceAddress_Inserted(object sender, ObjectDataSourceStatusEventArgs e)
         {
-            Person person = Person.Load(Convert.ToInt32(GridViewPeople.SelectedDataKey[0]));
-            person.Addresses.Add((Address)e.ReturnValue);
-            person.Save();
-            GridViewAddresses.DataBind();
+            if (e.ReturnValue != null)
+            {
+                With.Transaction.Execute(delegate
+                 {
+                     Person person = Person.Load(Convert.ToInt32(GridViewPeople.SelectedDataKey[0]));
+                     person.Addresses.Add((Address)e.ReturnValue);
+                     person.Save();
+                 });
+
+                GridViewAddresses.DataBind();
+                SetPanelNewAddressInitial();
+            }
         }
 
         void ObjectDataSourceAddress_Deleting(object sender, ObjectDataSourceMethodEventArgs e)
@@ -126,10 +135,12 @@ namespace Sample.UI.AddressBook
                 SetPanelNewAddressInitial();
         }
 
-        protected void DetailsViewAddress_ItemInserting(object sender, DetailsViewInsertEventArgs e)
+        protected void DetailsViewAddress_ItemInserted(object sender, DetailsViewInsertedEventArgs e)
         {
-            SetPanelNewAddressInitial();
+            e.KeepInInsertMode = true;
         }
         #endregion  
+
+        
     }
 }
