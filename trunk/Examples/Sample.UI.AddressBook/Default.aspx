@@ -1,5 +1,8 @@
 <%@ Page Language="C#" AutoEventWireup="true" CodeBehind="Default.aspx.cs" Inherits="Sample.UI.AddressBook._Default" %>
 
+<%@ Register Assembly="System.BusinessObjects.Framework" Namespace="System.BusinessObjects.Validation"
+    TagPrefix="cc1" %>
+
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
 <html xmlns="http://www.w3.org/1999/xhtml" >
@@ -99,7 +102,7 @@
             <asp:Panel ID="PanelAddNewAddress" runat="server" Visible="False">
             <asp:DetailsView ID="DetailsViewAddress" runat="server" AutoGenerateRows="False"
                 CellPadding="4" DataSourceID="ObjectDataSourceAddress" DefaultMode="Insert" ForeColor="#333333"
-                GridLines="None" OnItemCommand="DetailsViewAddress_ItemCommand" OnItemInserting="DetailsViewAddress_ItemInserting">
+                GridLines="None" OnItemCommand="DetailsViewAddress_ItemCommand" OnItemInserted="DetailsViewAddress_ItemInserted">
                 <FooterStyle BackColor="#5D7B9D" Font-Bold="True" ForeColor="White" />
                 <CommandRowStyle BackColor="#E2DED6" Font-Bold="True" />
                 <RowStyle BackColor="#F7F6F3" ForeColor="#333333" />
@@ -119,6 +122,8 @@
                 <AlternatingRowStyle BackColor="White" ForeColor="#284775" />
             </asp:DetailsView>
             </asp:Panel>
+            <cc1:WebValidationControlExtender ID="WebValidationControlExtender1" runat="server"
+                AttachTo="ObjectDataSourceAddress" />
         </asp:Panel>
         <br />
     </form>

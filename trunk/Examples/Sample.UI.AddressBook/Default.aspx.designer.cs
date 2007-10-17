@@ -144,5 +144,14 @@ namespace Sample.UI.AddressBook {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.DetailsView DetailsViewAddress;
+        
+        /// <summary>
+        /// WebValidationControlExtender1 control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.BusinessObjects.Validation.WebValidationControlExtender WebValidationControlExtender1;
     }
 }

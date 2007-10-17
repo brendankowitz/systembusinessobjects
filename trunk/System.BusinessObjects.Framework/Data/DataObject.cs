@@ -6,6 +6,7 @@ using System.Runtime.Serialization.Formatters.Binary;
 
 using System.BusinessObjects.Providers;
 using System.BusinessObjects.Validation;
+using System.BusinessObjects.Transactions;
 
 namespace System.BusinessObjects.Data
 {
@@ -212,7 +213,7 @@ namespace System.BusinessObjects.Data
             {
                 if(OnDeleting != null)
                     OnDeleting(this, new EventArgs());
-                NHibernateSessionProvider.Provider.CurrentSession.Delete(this);
+                UnitOfWork.CurrentSession.Delete(this);
                 if(OnDeleted != null)
                     OnDeleted(this, new EventArgs());
             }
@@ -220,7 +221,7 @@ namespace System.BusinessObjects.Data
             {
                 if(OnSaving != null)
                     OnSaving(this, new EventArgs());
-                NHibernateSessionProvider.Provider.CurrentSession.Save(this);
+                UnitOfWork.CurrentSession.Save(this);
                 if(OnSaved != null)
                     OnSaved(this, new EventArgs());
             }
@@ -229,9 +230,9 @@ namespace System.BusinessObjects.Data
                 
                 if (OnSaving != null)
                     OnSaving(this, new EventArgs());
-                NHibernateSessionProvider.Provider.CurrentSession.Update(this);
+                UnitOfWork.CurrentSession.Update(this);
                 if (AutoFlush)
-                    NHibernateSessionProvider.Provider.CurrentSession.Flush();
+                    UnitOfWork.CurrentSession.Flush();
                 if (OnSaved != null)
                     OnSaved(this, new EventArgs());
             }
@@ -311,8 +312,8 @@ namespace System.BusinessObjects.Data
         /// </summary>
         public virtual void Evict()
         {
-            if (NHibernateSessionProvider.Provider.CurrentSession != null)
-                NHibernateSessionProvider.Provider.CurrentSession.Evict(this);
+            if (UnitOfWork.CurrentSession != null)
+                UnitOfWork.CurrentSession.Evict(this);
         }
         #endregion
 
@@ -489,7 +490,7 @@ namespace System.BusinessObjects.Data
         /// </summary>
         public static new T Load(int Id)
         {
-            T newObj = NHibernateSessionProvider.Provider.CurrentSession.Get<T>(Id);
+            T newObj = UnitOfWork.CurrentSession.Get<T>(Id);
             if(newObj != null)
                 newObj.SetLoadRowState();
             return newObj;
@@ -544,7 +545,7 @@ namespace System.BusinessObjects.Data
         /// </summary>
         public static void Evict(int ID)
         {
-            T existingObj = NHibernateSessionProvider.Provider.CurrentSession.Get<T>(ID);
+            T existingObj = UnitOfWork.CurrentSession.Get<T>(ID);
             if (existingObj != null)
             {
                 existingObj.Evict();

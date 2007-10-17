@@ -1,8 +1,8 @@
 using System;
 using System.BusinessObjects.Data;
-using System.BusinessObjects.Providers;
-using System.Data;
+using System.BusinessObjects.Transactions;
 using Iesi.Collections.Generic;
+using System.BusinessObjects.Validation;
 
 namespace Sample.BusinessObjects.Contacts
 {
@@ -18,6 +18,7 @@ namespace Sample.BusinessObjects.Contacts
             }
         }
 
+        [ValidationNotEmpty]
         public virtual string FirstName
         {
             get { return GetValue<string>("FirstName"); }
@@ -28,6 +29,7 @@ namespace Sample.BusinessObjects.Contacts
             }
         }
 
+        [ValidationNotEmpty]
         public virtual string LastName
         {
             get { return GetValue<string>("LastName"); }
@@ -54,7 +56,7 @@ namespace Sample.BusinessObjects.Contacts
             base.Save();
 
             //Flush so the Feature ForiegnKeys are saved.
-            NHibernateSessionProvider.Provider.CurrentSession.Flush();
+            UnitOfWork.CurrentSession.Flush();
         }
     }
 }
