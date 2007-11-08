@@ -20,7 +20,6 @@ namespace System.BusinessObjects.With
                 IUnitOfWork work = UnitOfWork.Create();
                 work.Add(func);
                 work.Execute();
-                work.Flush();
             }
         }
         
