@@ -307,6 +307,73 @@ namespace System.BusinessObjects.Data
         }
 
         /// <summary>
+        /// Loads a business object with the given ID
+        /// </summary>
+        public static T Load<T>(int Id) where T : DataObject
+        {
+            T newObj = UnitOfWork.CurrentSession.Get<T>(Id);
+            if (newObj != null)
+                newObj.SetLoadRowState();
+            return newObj;
+        }
+
+        /// <summary>
+        /// Gets a strongly typed list of business objects based on NHibernate criteria
+        /// </summary>
+        public static IList<T> Search<T>(NHibernate.ICriteria criteria) where T : DataObject
+        {
+            IList<T> list = criteria.List<T>();
+            foreach (T item in list)
+                item.SetLoadRowState();
+            return list;
+        }
+
+        /// <summary>
+        /// Gets a strongly typed list of business objects based on an NHibernate Query
+        /// </summary>
+        public static IList<T> Search<T>(NHibernate.IQuery query) where T : DataObject
+        {
+            IList<T> list = query.List<T>();
+            foreach (T item in list)
+                item.SetLoadRowState();
+            return list;
+        }
+
+        /// <summary>
+        /// Gets a strongly typed business object based on NHibernate criteria
+        /// </summary>
+        public static T Fetch<T>(NHibernate.ICriteria criteria) where T : DataObject
+        {
+            T item = criteria.UniqueResult<T>();
+            if (item != null)
+                item.SetLoadRowState();
+            return item;
+        }
+
+        /// <summary>
+        /// Gets a strongly typed business object based on an NHibernate Query
+        /// </summary>
+        public static T Fetch<T>(NHibernate.IQuery query) where T : DataObject
+        {
+            T item = query.UniqueResult<T>();
+            if (item != null)
+                item.SetLoadRowState();
+            return item;
+        }
+
+        /// <summary>
+        /// Evicts an existing instance of this business object from NHibernate's session cache
+        /// </summary>
+        public static void Evict<T>(int ID) where T : DataObject
+        {
+            T existingObj = UnitOfWork.CurrentSession.Get<T>(ID);
+            if (existingObj != null)
+            {
+                existingObj.Evict();
+            }
+        }
+
+        /// <summary>
         /// Evicts the current object from NHibernate's session cache
         /// </summary>
         public virtual void Evict()
@@ -465,91 +532,4 @@ namespace System.BusinessObjects.Data
 
         #endregion
     }
-
-    #region DataObject<T> Generic Extensions
-    /// <summary>
-    /// An abstract class that provides core business object functionality.
-    /// This generic class provides extensions to create a strongly typed interface
-    /// for the inherited class.
-    /// </summary>
-    [Serializable]
-    public abstract class DataObject<T> : DataObject
-        where T : DataObject
-    {
-        /// <summary>
-        /// Clone a deep-copy of this object
-        /// </summary>
-        public new virtual T Clone()
-        {
-            return (T)binarySerialiseClone(this);
-        }
-
-        /// <summary>
-        /// Loads a business object with the given ID
-        /// </summary>
-        public static new T Load(int Id)
-        {
-            T newObj = UnitOfWork.CurrentSession.Get<T>(Id);
-            if(newObj != null)
-                newObj.SetLoadRowState();
-            return newObj;
-        }
-
-        /// <summary>
-        /// Gets a strongly typed list of business objects based on NHibernate criteria
-        /// </summary>
-        public static IList<T> Search(NHibernate.ICriteria criteria)
-        {
-            IList<T> list = criteria.List<T>();
-            foreach(T item in list)
-                item.SetLoadRowState();
-            return list;
-        }
-
-        /// <summary>
-        /// Gets a strongly typed list of business objects based on an NHibernate Query
-        /// </summary>
-        public static IList<T> Search(NHibernate.IQuery query)
-        {
-            IList<T> list = query.List<T>();
-            foreach (T item in list)
-                item.SetLoadRowState();
-            return list;
-        }
-
-        /// <summary>
-        /// Gets a strongly typed business object based on NHibernate criteria
-        /// </summary>
-        public static T Fetch(NHibernate.ICriteria criteria)
-        {
-            T item = criteria.UniqueResult<T>();
-            if(item != null)
-                item.SetLoadRowState();
-            return item;
-        }
-
-        /// <summary>
-        /// Gets a strongly typed business object based on an NHibernate Query
-        /// </summary>
-        public static T Fetch(NHibernate.IQuery query)
-        {
-            T item = query.UniqueResult<T>();
-            if (item != null)
-                item.SetLoadRowState();
-            return item;
-        }
-
-        /// <summary>
-        /// Evicts an existing instance of this business object from NHibernate's session cache
-        /// </summary>
-        public static void Evict(int ID)
-        {
-            T existingObj = UnitOfWork.CurrentSession.Get<T>(ID);
-            if (existingObj != null)
-            {
-                existingObj.Evict();
-            }
-        }
-    }
-    #endregion
 }
