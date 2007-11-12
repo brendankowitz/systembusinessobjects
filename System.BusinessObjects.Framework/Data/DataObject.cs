@@ -6,6 +6,7 @@ using System.Runtime.Serialization.Formatters.Binary;
 
 using System.BusinessObjects.Validation;
 using System.BusinessObjects.Transactions;
+using System.Collections;
 
 namespace System.BusinessObjects.Data
 {
@@ -256,6 +257,18 @@ namespace System.BusinessObjects.Data
         }
 
         /// <summary>
+        /// Marks the BusinessObjects in an enumeration as Loaded
+        /// </summary>
+        public static void SetLoadedRowState(IEnumerable list)
+        {
+            IEnumerator e = list.GetEnumerator();
+            while (e.MoveNext())
+            {
+                ((DataObject)e.Current).SetLoadRowState();
+            }
+        }
+
+        /// <summary>
         /// Returns the query action needed to save the current state of the object
         /// </summary>
         public virtual QueryAction GetPersistanceQueryAction()
@@ -318,13 +331,35 @@ namespace System.BusinessObjects.Data
         }
 
         /// <summary>
+        /// Returns a list of all business objects of this type
+        /// </summary>
+        public static IList<T> Search<T>() where T : DataObject
+        {
+            NHibernate.ICriteria qry = UnitOfWork.CurrentSession.CreateCriteria(typeof(T));
+            IList<T> list = qry.List<T>();
+            SetLoadedRowState(list);
+            return list;
+        }
+
+        /// <summary>
+        /// Returns a list of all business objects of this type
+        /// </summary>
+        public static IList<T> Search<T>(NHibernate.Expression.Order orderBy) where T : DataObject
+        {
+            NHibernate.ICriteria qry = UnitOfWork.CurrentSession.CreateCriteria(typeof(T));
+            qry.AddOrder(orderBy);
+            IList<T> list = qry.List<T>();
+            SetLoadedRowState(list);
+            return list;
+        }
+
+        /// <summary>
         /// Gets a strongly typed list of business objects based on NHibernate criteria
         /// </summary>
         public static IList<T> Search<T>(NHibernate.ICriteria criteria) where T : DataObject
         {
             IList<T> list = criteria.List<T>();
-            foreach (T item in list)
-                item.SetLoadRowState();
+            SetLoadedRowState(list);
             return list;
         }
 
@@ -334,8 +369,7 @@ namespace System.BusinessObjects.Data
         public static IList<T> Search<T>(NHibernate.IQuery query) where T : DataObject
         {
             IList<T> list = query.List<T>();
-            foreach (T item in list)
-                item.SetLoadRowState();
+            SetLoadedRowState(list);
             return list;
         }
 
