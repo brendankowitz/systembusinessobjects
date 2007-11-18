@@ -68,7 +68,7 @@
                 <AlternatingRowStyle BackColor="White" ForeColor="#284775" />
             </asp:DetailsView>
         </asp:Panel>
-        <asp:Panel ID="PanelAddAddress" runat="server" Visible="False">
+        <asp:Panel ID="PanelAddAddress" runat="server" Visible="False" Width="100%">
             <h2>Addresses</h2><br />
             <asp:Button ID="ButtonAddAddress" runat="server" Text="Create New" OnClick="ButtonAddAddress_Click" /><br />
             <asp:GridView ID="GridViewAddresses" runat="server" AutoGenerateColumns="False" CellPadding="4"
@@ -124,6 +124,7 @@
             </asp:Panel>
             <cc1:WebValidationControlExtender ID="WebValidationControlExtender1" runat="server"
                 AttachTo="ObjectDataSourceAddress" />
+            <br />
             <asp:ValidationSummary ID="ValidationSummary1" runat="server" />
         </asp:Panel>
         <br />
