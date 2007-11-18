@@ -28,6 +28,14 @@ namespace System.BusinessObjects.Data
             return Load<T>(Id);
         }
 
+        // <summary>
+        /// Gets a strongly typed list of all business objects of this type
+        /// </summary>
+        public static IList<T> Search()
+        {
+            return Search<T>();
+        }
+
         /// <summary>
         /// Gets a strongly typed list of business objects based on NHibernate criteria
         /// </summary>
