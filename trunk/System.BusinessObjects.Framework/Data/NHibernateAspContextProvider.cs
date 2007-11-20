@@ -61,6 +61,13 @@ namespace System.BusinessObjects.Data
                 }
                 return session;
             }
+            set
+            {
+                if (HttpContext.Current != null)
+                {
+                    ManagedWebSessionContext.Bind(HttpContext.Current, value);
+                }
+            }
         }
 
         public ISession BindNewSession()

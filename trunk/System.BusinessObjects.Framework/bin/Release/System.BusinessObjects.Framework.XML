@@ -81,18 +81,18 @@
         </member>
         <member name="T:System.BusinessObjects.Data.DataObject">
             <summary>
-            An abstract class that provides core business object funcationality.
+            An abstract class that provides core business object functionality.
+            </summary>
             <remarks>
             Core functionality targets specifically:
             1. tracking/cloning an object's persistance state
             2. providing basic persistance functionality
             3. implementing the built-in binding interfaces for use with .net's built-in datacontrols (ie. GridView)
             </remarks>
-            </summary>
         </member>
         <member name="M:System.BusinessObjects.Data.DataObject.SetValue(System.String,System.Object)">
             <summary>
-            Sets a properties value in the internal property store.
+            Sets a property value in the internal property store.
             If a null is passed the property will be reset and removed.
             </summary>
             <param name="keyName">Property name of whos value is to be set</param>
@@ -133,6 +133,11 @@
             Sets the business object's RowState to Loaded
             </summary>
         </member>
+        <member name="M:System.BusinessObjects.Data.DataObject.SetLoadedRowState(System.Collections.IEnumerable)">
+            <summary>
+            Marks the BusinessObjects in an enumeration as Loaded
+            </summary>
+        </member>
         <member name="M:System.BusinessObjects.Data.DataObject.GetPersistanceQueryAction">
             <summary>
             Returns the query action needed to save the current state of the object
@@ -147,6 +152,51 @@
         <member name="M:System.BusinessObjects.Data.DataObject.Load(System.Int32)">
             <summary>
             Loads a business object with the given ID
+            </summary>
+        </member>
+        <member name="M:System.BusinessObjects.Data.DataObject.Load``1(System.Int32)">
+            <summary>
+            Loads a business object with the given ID
+            </summary>
+        </member>
+        <member name="M:System.BusinessObjects.Data.DataObject.Search``1">
+            <summary>
+            Returns a list of all business objects of this type
+            </summary>
+        </member>
+        <member name="M:System.BusinessObjects.Data.DataObject.Search``1(NHibernate.Expression.Order)">
+            <summary>
+            Returns a list of all business objects of this type
+            </summary>
+        </member>
+        <member name="M:System.BusinessObjects.Data.DataObject.Search``1(NHibernate.ICriteria)">
+            <summary>
+            Gets a strongly typed list of business objects based on NHibernate criteria
+            </summary>
+        </member>
+        <member name="M:System.BusinessObjects.Data.DataObject.Search``1(NHibernate.IQuery)">
+            <summary>
+            Gets a strongly typed list of business objects based on an NHibernate Query
+            </summary>
+        </member>
+        <member name="M:System.BusinessObjects.Data.DataObject.Fetch``1(NHibernate.ICriteria)">
+            <summary>
+            Gets a strongly typed business object based on NHibernate criteria
+            </summary>
+        </member>
+        <member name="M:System.BusinessObjects.Data.DataObject.Fetch``1(NHibernate.IQuery)">
+            <summary>
+            Gets a strongly typed business object based on an NHibernate Query
+            </summary>
+        </member>
+        <member name="M:System.BusinessObjects.Data.DataObject.Evict``1(System.Int32)">
+            <summary>
+            Evicts an existing instance of this business object from NHibernate's session cache
+            </summary>
+        </member>
+        <member name="M:System.BusinessObjects.Data.DataObject.Evict">
+            <summary>
+            Evicts the current object from NHibernate's session cache
             </summary>
         </member>
         <member name="M:System.BusinessObjects.Data.DataObject.Clone">
@@ -164,6 +214,11 @@
             The current rowstate of this business object
             </summary>
         </member>
+        <member name="P:System.BusinessObjects.Data.DataObject.AutoFlush">
+            <summary>
+            Specifies if this object should automatically flush changes to the persistance layer as they are called
+            </summary>
+        </member>
         <member name="P:System.BusinessObjects.Data.DataObject.System#ComponentModel#IDataErrorInfo#Error">
             <summary>
             Returns the first error in the object
@@ -177,6 +232,70 @@
         <member name="T:System.BusinessObjects.Data.DataObject.QueryAction">
             <summary>
             The type of query needed to persist this business object
+            </summary>
+        </member>
+        <member name="T:System.BusinessObjects.With.With">
+            <summary>
+            A collection of classes that can perform an action with a delegate
+            </summary>
+        </member>
+        <member name="T:System.BusinessObjects.With.With.Transaction">
+            <summary>
+            With.Transaction creates and executes a transaction
+            </summary>
+        </member>
+        <member name="M:System.BusinessObjects.With.With.Transaction.Execute(System.BusinessObjects.Transactions.WorkUnitDelegate)">
+            <summary>
+            Execute work within a transaction in the current session.
+            </summary>
+        </member>
+        <member name="M:System.BusinessObjects.Helpers.WebHelper.GetCurrentTrustLevel">
+            <summary>
+            Returns the current trust level for the asp.net hosting
+            </summary>
+            <remarks>taken from http://blogs.msdn.com/dmitryr/archive/2007/01/23/finding-out-the-current-trust-level-in-asp-net.aspx</remarks>
+        </member>
+        <member name="T:System.BusinessObjects.Data.DataObject`1">
+            <summary>
+            An abstract class that provides core business object functionality.
+            This generic class provides extensions to create a strongly typed interface
+            for the inherited class.
+            </summary>
+        </member>
+        <member name="M:System.BusinessObjects.Data.DataObject`1.Clone">
+            <summary>
+            Clone a deep-copy of this object
+            </summary>
+        </member>
+        <member name="M:System.BusinessObjects.Data.DataObject`1.Load(System.Int32)">
+            <summary>
+            Loads a business object with the given ID
+            </summary>
+        </member>
+        <!-- Badly formed XML comment ignored for member "M:System.BusinessObjects.Data.DataObject`1.Search" -->
+        <member name="M:System.BusinessObjects.Data.DataObject`1.Search(NHibernate.ICriteria)">
+            <summary>
+            Gets a strongly typed list of business objects based on NHibernate criteria
+            </summary>
+        </member>
+        <member name="M:System.BusinessObjects.Data.DataObject`1.Search(NHibernate.IQuery)">
+            <summary>
+            Gets a strongly typed list of business objects based on an NHibernate Query
+            </summary>
+        </member>
+        <member name="M:System.BusinessObjects.Data.DataObject`1.Fetch(NHibernate.ICriteria)">
+            <summary>
+            Gets a strongly typed business object based on NHibernate criteria
+            </summary>
+        </member>
+        <member name="M:System.BusinessObjects.Data.DataObject`1.Fetch(NHibernate.IQuery)">
+            <summary>
+            Gets a strongly typed business object based on an NHibernate Query
+            </summary>
+        </member>
+        <member name="M:System.BusinessObjects.Data.DataObject`1.Evict(System.Int32)">
+            <summary>
+            Evicts an existing instance of this business object from NHibernate's session cache
             </summary>
         </member>
         <member name="M:System.BusinessObjects.Validation.ValidationRuleCollection.Validate">
@@ -194,37 +313,6 @@
             Returns any error messages from the validation of the list
             </summary>
         </member>
-        <member name="T:System.BusinessObjects.Data.DataObject`1">
-            <summary>
-            An abstract class that provides core business object funcationality.
-            <remarks>
-            Core functionality targets specifically:
-            1. tracking/cloning an object's persistance state
-            2. providing basic persistance functionality
-            3. implementing the built-in binding interfaces for use with .net's built-in datacontrols (ie. GridView)
-            </remarks>
-            </summary>
-        </member>
-        <member name="M:System.BusinessObjects.Data.DataObject`1.Clone">
-            <summary>
-            Clone a deep-copy of this object
-            </summary>
-        </member>
-        <member name="M:System.BusinessObjects.Data.DataObject`1.Load(System.Int32)">
-            <summary>
-            Loads a business object with the given ID
-            </summary>
-        </member>
-        <member name="M:System.BusinessObjects.Data.DataObject`1.Search(NHibernate.ICriteria)">
-            <summary>
-            Gets a strongly typed list of business objects based on NHibernate criteria
-            </summary>
-        </member>
-        <member name="M:System.BusinessObjects.Data.DataObject`1.Search(NHibernate.IQuery)">
-            <summary>
-            Gets a strongly typed list of business objects based on an NHibernate Query
-            </summary>
-        </member>
         <member name="T:System.BusinessObjects.Providers.ProviderHelper">
             <summary>
             A helper class for loading providers from the configuration file
@@ -237,6 +325,42 @@
             <param name="propertyName">Name of the property with the validation error</param>
             <param name="message">Description of the validation error</param>
             <returns>True if the rule is valid, False if it has been broken</returns>
+        </member>
+        <member name="T:System.BusinessObjects.Controls.BindableDropDownListExtender">
+            <summary>
+            Allows a BusinessObject property to be bound to a listbox.
+            </summary>
+        </member>
+        <member name="P:System.BusinessObjects.Controls.BindableDropDownListExtender.AttachTo">
+            <summary>
+            Specifies the ObjectDataSource to attach to
+            </summary>
+        </member>
+        <member name="M:System.BusinessObjects.Validation.WebValidationControlExtender.OnLoad(System.EventArgs)">
+            <summary>
+            Accessing controls such as LoginView on the OnInit event causes them not to
+            render correctly. This is why the events are now hooked up during onload.
+            </summary>
+        </member>
+        <member name="P:System.BusinessObjects.Validation.WebValidationControlExtender.AttachTo">
+            <summary>
+            Specifies the ObjectDataSource to attach to
+            </summary>
+        </member>
+        <member name="P:System.BusinessObjects.Validation.WebValidationControlExtender.PropertyToValidate">
+            <summary>
+            Optionally. Specifies only one property to validate
+            </summary>
+        </member>
+        <member name="T:System.BusinessObjects.Validation.ValidationLengthAttribute">
+            <summary>
+            Validates false if the target property is more than the speficified length
+            </summary>
+        </member>
+        <member name="T:System.BusinessObjects.Validation.ValidationNotEmptyAttribute">
+            <summary>
+            Validates false if the target property is empty or null
+            </summary>
         </member>
         <member name="T:System.BusinessObjects.Data.AspNetDataCache">
             <summary>
@@ -255,7 +379,7 @@
         </member>
         <member name="M:System.BusinessObjects.Validation.GeneralAssertionTemplate.Less``1(System.BusinessObjects.Data.DataObject,System.String,``0)">
             <summary>
-            Compares that a property is less then the expected.
+            Compares that a property is less then the expected value by using IComparable.
             </summary>
         </member>
         <member name="M:System.BusinessObjects.Validation.GeneralAssertionTemplate.IsNotEmpty(System.BusinessObjects.Data.DataObject,System.String)">
@@ -276,6 +400,16 @@
         <member name="M:System.BusinessObjects.Validation.GeneralAssertionTemplate.LengthLess(System.BusinessObjects.Data.DataObject,System.String,System.Int32)">
             <summary>
             Validates that a string is less than a certain length or a collection is less than a certain size
+            </summary>
+        </member>
+        <member name="M:System.BusinessObjects.Validation.GeneralAssertionTemplate.LengthFixed(System.BusinessObjects.Data.DataObject,System.String,System.Int32)">
+            <summary>
+            Validates that a string or collection is a certain length
+            </summary>
+        </member>
+        <member name="M:System.BusinessObjects.Validation.GeneralAssertionTemplate.ValidCharacterRange(System.BusinessObjects.Data.DataObject,System.String,System.String,System.Boolean)">
+            <summary>
+            Validates that a string contains only the specified characters
             </summary>
         </member>
     </members>

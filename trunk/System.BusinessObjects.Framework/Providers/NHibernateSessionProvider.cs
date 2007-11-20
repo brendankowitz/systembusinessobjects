@@ -40,6 +40,13 @@ namespace System.BusinessObjects.Providers
                 }
                 return sessionFactory;
             }
+            set
+            {
+                lock (syncObj)
+                {
+                    sessionFactory = value;
+                }
+            }
         }
 
         public override void Initialize(string name, System.Collections.Specialized.NameValueCollection config)
@@ -74,7 +81,7 @@ namespace System.BusinessObjects.Providers
             }
         }
 
-        public abstract ISession CurrentSession { get;}
+        public abstract ISession CurrentSession { get; set; }
 
         public abstract void CloseSession();
 
