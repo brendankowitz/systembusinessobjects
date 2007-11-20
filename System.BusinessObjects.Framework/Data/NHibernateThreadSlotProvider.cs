@@ -44,6 +44,20 @@ namespace System.BusinessObjects.Data
 
                 return currentSession;
             }
+            set
+            {
+                LocalDataStoreSlot slot = Thread.GetNamedDataSlot(CurrentSessionKey);
+                ISession currentSession = value;
+                if (slot != null)
+                {
+                    Thread.SetData(slot, currentSession);
+                }
+                else
+                {
+                    slot = Thread.AllocateNamedDataSlot(CurrentSessionKey);
+                    Thread.SetData(slot, currentSession);
+                }
+            }
         }
 
         public override void CloseSession()
