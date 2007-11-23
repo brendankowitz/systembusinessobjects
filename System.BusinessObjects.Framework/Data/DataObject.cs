@@ -7,6 +7,7 @@ using System.Runtime.Serialization.Formatters.Binary;
 using System.BusinessObjects.Validation;
 using System.BusinessObjects.Transactions;
 using System.Collections;
+using System.Diagnostics;
 
 namespace System.BusinessObjects.Data
 {
@@ -138,9 +139,11 @@ namespace System.BusinessObjects.Data
 
             if (PropertyChanged != null)
             {
-                string propertyName =
-                    new Diagnostics.StackTrace().GetFrame(1).GetMethod().Name.Substring(4);
-                OnPropertyChanged(new PropertyChangedEventArgs(propertyName));
+                string propertyName = new Diagnostics.StackTrace().GetFrame(1).GetMethod().Name;
+                if (!string.IsNullOrEmpty(propertyName) && propertyName.Length > 3)
+                {
+                    OnPropertyChanged(new PropertyChangedEventArgs(propertyName.Substring(4)));
+                }
             }
         }
 
@@ -261,10 +264,13 @@ namespace System.BusinessObjects.Data
         /// </summary>
         public static void SetLoadedRowState(IEnumerable list)
         {
-            IEnumerator e = list.GetEnumerator();
-            while (e.MoveNext())
+            if (list != null)
             {
-                ((DataObject)e.Current).SetLoadRowState();
+                IEnumerator e = list.GetEnumerator();
+                while (e.MoveNext())
+                {
+                    ((DataObject) e.Current).SetLoadRowState();
+                }
             }
         }
 
