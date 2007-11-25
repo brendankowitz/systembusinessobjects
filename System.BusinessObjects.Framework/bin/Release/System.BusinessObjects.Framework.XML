@@ -209,6 +209,16 @@
             Override this function to add validation rules to this data object
             </summary>
         </member>
+        <member name="M:System.BusinessObjects.Data.DataObject.SerializeToXml">
+            <summary>
+            Returns an Xml representation of this object
+            </summary>
+        </member>
+        <member name="M:System.BusinessObjects.Data.DataObject.DeserializeFromXml``1(System.String)">
+            <summary>
+            Reinstantiates an object from Xml
+            </summary>
+        </member>
         <member name="P:System.BusinessObjects.Data.DataObject.RowState">
             <summary>
             The current rowstate of this business object
@@ -296,6 +306,11 @@
         <member name="M:System.BusinessObjects.Data.DataObject`1.Evict(System.Int32)">
             <summary>
             Evicts an existing instance of this business object from NHibernate's session cache
+            </summary>
+        </member>
+        <member name="M:System.BusinessObjects.Data.DataObject`1.DeserializeFromXml(System.String)">
+            <summary>
+            Reinstantiates an object from Xml
             </summary>
         </member>
         <member name="M:System.BusinessObjects.Validation.ValidationRuleCollection.Validate">
