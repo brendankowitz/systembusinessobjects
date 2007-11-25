@@ -75,5 +75,13 @@ namespace System.BusinessObjects.Data
         {
             Evict<T>(ID);
         }
+
+        /// <summary>
+        /// Reinstantiates an object from Xml
+        /// </summary>
+        public virtual T DeserializeFromXml(string xml)
+        {
+           return DeserializeFromXml<T>(xml);
+        }
     }
 }

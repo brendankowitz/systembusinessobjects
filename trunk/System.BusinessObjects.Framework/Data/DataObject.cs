@@ -8,6 +8,8 @@ using System.BusinessObjects.Validation;
 using System.BusinessObjects.Transactions;
 using System.Collections;
 using System.Diagnostics;
+using System.Xml.Serialization;
+using System.BusinessObjects.Helpers;
 
 namespace System.BusinessObjects.Data
 {
@@ -21,7 +23,8 @@ namespace System.BusinessObjects.Data
     /// 3. implementing the built-in binding interfaces for use with .net's built-in datacontrols (ie. GridView)
     /// </remarks>
     [Serializable]
-    public abstract class DataObject : ICloneable, IEditableObject, IDataErrorInfo, INotifyPropertyChanged
+    public abstract class DataObject : ICloneable, IEditableObject,
+        IDataErrorInfo
     {
         #region Events
         public event PropertyChangedEventHandler PropertyChanged;
@@ -33,10 +36,12 @@ namespace System.BusinessObjects.Data
 
         #region Protected Variables
         protected IDictionary<string, object> dataValue = new Dictionary<string, object>();
+        [NonSerialized, XmlIgnore]
         protected DataRowState _rowstateOriginal;
         protected DataRowState _rowstate = DataRowState.Detached;
-        [NonSerialized]
+        [NonSerialized, XmlIgnore]
         protected ValidationRuleCollection validationRules;
+        [NonSerialized, XmlIgnore]
         private bool _autoFlush = true;
         #endregion
 
@@ -53,6 +58,7 @@ namespace System.BusinessObjects.Data
         /// <summary>
         /// Specifies if this object should automatically flush changes to the persistance layer as they are called
         /// </summary>
+        [XmlIgnore]
         public virtual bool AutoFlush
         {
             get { return _autoFlush; }
@@ -463,6 +469,7 @@ namespace System.BusinessObjects.Data
         #endregion
 
         #region Validation()
+        [XmlIgnore]
         public virtual ValidationRuleCollection ValidationRules
         {
             get
@@ -568,6 +575,26 @@ namespace System.BusinessObjects.Data
                     PropertyChanged(this, e);
                 }
             }
+        }
+
+        #endregion
+
+        #region Xml Serialization
+
+        /// <summary>
+        /// Returns an Xml representation of this object
+        /// </summary>
+        public virtual string SerializeToXml()
+        {
+            return XmlHelper.SerializeToXML(this);
+        }
+
+        /// <summary>
+        /// Reinstantiates an object from Xml
+        /// </summary>
+        public virtual T DeserializeFromXml<T>(string xml)
+        {
+            return XmlHelper.Deserialise<T>(xml);
         }
 
         #endregion
