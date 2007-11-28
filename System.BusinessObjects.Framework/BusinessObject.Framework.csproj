@@ -9,8 +9,8 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>System.BusinessObjects</RootNamespace>
     <AssemblyName>System.BusinessObjects.Framework</AssemblyName>
-    <SignAssembly>false</SignAssembly>
-    <AssemblyOriginatorKeyFile>..\Global\DataBlue.snk</AssemblyOriginatorKeyFile>
+    <SignAssembly>true</SignAssembly>
+    <AssemblyOriginatorKeyFile>SystemBusinessObjectsPublic.snk</AssemblyOriginatorKeyFile>
     <FileUpgradeFlags>
     </FileUpgradeFlags>
     <OldToolsVersion>2.0</OldToolsVersion>
@@ -74,6 +74,9 @@
     <Compile Include="Validation\ValidationRuleCollection.cs" />
     <Compile Include="Validation\WebValidationControl.cs" />
     <Compile Include="With\With.Transaction.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="SystemBusinessObjectsPublic.snk" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
