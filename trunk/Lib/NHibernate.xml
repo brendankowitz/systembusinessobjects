@@ -993,68 +993,23 @@
         <member name="M:NHibernate.Cache.UpdateTimestampsCache.Invalidate(System.Object[])">
             <summary></summary>
         </member>
-        <member name="T:NHibernate.Cfg.AssemblyHbmOrderer">
+        <member name="T:NHibernate.Cfg.ClassExtractor">
             <summary>
-            Analyzes the contents of the <c>hbm.xml</c> files embedded in the 
-            <see cref="T:System.Reflection.Assembly"/> for their dependency order.
-            </summary>
-            <remarks>
-            This solves the problem caused when you have embedded <c>hbm.xml</c> files
-            that contain subclasses/joined-subclasses that make use of the <c>extends</c>
-            attribute.  This ensures that those subclasses/joined-subclasses will not be
-            processed until after the class they extend is processed.
-            </remarks>
-        </member>
-        <member name="F:NHibernate.Cfg.AssemblyHbmOrderer._hbmResources">
-            <summary>
-            An <see cref="T:System.Collections.IList"/> of all the <c>hbm.xml</c> resources found
-            in the assembly.
+            Extracts the names of classes mapped in a given file,
+            and the names of the classes they extend.
             </summary>
         </member>
-        <member name="M:NHibernate.Cfg.AssemblyHbmOrderer.CreateWithResources(System.Reflection.Assembly,System.Collections.IEnumerable)">
+        <member name="M:NHibernate.Cfg.ClassExtractor.GetClassEntries(System.Xml.XmlDocument)">
             <summary>
-            Creates a new instance of AssemblyHbmOrderer with the specified <paramref name="resources" />
-            added.
+            Returns a collection of <see cref="T:NHibernate.Cfg.ClassExtractor.ClassEntry"/> containing
+            information about all classes in this stream.
             </summary>
+            <param name="document">A validated <see cref="T:System.Xml.XmlDocument"/> representing
+            a mapping file.</param>
         </member>
-        <member name="M:NHibernate.Cfg.AssemblyHbmOrderer.#ctor(System.Reflection.Assembly)">
-            <summary>
-            Creates a new instance of <see cref="T:NHibernate.Cfg.AssemblyHbmOrderer"/>
-            </summary>
-            <param name="assembly">The <see cref="T:System.Reflection.Assembly"/> to get resource streams from.</param>
-        </member>
-        <member name="M:NHibernate.Cfg.AssemblyHbmOrderer.AddResource(System.String)">
-            <summary>
-            Adds the specified resource to the resources being ordered.
-            </summary>
-            <param name="fileName">Name of the file (embedded resource).</param>
-        </member>
-        <member name="M:NHibernate.Cfg.AssemblyHbmOrderer.GetHbmFiles">
-            <summary>
-            Gets an <see cref="T:System.Collections.IList"/> of <c>hbm.xml</c> resources in the correct order.
-            </summary>
-            <returns>
-            An <see cref="T:System.Collections.IList"/> of <c>hbm.xml</c> resources in the correct order.
-            </returns>
-        </member>
-        <member name="M:NHibernate.Cfg.AssemblyHbmOrderer.OrderedHbmFiles(Iesi.Collections.ISet)">
-            <summary>
-            Returns an <see cref="T:System.Collections.IList"/> of <c>hbm.xml</c> files in the order that ensures
-            base classes are loaded before their subclass/joined-subclass.
-            </summary>
-            <param name="unorderedClasses">An <see cref="T:Iesi.Collections.ISet"/> of <see cref="T:NHibernate.Cfg.AssemblyHbmOrderer.ClassEntry"/> objects.</param>
-            <returns>
-            An <see cref="T:System.Collections.IList"/> of <see cref="T:System.String"/> objects that contain the <c>hbm.xml</c> file names.
-            </returns>
-        </member>
-        <member name="T:NHibernate.Cfg.AssemblyHbmOrderer.ClassEntry">
+        <member name="T:NHibernate.Cfg.ClassExtractor.ClassEntry">
             <summary>
             Holds information about mapped classes found in the <c>hbm.xml</c> files.
-            </summary>
-        </member>
-        <member name="P:NHibernate.Cfg.AssemblyHbmOrderer.ClassEntry.FileName">
-            <summary>
-            Gets the name of the <c>hbm.xml</c> file this class was found in.
             </summary>
         </member>
         <member name="T:NHibernate.Cfg.Configuration">
@@ -1159,13 +1114,12 @@
             <param name="name">The name of the document, for error reporting purposes.</param>
             <returns>This configuration object.</returns>
         </member>
-        <member name="M:NHibernate.Cfg.Configuration.AddValidatedDocument(System.Xml.XmlDocument,System.String)">
+        <member name="M:NHibernate.Cfg.Configuration.AddValidatedDocument(NHibernate.Cfg.NamedXmlDocument)">
             <summary>
             Takes the validated XmlDocument and has the Binder do its work of
             creating Mapping objects from the Mapping Xml.
             </summary>
-            <param name="doc">The <b>validated</b> XmlDocument that contains the Mappings.</param>
-            <param name="name">The name of the document, for error reporting purposes.</param>
+            <param name="doc">The NamedXmlDocument that contains the <b>validated</b> mapping XML file.</param>
         </member>
         <member name="M:NHibernate.Cfg.Configuration.CreateMappings">
             <summary>
@@ -1240,31 +1194,6 @@
             </summary>
             <param name="assembly">The assembly.</param>
             <returns>This configuration object.</returns>
-            <remarks>
-            This method assumes that the <c>hbm.xml</c> files in the Assembly need to be put
-            in the correct order by NHibernate.  See <see cref="M:NHibernate.Cfg.Configuration.AddAssembly(System.Reflection.Assembly,System.Boolean)">
-            AddAssembly(Assembly assembly, bool skipOrdering)</see> for the impacts and reasons
-            for letting NHibernate order the <c>hbm.xml</c> files.
-            </remarks>
-        </member>
-        <member name="M:NHibernate.Cfg.Configuration.AddAssembly(System.Reflection.Assembly,System.Boolean)">
-            <summary>
-            Adds all of the assembly's embedded resources whose names end with <c>.hbm.xml</c>.
-            </summary>
-            <param name="assembly">The loaded assembly.</param>
-            <param name="skipOrdering">
-            A <see cref="T:System.Boolean"/> indicating if the ordering of hbm.xml files can be skipped.
-            </param>
-            <returns>This configuration object.</returns>
-            <remarks>
-            <para>
-            The order of <c>hbm.xml</c> files only matters if the attribute "extends" is used.
-            The ordering should only be done when needed because it takes extra time 
-            to read the XML files to find out the order the files should be passed to
-            the <see cref="T:NHibernate.Cfg.HbmBinder"/>. If you don't use the "extends" attribute then it is
-            reccommended to call this with <c>skipOrdering=true</c>.
-            </para>
-            </remarks>
         </member>
         <member name="M:NHibernate.Cfg.Configuration.AddDirectory(System.IO.DirectoryInfo)">
             <summary>
@@ -1450,7 +1379,7 @@
             </remarks>
             <param name="hbmReader">The XmlReader that contains the mapping.</param>
             <param name="name">The name of the document, for error reporting purposes.</param>
-            <returns>Validated XmlDocument built from the XmlReader.</returns>
+            <returns>NamedXmlDocument containing the validated XmlDocument built from the XmlReader.</returns>
         </member>
         <member name="M:NHibernate.Cfg.Configuration.AddXmlReader(System.Xml.XmlTextReader)">
             <summary>
@@ -1936,6 +1865,40 @@
             version <c>MyAssembly.MyNamespace.MyClass</c>. If <c>auto-import="true"</c>, the type could
             be referred to in HQL as just <c>MyClass</c>.
             </remarks>
+        </member>
+        <member name="T:NHibernate.Cfg.MappingsQueue">
+            <summary>
+            Queues mapping files according to their dependency order.
+            </summary>
+        </member>
+        <member name="M:NHibernate.Cfg.MappingsQueue.AddDocument(NHibernate.Cfg.NamedXmlDocument)">
+            <summary>
+            Adds the specified document to the queue.
+            </summary>
+        </member>
+        <member name="M:NHibernate.Cfg.MappingsQueue.GetNextAvailableResource">
+            <summary>
+            Gets a <see cref="T:NHibernate.Cfg.NamedXmlDocument"/> that can now be processed (i.e.
+            that doesn't depend on classes not yet processed).
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:NHibernate.Cfg.MappingsQueue.CheckNoUnavailableEntries">
+            <summary>
+            Checks that no unprocessed documents remain in the queue.
+            </summary>
+        </member>
+        <member name="T:NHibernate.Cfg.MappingsQueueEntry">
+            <summary>
+            Holds information about mapped classes found in an embedded resource
+            </summary>
+        </member>
+        <member name="P:NHibernate.Cfg.MappingsQueueEntry.RequiredClassNames">
+            <summary>
+            Gets the names of all classes outside this resource
+            needed by the classes in this resource.
+            </summary>
+            <returns>An <see cref="T:Iesi.Collections.ISet"/> of <see cref="T:NHibernate.Util.AssemblyQualifiedTypeName"/></returns>
         </member>
         <member name="T:NHibernate.Cfg.Settings">
             <summary>
@@ -3545,6 +3508,26 @@
             NHibernate to use a Connection supplied by the User.
             </remarks>
         </member>
+        <member name="T:NHibernate.Context.CallSessionContext">
+            <summary>
+            Provides a <see cref="M:NHibernate.ISessionFactory.GetCurrentSession">current session</see>
+            for each <see cref="T:System.Runtime.Remoting.Messaging.CallContext"/>.
+            Not recommended for .NET 2.0 web applications.
+            </summary>
+        </member>
+        <member name="T:NHibernate.Context.CurrentSessionContext">
+            <summary>
+            Extends the contract defined by <see cref="T:NHibernate.Context.ICurrentSessionContext"/>
+            by providing methods to bind and unbind sessions to the current context.
+            </summary>
+            <remarks>
+            The notion of a contextual session is managed by some external entity
+            (generally some form of interceptor like the HttpModule).
+            This external manager is responsible for scoping these contextual sessions
+            appropriately binding/unbinding them here for exposure to the application
+            through <see cref="M:NHibernate.ISessionFactory.GetCurrentSession"/> calls.
+            </remarks>
+        </member>
         <member name="T:NHibernate.Context.ICurrentSessionContext">
             <summary>
             Defines the contract for implementations which know how to
@@ -3568,6 +3551,11 @@
             Note that there will be exactly one instance of the configured
             ICurrentSessionContext implementation per <see cref="T:NHibernate.ISessionFactory"/>.
             </para>
+            <para>
+            It is recommended to inherit from the class <see cref="T:NHibernate.Context.CurrentSessionContext"/>
+            whenever possible as it simplifies the implementation and provides
+            single entry point with session binding support.
+            </para>
             </remarks>
         </member>
         <member name="M:NHibernate.Context.ICurrentSessionContext.CurrentSession">
@@ -3578,6 +3566,81 @@
             <returns>The current session.</returns>
             <exception cref="T:NHibernate.HibernateException">Typically indicates an issue
             locating or creating the current session.</exception>
+        </member>
+        <member name="M:NHibernate.Context.CurrentSessionContext.CurrentSession">
+            <summary>
+            Retrieve the current session according to the scoping defined
+            by this implementation.
+            </summary>
+            <returns>The current session.</returns>
+            <exception cref="T:NHibernate.HibernateException">Indicates an issue
+            locating the current session.</exception>
+        </member>
+        <member name="M:NHibernate.Context.CurrentSessionContext.Bind(NHibernate.ISession)">
+            <summary>
+            Binds the specified session to the current context.
+            </summary>
+        </member>
+        <member name="M:NHibernate.Context.CurrentSessionContext.HasBind(NHibernate.ISessionFactory)">
+            <summary>
+            Returns whether there is a session bound to the current context.
+            </summary>
+        </member>
+        <member name="M:NHibernate.Context.CurrentSessionContext.Unbind(NHibernate.ISessionFactory)">
+            <summary>
+            Unbinds and returns the current session.
+            </summary>
+        </member>
+        <member name="P:NHibernate.Context.CurrentSessionContext.Session">
+            <summary> Gets or sets the currently bound session. </summary>
+        </member>
+        <member name="M:NHibernate.Context.MapBasedSessionContext.GetMap">
+            <summary>
+            Get the dicitonary mapping session factory to its current session.
+            </summary>
+        </member>
+        <member name="M:NHibernate.Context.MapBasedSessionContext.SetMap(System.Collections.IDictionary)">
+            <summary>
+            Set the map mapping session factory to its current session.
+            </summary>
+        </member>
+        <member name="P:NHibernate.Context.MapBasedSessionContext.Session">
+            <summary>
+            Gets or sets the currently bound session.
+            </summary>
+        </member>
+        <member name="M:NHibernate.Context.CallSessionContext.SetMap(System.Collections.IDictionary)">
+            <summary>
+            The key is the session factory and the value is the bound session.
+            </summary>
+        </member>
+        <member name="M:NHibernate.Context.CallSessionContext.GetMap">
+            <summary>
+            The key is the session factory and the value is the bound session.
+            </summary>
+        </member>
+        <member name="T:NHibernate.Context.ManagedWebSessionContext">
+            <summary>
+            Provides a <see cref="M:NHibernate.ISessionFactory.GetCurrentSession">current session</see>
+            for each <see cref="T:System.Web.HttpContext"/>.
+            Works only with Web Applications.
+            </summary>
+        </member>
+        <member name="T:NHibernate.Context.ThreadStaticSessionContext">
+            <summary>
+            Provides a <see cref="M:NHibernate.ISessionFactory.GetCurrentSession">current session</see>
+            for each thread using the [<see cref="T:System.ThreadStaticAttribute"/>].
+            To avoid if there are two session factories in the same thread.
+            </summary>
+        </member>
+        <member name="P:NHibernate.Context.ThreadStaticSessionContext.Session">
+            <summary> Gets or sets the currently bound session. </summary>
+        </member>
+        <member name="T:NHibernate.Context.WebSessionContext">
+            <summary>
+            Provides a <see cref="M:NHibernate.ISessionFactory.GetCurrentSession">current session</see>
+            for each <see cref="T:System.Web.HttpContext"/>. Works only with web applications.
+            </summary>
         </member>
         <member name="T:NHibernate.DebugHelpers.DictionaryProxy">
             <summary>
@@ -4610,11 +4673,6 @@
             </summary>
             <returns>false, unless overridden</returns>
         </member>
-        <member name="T:NHibernate.Dialect.MsSql2005Dialect">
-            <summary>
-            A <see cref="T:NHibernate.Dialect.Dialect"/> for <c>Microsoft Sql Server 2005</c>.
-            </summary>
-        </member>
         <member name="M:NHibernate.Dialect.MsSql2005Dialect.GetLimitString(NHibernate.SqlCommand.SqlString,System.Int32,System.Int32)">
             <summary>
             Add a <c>LIMIT</c> clause to the given SQL <c>SELECT</c>
@@ -4626,28 +4684,40 @@
             <remarks>
             The <c>LIMIT</c> SQL will look like
             <code>
-            WITH query AS
-                (SELECT TOP last ROW_NUMBER() OVER (ORDER BY orderby) as __hibernate_row_nr__, ... original_query)
-             SELECT * 
-               FROM query
-               WHERE __hibernate_row_nr__ &gt; offset
-               ORDER BY __hibernate_row_nr__
+            
+            SELECT TOP last (columns) FROM (
+            SELECT ROW_NUMBER() OVER(ORDER BY __hibernate_sort_expr_1__ {sort direction 1} [, __hibernate_sort_expr_2__ {sort direction 2}, ...]) as row, (query.columns) FROM (
+            	{original select query part}, {sort field 1} as __hibernate_sort_expr_1__ [, {sort field 2} as __hibernate_sort_expr_2__, ...]
+            	{remainder of original query minus the order by clause}
+            ) query
+            ) page WHERE page.row &gt; offset
+            
             </code>
+            
+            Note that we need to add explicitly specify the columns, because we need to be able to use them
+            in a paged subselect. NH-1155
             </remarks>
         </member>
         <member name="P:NHibernate.Dialect.MsSql2005Dialect.SupportsLimit">
             <summary>
             Sql Server 2005 supports a query statement that provides <c>LIMIT</c>
-            functionallity.
+            functionality.
             </summary>
-            <value><see langword="true" /></value>
+            <value><c>true</c></value>
         </member>
         <member name="P:NHibernate.Dialect.MsSql2005Dialect.SupportsLimitOffset">
             <summary>
             Sql Server 2005 supports a query statement that provides <c>LIMIT</c>
-            functionallity with an offset.
+            functionality with an offset.
             </summary>
-            <value><see langword="true" /></value>
+            <value><c>true</c></value>
+        </member>
+        <member name="P:NHibernate.Dialect.MsSql2005Dialect.UseMaxForLimit">
+            <summary>
+            Sql Server 2005 supports a query statement that provides <c>LIMIT</c>
+            functionality with an offset.
+            </summary>
+            <value><c>false</c></value>
         </member>
         <member name="T:NHibernate.Dialect.MsSql7Dialect">
             <summary>
@@ -4968,53 +5038,10 @@
             
             </summary>
         </member>
-        <member name="T:NHibernate.Dialect.SybaseAnywhereDialect">
+        <member name="T:NHibernate.Dialect.Sybase11Dialect">
             <summary>
-            An SQL dialect for Sybase Adaptive Server Anywhere 9.0
-            </summary>
-            <remarks>
-            <p>
-            This dialect probably will not work with schema-export.  If anyone out there
-            can fill in the ctor with DbTypes to Strings that would be helpful.
-            </p>
-            The SybaseAnywhereDialect defaults the following configuration properties:
-            <list type="table">
-            	<listheader>
-            		<term>Property</term>
-            		<description>Default Value</description>
-            	</listheader>
-            	<item>
-            		<term>hibernate.use_outer_join</term>
-            		<description><see langword="true"/></description>
-            	</item>
-            	<item>
-            		<term>hibernate.connection.driver_class</term>
-            		<description><see cref="T:NHibernate.Driver.SybaseClientDriver"/></description>
-            	</item>
-            	<item>
-            		<term>hibernate.prepare_sql</term>
-            		<description><see langword="false"/></description>
-            	</item>
-            </list>
-            </remarks>
-        </member>
-        <member name="M:NHibernate.Dialect.SybaseAnywhereDialect.#ctor">
-            <summary></summary>
-        </member>
-        <member name="M:NHibernate.Dialect.SybaseAnywhereDialect.GetIdentitySelectString(System.String,System.String)">
-            <summary></summary>
-        </member>
-        <member name="P:NHibernate.Dialect.SybaseAnywhereDialect.IdentityColumnString">
-            <summary></summary>
-        </member>
-        <member name="P:NHibernate.Dialect.SybaseAnywhereDialect.NoColumnsInsertString">
-            <summary></summary>
-        </member>
-        <member name="P:NHibernate.Dialect.SybaseAnywhereDialect.DropConstraints">
-            <summary>
-            ASA does not require to drop constraint before dropping tables, and DROP statement
-            syntax used by Hibernate to drop constraint is not compatible with ASA, so disable it.  
-            Comments matchs SybaseAnywhereDialect from Hibernate-3.1 src
+            This is a subclass of SybaseDialect for sybase 11 databases (specifically tested against 11.9.2). 11.9.2 does not support ANSI JOINs
+            therefore we have to provide  a special join fragment for left/right joins (*= and =* respectively).
             </summary>
         </member>
         <member name="T:NHibernate.Dialect.SybaseDialect">
@@ -5079,6 +5106,65 @@
         </member>
         <member name="P:NHibernate.Dialect.SybaseDialect.NoColumnsInsertString">
             <summary></summary>
+        </member>
+        <member name="T:NHibernate.Dialect.Sybase11JoinFragment">
+            <summary>
+            This class is basically a port of the hibernate 3.2  Sybase 11 join fragment. It usees concepts from that join fragment and the Oracle join fragment in NHibernate
+            </summary>
+        </member>
+        <member name="T:NHibernate.SqlCommand.JoinFragment">
+            <summary>
+            Represents a SQL <c>JOIN</c>
+            </summary>
+        </member>
+        <member name="T:NHibernate.Dialect.SybaseAnywhereDialect">
+            <summary>
+            An SQL dialect for Sybase Adaptive Server Anywhere 9.0
+            </summary>
+            <remarks>
+            <p>
+            This dialect probably will not work with schema-export.  If anyone out there
+            can fill in the ctor with DbTypes to Strings that would be helpful.
+            </p>
+            The SybaseAnywhereDialect defaults the following configuration properties:
+            <list type="table">
+            	<listheader>
+            		<term>Property</term>
+            		<description>Default Value</description>
+            	</listheader>
+            	<item>
+            		<term>hibernate.use_outer_join</term>
+            		<description><see langword="true"/></description>
+            	</item>
+            	<item>
+            		<term>hibernate.connection.driver_class</term>
+            		<description><see cref="T:NHibernate.Driver.SybaseClientDriver"/></description>
+            	</item>
+            	<item>
+            		<term>hibernate.prepare_sql</term>
+            		<description><see langword="false"/></description>
+            	</item>
+            </list>
+            </remarks>
+        </member>
+        <member name="M:NHibernate.Dialect.SybaseAnywhereDialect.#ctor">
+            <summary></summary>
+        </member>
+        <member name="M:NHibernate.Dialect.SybaseAnywhereDialect.GetIdentitySelectString(System.String,System.String)">
+            <summary></summary>
+        </member>
+        <member name="P:NHibernate.Dialect.SybaseAnywhereDialect.IdentityColumnString">
+            <summary></summary>
+        </member>
+        <member name="P:NHibernate.Dialect.SybaseAnywhereDialect.NoColumnsInsertString">
+            <summary></summary>
+        </member>
+        <member name="P:NHibernate.Dialect.SybaseAnywhereDialect.DropConstraints">
+            <summary>
+            ASA does not require to drop constraint before dropping tables, and DROP statement
+            syntax used by Hibernate to drop constraint is not compatible with ASA, so disable it.  
+            Comments matchs SybaseAnywhereDialect from Hibernate-3.1 src
+            </summary>
         </member>
         <member name="T:NHibernate.Dialect.TypeNames">
             <summary>
@@ -6142,6 +6228,16 @@
             Thrown when the <c>Oracle.DataAccess</c> assembly can not be loaded.
             </exception>
         </member>
+        <member name="M:NHibernate.Driver.OracleDataClientDriver.CreateBatcher(NHibernate.Impl.ConnectionManager)">
+            <summary>
+            Create an instance of <see cref="T:NHibernate.Engine.IBatcher"/> according to the configuration 
+            and the capabilities of the driver
+            </summary>
+            <remarks>
+            By default, .Net doesn't have any batching capabilities, drivers that does have
+            batching support need to override this method and return their own batcher.
+            </remarks>
+        </member>
         <member name="M:NHibernate.Driver.OracleDataClientDriver.InitializeParameter(System.Data.IDbDataParameter,System.String,NHibernate.SqlTypes.SqlType)">
             <remarks>
             This adds logic to ensure that a DbType.Boolean parameter is not created since
@@ -7154,6 +7250,14 @@
             </summary>
             <return>The set of filter names.</return>
         </member>
+        <member name="P:NHibernate.ISessionFactory.Items">
+            <summary>
+            This collections allows external libraries
+            to add their own configuration to the NHibernate session factory.
+            This is needed in such cases where the library is tightly coupled to NHibernate, such
+            as the case of NHibernate Search
+            </summary>
+        </member>
         <member name="M:NHibernate.Engine.ISessionFactoryImplementor.GetEntityPersister(System.Type)">
             <summary>
             Get the persister for a class
@@ -7304,6 +7408,11 @@
             <summary>
             Gets a boolean indicating if the sql statement should be prepared.  The value
             is calculated from <c>hibernate.adonet.batch_size</c> if the value exists and greater than 0.
+            </summary>
+        </member>
+        <member name="P:NHibernate.Engine.ISessionFactoryImplementor.CurrentSessionContext">
+            <summary>
+            Gets the ICurrentSessionContext instance attached to this session factory.
             </summary>
         </member>
         <member name="T:NHibernate.Engine.ISessionImplementor">
@@ -13023,6 +13132,76 @@
             </summary>
             <value>The alias for the encapsulated entity.</value>
         </member>
+        <member name="T:NHibernate.Impl.DbCommandSet`2">
+            <summary>
+            Expose the batch functionality in ADO.Net 2.0
+            Microsoft in its wisdom decided to make my life hard and mark it internal.
+            Through the use of Reflection and some delegates magic, I opened up the functionality.
+            
+            Observable performance benefits are 50%+ when used, so it is really worth it.
+            </summary>
+        </member>
+        <member name="M:NHibernate.Impl.IDbCommandSet.Append(System.Data.IDbCommand)">
+            <summary>
+            Append a command to the batch
+            </summary>
+            <param name="command"></param>
+        </member>
+        <member name="M:NHibernate.Impl.IDbCommandSet.ExecuteNonQuery">
+            <summary>
+            Executes the batch
+            </summary>
+            <returns>
+            This seems to be returning the total number of affected rows in all queries
+            </returns>
+        </member>
+        <member name="P:NHibernate.Impl.IDbCommandSet.BatchCommand">
+            <summary>
+            Return the batch command to be executed
+            </summary>
+        </member>
+        <member name="P:NHibernate.Impl.IDbCommandSet.CountOfCommands">
+            <summary>
+            The number of commands batched in this instance
+            </summary>
+        </member>
+        <member name="M:NHibernate.Impl.DbCommandSet`2.Append(System.Data.IDbCommand)">
+            <summary>
+            Append a command to the batch
+            </summary>
+            <param name="command"></param>
+        </member>
+        <member name="M:NHibernate.Impl.DbCommandSet`2.AssertHasParameters(System.Data.IDbCommand)">
+            <summary>
+            This is required because SqlClient.SqlCommandSet will throw if 
+            the command has no parameters.
+            </summary>
+            <param name="command"></param>
+        </member>
+        <member name="M:NHibernate.Impl.DbCommandSet`2.ExecuteNonQuery">
+            <summary>
+            Executes the batch
+            </summary>
+            <returns>
+            This seems to be returning the total number of affected rows in all queries
+            </returns>
+        </member>
+        <member name="M:NHibernate.Impl.DbCommandSet`2.Dispose">
+            <summary>
+            Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.
+            </summary>
+            <filterpriority>2</filterpriority>
+        </member>
+        <member name="P:NHibernate.Impl.DbCommandSet`2.BatchCommand">
+            <summary>
+            Return the batch command to be executed
+            </summary>
+        </member>
+        <member name="P:NHibernate.Impl.DbCommandSet`2.CountOfCommands">
+            <summary>
+            The number of commands batched in this instance
+            </summary>
+        </member>
         <member name="T:NHibernate.Impl.DirtyCollectionSearchVisitor">
             <summary>
             A Visitor that determines if a dirty collection was found.
@@ -13766,6 +13945,12 @@
             </list>
             </summary>
         </member>
+        <member name="T:NHibernate.Impl.OracleDataClientBatchingBatcher">
+            <summary>
+            Summary description for OracleDataClientBatchingBatcher.
+            By Tomer Avissar
+            </summary>
+        </member>
         <member name="M:NHibernate.Impl.Printer.ToString(System.Object)">
             <summary>
             
@@ -14196,6 +14381,11 @@
         </member>
         <member name="P:NHibernate.Impl.SessionFactoryImpl.Isolation">
             <summary></summary>
+        </member>
+        <member name="P:NHibernate.Impl.SessionFactoryImpl.CurrentSessionContext">
+            <summary>
+            Gets the ICurrentSessionContext instance attached to this session factory.
+            </summary>
         </member>
         <member name="T:NHibernate.Impl.SessionFactoryImpl.QueryCacheKey">
             <summary>
@@ -15377,6 +15567,12 @@
             <summary>
             Get the names of the columns constrained
             by this criterion.
+            </summary>
+        </member>
+        <member name="M:NHibernate.Loader.Criteria.CriteriaQueryTranslator.GetColumnAliasesUsingProjection(NHibernate.ICriteria,System.String)">
+            <summary>
+            Get the aliases of the columns constrained
+            by this criterion (for use in ORDER BY clause).
             </summary>
         </member>
         <member name="M:NHibernate.Loader.Criteria.CriteriaQueryTranslator.GetTypedValue(NHibernate.ICriteria,System.String,System.Object)">
@@ -20663,11 +20859,6 @@
         <member name="T:NHibernate.SqlCommand.ANSIJoinFragment">
             <summary>
             An ANSI-style Join.
-            </summary>
-        </member>
-        <member name="T:NHibernate.SqlCommand.JoinFragment">
-            <summary>
-            Represents a SQL <c>JOIN</c>
             </summary>
         </member>
         <member name="T:NHibernate.SqlCommand.ConditionalFragment">

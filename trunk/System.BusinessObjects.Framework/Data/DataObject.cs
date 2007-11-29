@@ -27,7 +27,7 @@ namespace System.BusinessObjects.Data
         IDataErrorInfo
     {
         #region Events
-        public event PropertyChangedEventHandler PropertyChanged;
+        public virtual event PropertyChangedEventHandler PropertyChanged;
         public virtual event EventHandler OnDeleting;
         public virtual event EventHandler OnDeleted;
         public virtual event EventHandler OnSaving;
