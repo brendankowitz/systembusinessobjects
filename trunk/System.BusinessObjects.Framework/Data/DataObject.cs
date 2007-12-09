@@ -57,7 +57,7 @@ namespace System.BusinessObjects.Data
         }
 
         /// <summary>
-        /// Specifies if this object should automatically flush changes to the persistance layer as they are called
+        /// Specifies if this object should automatically flush changes to the datastore as they are called
         /// </summary>
         [XmlIgnore]
         public virtual bool AutoFlush
@@ -246,17 +246,26 @@ namespace System.BusinessObjects.Data
         {
             //if (oldDataValue != null)
             //{
-            UnitOfWork.CurrentSession.Refresh(this);
-            _rowstate = _rowstateOriginal;
+            Refresh();
                 //dataValue = oldDataValue;
                 //foreignKeys = oldForeignKeys;
             //}
+        }
+
+        /// <summary>
+        /// Refreshes the object state from the datastore
+        /// </summary>
+        public virtual void Refresh()
+        {
+            UnitOfWork.CurrentSession.Refresh(this);
+            _rowstate = _rowstateOriginal;
+            collectionLoaded.Clear();
         }
         #endregion
 
         #region Persistance Methods (Save, Delete)
         /// <summary>
-        /// Saves this business object to the persisted medium.
+        /// Saves this business object to the datastore.
         /// </summary>
         public virtual void Save()
         {
@@ -293,7 +302,7 @@ namespace System.BusinessObjects.Data
         }
 
         /// <summary>
-        /// Sets the state of this business object to deleted. Call Save() to update the persisted medium
+        /// Sets the state of this business object to deleted. Call Save() to update the datastore
         /// </summary>
         public virtual void Delete()
         {
@@ -512,6 +521,9 @@ namespace System.BusinessObjects.Data
         #endregion
 
         #region Validation()
+        /// <summary>
+        /// A collection of validation rules used to determine if the data in the object is valid
+        /// </summary>
         [XmlIgnore]
         public virtual ValidationRuleCollection ValidationRules
         {
