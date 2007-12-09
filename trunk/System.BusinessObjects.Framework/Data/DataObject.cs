@@ -36,6 +36,7 @@ namespace System.BusinessObjects.Data
 
         #region Protected Variables
         protected IDictionary<string, object> dataValue = new Dictionary<string, object>();
+        protected IDictionary<string, bool> collectionLoaded = new Dictionary<string, bool>();
         [NonSerialized, XmlIgnore]
         protected DataRowState _rowstateOriginal;
         protected DataRowState _rowstate = DataRowState.Detached;
@@ -72,9 +73,21 @@ namespace System.BusinessObjects.Data
         /// </summary>
         public enum QueryAction
         {
+            /// <summary>
+            /// Indicates that the object should be inserted
+            /// </summary>
             Insert,
+            /// <summary>
+            /// Indicates that the object should be updated
+            /// </summary>
             Update,
+            /// <summary>
+            /// Indicates that the object should be deleted
+            /// </summary>
             Delete,
+            /// <summary>
+            /// Indicates that no action is required, this object is up-to-date
+            /// </summary>
             None
         }
         #endregion
@@ -88,6 +101,12 @@ namespace System.BusinessObjects.Data
 
         #region Get / Set Properties
 
+        /// <summary>
+        /// Gets a value from the internal data store
+        /// </summary>
+        /// <typeparam name="T">Type of the object</typeparam>
+        /// <param name="keyName">Key of the object to fetch</param>
+        /// <returns>the object's value</returns>
         protected T GetValue<T>(string keyName)
         {
             object obj;
@@ -111,6 +130,13 @@ namespace System.BusinessObjects.Data
             return (T)obj;
         }
 
+        /// <summary>
+        /// Gets a value from the internal data store
+        /// </summary>
+        /// <typeparam name="T">Type of the object</typeparam>
+        /// <param name="keyName">Key of the object to fetch</param>
+        /// <param name="defaultValue">A default value to return of the object's value doesn't exist</param>
+        /// <returns>the object's value</returns>
         protected T GetValue<T>(string keyName, T defaultValue)
         {
             object obj;
@@ -168,6 +194,23 @@ namespace System.BusinessObjects.Data
                 } 
             }
             return isNull;
+        }
+
+        /// <summary>
+        /// Returns true the first time this function is hit. After this the collection is assumed to have been loaded.
+        /// </summary>
+        protected virtual bool CollectionLoaded(string collectionName, IEnumerable collection)
+        {
+            if(collectionLoaded.ContainsKey(collectionName))
+            {
+                return false;
+            }
+            else
+            {
+                SetLoadedRowState(collection);
+                collectionLoaded.Add(collectionName, true);
+                return true;
+            }
         }
         #endregion
 

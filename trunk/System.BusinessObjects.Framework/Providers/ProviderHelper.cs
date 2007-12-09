@@ -5,6 +5,7 @@ using System.Web.Configuration;
 using System.Configuration;
 using System.Configuration.Provider;
 using System.Diagnostics;
+using System.Web;
 
 namespace System.BusinessObjects.Providers
 {
@@ -16,6 +17,14 @@ namespace System.BusinessObjects.Providers
         static object syncObject = new object();
         static Dictionary<string,ProviderSectionHandler> providerSection = new Dictionary<string,ProviderSectionHandler>();
 
+        public static object GetSection(string sectionName)
+        {
+            if (HttpContext.Current == null)
+                return ConfigurationManager.GetSection(sectionName);
+            else
+                return WebConfigurationManager.GetSection(sectionName);
+        }
+
         public static T LoadProvider<T>(string sectionName, string providerName) where T : ProviderBase
         {
             Debug.Assert(!string.IsNullOrEmpty(providerName));
@@ -26,7 +35,7 @@ namespace System.BusinessObjects.Providers
                 lock (syncObject)
                 {
                     // Get a reference to the provider section
-                    section = (ProviderSectionHandler)WebConfigurationManager.GetSection(sectionName);
+                    section = (ProviderSectionHandler)GetSection(sectionName);
                     providerSection.Add(sectionName, section);
                 }
             }
@@ -50,7 +59,7 @@ namespace System.BusinessObjects.Providers
                 lock (syncObject)
                 {
                     // Get a reference to the provider section
-                    section = (ProviderSectionHandler)WebConfigurationManager.GetSection(sectionName);
+                    section = (ProviderSectionHandler)GetSection(sectionName);
                     providerSection.Add(sectionName, section);
                 }
             }
@@ -68,7 +77,7 @@ namespace System.BusinessObjects.Providers
                 lock (syncObject)
                 {
                     // Get a reference to the provider section
-                    section = (ProviderSectionHandler)WebConfigurationManager.GetSection(sectionName);
+                    section = (ProviderSectionHandler)GetSection(sectionName);
                     providerSection.Add(sectionName, section);
                 }
             }
@@ -92,7 +101,7 @@ namespace System.BusinessObjects.Providers
                 lock (syncObject)
                 {
                     // Get a reference to the provider section
-                    section = (ProviderSectionHandler)WebConfigurationManager.GetSection(sectionName);
+                    section = (ProviderSectionHandler)GetSection(sectionName);
                     providerSection.Add(sectionName, section);
                 }
             }
