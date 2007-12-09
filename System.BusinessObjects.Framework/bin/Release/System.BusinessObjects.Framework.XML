@@ -140,14 +140,19 @@
             Reverts any changes back to the last accepted state
             </summary>
         </member>
+        <member name="M:System.BusinessObjects.Data.DataObject.Refresh">
+            <summary>
+            Refreshes the object state from the datastore
+            </summary>
+        </member>
         <member name="M:System.BusinessObjects.Data.DataObject.Save">
             <summary>
-            Saves this business object to the persisted medium.
+            Saves this business object to the datastore.
             </summary>
         </member>
         <member name="M:System.BusinessObjects.Data.DataObject.Delete">
             <summary>
-            Sets the state of this business object to deleted. Call Save() to update the persisted medium
+            Sets the state of this business object to deleted. Call Save() to update the datastore
             </summary>
         </member>
         <member name="M:System.BusinessObjects.Data.DataObject.SetLoadRowState">
@@ -248,7 +253,12 @@
         </member>
         <member name="P:System.BusinessObjects.Data.DataObject.AutoFlush">
             <summary>
-            Specifies if this object should automatically flush changes to the persistance layer as they are called
+            Specifies if this object should automatically flush changes to the datastore as they are called
+            </summary>
+        </member>
+        <member name="P:System.BusinessObjects.Data.DataObject.ValidationRules">
+            <summary>
+            A collection of validation rules used to determine if the data in the object is valid
             </summary>
         </member>
         <member name="P:System.BusinessObjects.Data.DataObject.System#ComponentModel#IDataErrorInfo#Error">
