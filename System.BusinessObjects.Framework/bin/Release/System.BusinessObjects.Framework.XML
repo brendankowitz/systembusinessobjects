@@ -90,6 +90,23 @@
             3. implementing the built-in binding interfaces for use with .net's built-in datacontrols (ie. GridView)
             </remarks>
         </member>
+        <member name="M:System.BusinessObjects.Data.DataObject.GetValue``1(System.String)">
+            <summary>
+            Gets a value from the internal data store
+            </summary>
+            <typeparam name="T">Type of the object</typeparam>
+            <param name="keyName">Key of the object to fetch</param>
+            <returns>the object's value</returns>
+        </member>
+        <member name="M:System.BusinessObjects.Data.DataObject.GetValue``1(System.String,``0)">
+            <summary>
+            Gets a value from the internal data store
+            </summary>
+            <typeparam name="T">Type of the object</typeparam>
+            <param name="keyName">Key of the object to fetch</param>
+            <param name="defaultValue">A default value to return of the object's value doesn't exist</param>
+            <returns>the object's value</returns>
+        </member>
         <member name="M:System.BusinessObjects.Data.DataObject.SetValue(System.String,System.Object)">
             <summary>
             Sets a property value in the internal property store.
@@ -101,6 +118,11 @@
         <member name="M:System.BusinessObjects.Data.DataObject.IsNull(System.String)">
             <summary>
             Returns true if the property has been set
+            </summary>
+        </member>
+        <member name="M:System.BusinessObjects.Data.DataObject.CollectionLoaded(System.String,System.Collections.IEnumerable)">
+            <summary>
+            Returns true the first time this function is hit. After this the collection is assumed to have been loaded.
             </summary>
         </member>
         <member name="M:System.BusinessObjects.Data.DataObject.BeginEdit">
@@ -242,6 +264,26 @@
         <member name="T:System.BusinessObjects.Data.DataObject.QueryAction">
             <summary>
             The type of query needed to persist this business object
+            </summary>
+        </member>
+        <member name="F:System.BusinessObjects.Data.DataObject.QueryAction.Insert">
+            <summary>
+            Indicates that the object should be inserted
+            </summary>
+        </member>
+        <member name="F:System.BusinessObjects.Data.DataObject.QueryAction.Update">
+            <summary>
+            Indicates that the object should be updated
+            </summary>
+        </member>
+        <member name="F:System.BusinessObjects.Data.DataObject.QueryAction.Delete">
+            <summary>
+            Indicates that the object should be deleted
+            </summary>
+        </member>
+        <member name="F:System.BusinessObjects.Data.DataObject.QueryAction.None">
+            <summary>
+            Indicates that no action is required, this object is up-to-date
             </summary>
         </member>
         <member name="T:System.BusinessObjects.With.With">
