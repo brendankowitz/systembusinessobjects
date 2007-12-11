@@ -90,6 +90,11 @@
             3. implementing the built-in binding interfaces for use with .net's built-in datacontrols (ie. GridView)
             </remarks>
         </member>
+        <member name="M:System.BusinessObjects.Data.DataObject.#ctor">
+            <summary>
+            Initializes a new instance of DataObject
+            </summary>
+        </member>
         <member name="M:System.BusinessObjects.Data.DataObject.GetValue``1(System.String)">
             <summary>
             Gets a value from the internal data store
@@ -118,11 +123,6 @@
         <member name="M:System.BusinessObjects.Data.DataObject.IsNull(System.String)">
             <summary>
             Returns true if the property has been set
-            </summary>
-        </member>
-        <member name="M:System.BusinessObjects.Data.DataObject.CollectionLoaded(System.String,System.Collections.IEnumerable)">
-            <summary>
-            Returns true the first time this function is hit. After this the collection is assumed to have been loaded.
             </summary>
         </member>
         <member name="M:System.BusinessObjects.Data.DataObject.BeginEdit">

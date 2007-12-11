@@ -7,9 +7,9 @@ using System.Runtime.Serialization.Formatters.Binary;
 using System.BusinessObjects.Validation;
 using System.BusinessObjects.Transactions;
 using System.Collections;
-using System.Diagnostics;
 using System.Xml.Serialization;
 using System.BusinessObjects.Helpers;
+using NHibernate.Impl;
 
 namespace System.BusinessObjects.Data
 {
@@ -36,15 +36,22 @@ namespace System.BusinessObjects.Data
 
         #region Protected Variables
         protected IDictionary<string, object> dataValue = new Dictionary<string, object>();
-        protected IDictionary<string, bool> collectionLoaded = new Dictionary<string, bool>();
+        protected DataRowState _mrowstate = DataRowState.Detached;
         [NonSerialized, XmlIgnore]
         protected DataRowState _rowstateOriginal;
-        protected DataRowState _rowstate = DataRowState.Detached;
         [NonSerialized, XmlIgnore]
         protected ValidationRuleCollection validationRules;
         [NonSerialized, XmlIgnore]
         private bool _autoFlush = true;
         #endregion
+
+        private EntityEntry Entry
+        {
+            get
+            {
+                return ((SessionImpl)UnitOfWork.CurrentSession).GetEntry(this); ;
+            }
+        }
 
         #region Public Properties
         /// <summary>
@@ -52,8 +59,74 @@ namespace System.BusinessObjects.Data
         /// </summary>
         public virtual DataRowState RowState
         {
-            set { _rowstate = value; }
-            get { return _rowstate; }
+            set 
+            {
+                EntityEntry e = Entry;
+                if (e == null)
+                    _mrowstate = value;
+                else
+                {
+                    switch (value)
+                    {
+                        case DataRowState.Added:
+                        case DataRowState.Detached:
+                            e.ExistsInDatabase = false;
+                            break;
+                        case DataRowState.Deleted:
+                            e.Status = Status.Deleted;
+                            break;
+                        case DataRowState.Modified:
+                            e.ExistsInDatabase = true;
+                            break;
+                        case DataRowState.Unchanged:
+                            e.ExistsInDatabase = true;
+                            e.Status = Status.Loaded;
+                            break;
+                    }
+                }
+            }
+            get
+            {
+                if (_mrowstate != DataRowState.Detached)
+                    return _mrowstate;
+
+                EntityEntry e = Entry;
+                if (e != null)
+                {
+                    switch (e.Status)
+                    {
+                        case Status.Deleted:
+                        case Status.Gone:
+                            return DataRowState.Deleted;
+                        case Status.Loading:
+                        case Status.Loaded:
+                            try
+                            {
+                                int[] changes =
+                                    e.Persister.FindDirty(e.LoadedState, e.Persister.GetPropertyValues(this), this,
+                                                          ((SessionImpl) UnitOfWork.CurrentSession).
+                                                              GetSessionImplementation());
+                                if (changes == null)
+                                    return DataRowState.Unchanged;
+                                else
+                                    return DataRowState.Modified;
+                            }catch
+                            {
+                                return DataRowState.Unchanged;
+                            }
+                            
+                        default:
+                            if (e.ExistsInDatabase)
+                                return DataRowState.Modified;
+                            else
+                                return DataRowState.Detached;
+                    }
+                }
+                else
+                {
+                    return DataRowState.Detached;
+                }
+            }
         }
 
         /// <summary>
@@ -93,6 +166,9 @@ namespace System.BusinessObjects.Data
         #endregion
 
         #region .ctor
+        /// <summary>
+        /// Initializes a new instance of DataObject
+        /// </summary>
         public DataObject()
         {
             validationRules = new ValidationRuleCollection(this);
@@ -196,22 +272,6 @@ namespace System.BusinessObjects.Data
             return isNull;
         }
 
-        /// <summary>
-        /// Returns true the first time this function is hit. After this the collection is assumed to have been loaded.
-        /// </summary>
-        protected virtual bool CollectionLoaded(string collectionName, IEnumerable collection)
-        {
-            if(collectionLoaded.ContainsKey(collectionName))
-            {
-                return false;
-            }
-            else
-            {
-                SetLoadedRowState(collection);
-                collectionLoaded.Add(collectionName, true);
-                return true;
-            }
-        }
         #endregion
 
         #region BeginEdit() / AcceptChanges() / RejectChanges()
@@ -221,13 +281,14 @@ namespace System.BusinessObjects.Data
         /// </summary>
         protected void BeginEdit()
         {
-            if (_rowstate == DataRowState.Deleted)
+            DataRowState state = RowState;
+            if (state == DataRowState.Deleted)
                 throw new ApplicationException("Object has been marked for deletion and can not be modified.");
 
-            if (_rowstate == DataRowState.Unchanged || _rowstate == DataRowState.Added)
+            if (state == DataRowState.Unchanged || state == DataRowState.Added)
             {
-                _rowstateOriginal = _rowstate;
-                _rowstate = DataRowState.Modified;
+                _rowstateOriginal = RowState;
+                _mrowstate = DataRowState.Modified;
             }
         }
 
@@ -236,7 +297,7 @@ namespace System.BusinessObjects.Data
         /// </summary>
         public virtual void AcceptChanges()
         {
-            _rowstateOriginal = _rowstate;
+            //_rowstateOriginal = RowState;
         }
 
         /// <summary>
@@ -244,12 +305,8 @@ namespace System.BusinessObjects.Data
         /// </summary>
         public virtual void RejectChanges()
         {
-            //if (oldDataValue != null)
-            //{
             Refresh();
-                //dataValue = oldDataValue;
-                //foreignKeys = oldForeignKeys;
-            //}
+            _mrowstate = DataRowState.Detached;
         }
 
         /// <summary>
@@ -258,8 +315,6 @@ namespace System.BusinessObjects.Data
         public virtual void Refresh()
         {
             UnitOfWork.CurrentSession.Refresh(this);
-            _rowstate = _rowstateOriginal;
-            collectionLoaded.Clear();
         }
         #endregion
 
@@ -270,6 +325,8 @@ namespace System.BusinessObjects.Data
         public virtual void Save()
         {
             QueryAction action = GetPersistanceQueryAction();
+            _mrowstate = DataRowState.Detached;
+
             if (action == QueryAction.Delete)
             {
                 if(OnDeleting != null)
@@ -288,7 +345,6 @@ namespace System.BusinessObjects.Data
             }
             else if (action == QueryAction.Update)
             {
-                
                 if (OnSaving != null)
                     OnSaving(this, new EventArgs());
                 UnitOfWork.CurrentSession.Update(this);
@@ -306,7 +362,7 @@ namespace System.BusinessObjects.Data
         /// </summary>
         public virtual void Delete()
         {
-            _rowstate = DataRowState.Deleted;
+            RowState = DataRowState.Deleted;
         }
 
         /// <summary>
@@ -314,12 +370,13 @@ namespace System.BusinessObjects.Data
         /// </summary>
         protected virtual internal void SetLoadRowState()
         {
-            _rowstate = DataRowState.Unchanged;
+            RowState = DataRowState.Unchanged;
         }
 
         /// <summary>
         /// Marks the BusinessObjects in an enumeration as Loaded
         /// </summary>
+        [Obsolete]
         public static void SetLoadedRowState(IEnumerable list)
         {
             if (list != null)
@@ -338,15 +395,16 @@ namespace System.BusinessObjects.Data
         public virtual QueryAction GetPersistanceQueryAction()
         {
             QueryAction action = QueryAction.None;
+            DataRowState _rowstate = RowState;
             if (_rowstate == DataRowState.Detached)
             {
                 action = QueryAction.Insert;
-                _rowstate = DataRowState.Unchanged;
+                //_mrowstate = DataRowState.Detached;
             }
             else if (_rowstate == DataRowState.Modified)
             {
                 action = QueryAction.Update;
-                _rowstate = DataRowState.Unchanged;
+                //_mrowstate = DataRowState.Detached;
             }
             else if (_rowstate == DataRowState.Deleted)
             {
@@ -355,7 +413,7 @@ namespace System.BusinessObjects.Data
             else if (_rowstate == DataRowState.Added)
             {
                 action = QueryAction.Insert;
-                _rowstate = DataRowState.Unchanged;
+                //_mrowstate = DataRowState.Detached;
             }
             else if (_rowstate == DataRowState.Unchanged)
             {
@@ -368,11 +426,10 @@ namespace System.BusinessObjects.Data
         /// Sets the business object's rowstate to indicate the object has been saved
         /// </summary>
         /// <returns></returns>
-        protected virtual internal QueryAction SetSaveRowState()
+        protected virtual internal void SetSaveRowState()
         {
-            QueryAction action = GetPersistanceQueryAction();
             AcceptChanges();
-            return action;
+            _mrowstate = DataRowState.Detached;
         }
 
         /// <summary>
