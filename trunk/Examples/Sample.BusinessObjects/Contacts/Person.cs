@@ -44,6 +44,7 @@ namespace Sample.BusinessObjects.Contacts
 
         [NonSerialized]
         private ISet<Address> _addresses = new HashedSet<Address>();
+        [XmlIgnore]
         public virtual ISet<Address> Addresses
         {
             get { return _addresses; }
@@ -51,14 +52,6 @@ namespace Sample.BusinessObjects.Contacts
             {
                 _addresses = value;
             }
-        }
-
-        public override void Save()
-        {
-            base.Save();
-
-            //Flush so the Feature ForiegnKeys are saved.
-            UnitOfWork.CurrentSession.Flush();
         }
     }
 }
