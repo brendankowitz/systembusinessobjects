@@ -334,7 +334,16 @@
             Loads a business object with the given ID
             </summary>
         </member>
-        <!-- Badly formed XML comment ignored for member "M:System.BusinessObjects.Data.DataObject`1.Search" -->
+        <member name="M:System.BusinessObjects.Data.DataObject`1.Search">
+            <summary>
+            Gets a strongly typed list of all business objects of this type
+            </summary>
+        </member>
+        <member name="M:System.BusinessObjects.Data.DataObject`1.Search(NHibernate.Expression.Order)">
+            <summary>
+            Gets a strongly typed list of all business objects of this type
+            </summary>
+        </member>
         <member name="M:System.BusinessObjects.Data.DataObject`1.Search(NHibernate.ICriteria)">
             <summary>
             Gets a strongly typed list of business objects based on NHibernate criteria

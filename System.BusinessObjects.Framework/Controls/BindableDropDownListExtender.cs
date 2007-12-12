@@ -27,7 +27,7 @@ namespace System.BusinessObjects.Controls
         {
             get
             {
-                if(attachToControl != null && attachToControl.SelectedIndex > -1)
+                if (attachToControl != null && attachToControl.SelectedIndex > -1 && !string.IsNullOrEmpty(attachToControl.SelectedValue))
                 {
                     return NHibernateSessionProvider.Provider.CurrentSession.Get(boundType,
                                                                           int.Parse(attachToControl.SelectedValue));
