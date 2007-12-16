@@ -18,6 +18,14 @@ namespace System.BusinessObjects.Data
     {
         static Hashtable _data = new Hashtable();
 
+        public int ItemCount
+        {
+            get
+            {
+                return _data.Count;
+            }
+        }
+
         class HashItem
         {
             public object val;
@@ -68,22 +76,31 @@ namespace System.BusinessObjects.Data
                 _data.Remove(CacheKey);
         }
 
+        /// <summary>
+        /// Removes all items from the cache
+        /// </summary>
         public void Flush()
         {
             _data.Clear();
         }
 
+        /// <summary>
+        /// Removes any expired items from the cache
+        /// </summary>
         public void RemoveOldItems()
         {
             HashItem item;
+            List<string> removeItems = new List<string>();
             foreach (string str in _data.Keys)
             {
                 item = _data[str] as HashItem;
                 if (item != null && item.expire <= DateTime.Now)
                 {
-                    _data.Remove(str);
+                    removeItems.Add(str);
                 }
             }
+            foreach (string str in removeItems)
+                _data.Remove(str);
         }
     }
 }

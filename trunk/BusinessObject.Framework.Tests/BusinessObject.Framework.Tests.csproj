@@ -1,14 +1,19 @@
-﻿<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+﻿<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="3.5">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProductVersion>8.0.50727</ProductVersion>
+    <ProductVersion>9.0.21022</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{02162254-F621-4A0C-B165-4CD33B1E5052}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>BusinessObject.Framework.Tests</RootNamespace>
     <AssemblyName>BusinessObject.Framework.Tests</AssemblyName>
+    <FileUpgradeFlags>
+    </FileUpgradeFlags>
+    <OldToolsVersion>2.0</OldToolsVersion>
+    <UpgradeBackupLocation>
+    </UpgradeBackupLocation>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -60,6 +65,7 @@
   <ItemGroup>
     <Compile Include="BusinessObjectFactory.cs" />
     <Compile Include="DataObjectTests.cs" />
+    <Compile Include="HashtableDataCacheTests.cs" />
     <Compile Include="NHibernateInMemoryTestFixtureBase.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="XmlSerialiseTest.cs" />

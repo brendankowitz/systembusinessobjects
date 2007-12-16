@@ -6,6 +6,7 @@ using NUnit.Framework;
 using Sample.BusinessObjects.Contacts;
 using System.Diagnostics;
 using NHibernate;
+using System.ComponentModel;
 
 namespace BusinessObject.Framework.Tests
 {
@@ -98,6 +99,32 @@ namespace BusinessObject.Framework.Tests
             p.Save();
             Trace.WriteLine(p.RowState);
             Assert.AreEqual(DataRowState.Deleted, p.RowState);
+        }
+        #endregion
+
+        #region Validation Tests
+        [Test]
+        public void TestStringEmptyValidation_NullString()
+        {
+            Person p = BusinessObjectFactory.CreateAndFillPerson();
+            p.FirstName = null;
+
+            Assert.IsTrue(p.IsNull("FirstName"));
+
+            IDataErrorInfo error = p;
+            Assert.IsNotEmpty(error["FirstName"]);
+        }
+
+        [Test]
+        public void TestStringEmptyValidation_EmptyString()
+        {
+            Person p = BusinessObjectFactory.CreateAndFillPerson();
+            p.FirstName = string.Empty;
+
+            Assert.IsFalse(p.IsNull("FirstName"));
+
+            IDataErrorInfo error = p;
+            Assert.IsNotEmpty(error["FirstName"]);
         }
         #endregion
     }
