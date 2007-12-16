@@ -4,15 +4,10 @@
         <name>System.BusinessObjects.Framework</name>
     </assembly>
     <members>
-        <member name="T:System.BusinessObjects.Data.HashtableDataCache">
+        <member name="T:System.BusinessObjects.Data.AspNetDataCache">
             <summary>
-            A simple cache implementation that stores items in a Hashtable,
-            Item's do not automatically expire, however expired items will be removed when
-            access it attempted.
+            Provides a controlled access to the http cache
             </summary>
-            <remarks>This class would typically be used in a testing environment or
-            when no other cache is available see <seealso cref="T:System.BusinessObjects.Data.AspNetDataCache">AspNetDataCache</seealso>
-            </remarks>
         </member>
         <member name="T:System.BusinessObjects.Providers.CacheProvider">
             <summary>
@@ -69,14 +64,21 @@
             Returns true if the cache is being used
             </summary>
         </member>
-        <member name="P:System.BusinessObjects.Providers.NHibernateSessionProvider.Provider">
+        <member name="T:System.BusinessObjects.Controls.BindableDropDownListExtender">
             <summary>
-            Returns an instance of the default NHibernateSession provider
+            Allows a BusinessObject property to be bound to a listbox.
             </summary>
         </member>
-        <member name="P:System.BusinessObjects.Providers.NHibernateSessionProvider.Providers">
+        <member name="P:System.BusinessObjects.Controls.BindableDropDownListExtender.AttachTo">
             <summary>
-            Returns a collection of NHibernateSession providers
+            Specifies the ObjectDataSource to attach to
+            </summary>
+        </member>
+        <member name="T:System.BusinessObjects.Data.DataObject`1">
+            <summary>
+            An abstract class that provides core business object functionality.
+            This generic class provides extensions to create a strongly typed interface
+            for the inherited class.
             </summary>
         </member>
         <member name="T:System.BusinessObjects.Data.DataObject">
@@ -296,34 +298,6 @@
             Indicates that no action is required, this object is up-to-date
             </summary>
         </member>
-        <member name="T:System.BusinessObjects.With.With">
-            <summary>
-            A collection of classes that can perform an action with a delegate
-            </summary>
-        </member>
-        <member name="T:System.BusinessObjects.With.With.Transaction">
-            <summary>
-            With.Transaction creates and executes a transaction
-            </summary>
-        </member>
-        <member name="M:System.BusinessObjects.With.With.Transaction.Execute(System.BusinessObjects.Transactions.WorkUnitDelegate)">
-            <summary>
-            Execute work within a transaction in the current session.
-            </summary>
-        </member>
-        <member name="M:System.BusinessObjects.Helpers.WebHelper.GetCurrentTrustLevel">
-            <summary>
-            Returns the current trust level for the asp.net hosting
-            </summary>
-            <remarks>taken from http://blogs.msdn.com/dmitryr/archive/2007/01/23/finding-out-the-current-trust-level-in-asp-net.aspx</remarks>
-        </member>
-        <member name="T:System.BusinessObjects.Data.DataObject`1">
-            <summary>
-            An abstract class that provides core business object functionality.
-            This generic class provides extensions to create a strongly typed interface
-            for the inherited class.
-            </summary>
-        </member>
         <member name="M:System.BusinessObjects.Data.DataObject`1.Clone">
             <summary>
             Clone a deep-copy of this object
@@ -374,73 +348,45 @@
             Reinstantiates an object from Xml
             </summary>
         </member>
-        <member name="M:System.BusinessObjects.Validation.ValidationRuleCollection.Validate">
+        <member name="P:System.BusinessObjects.Providers.NHibernateSessionProvider.Provider">
             <summary>
-            Validates the entire list
+            Returns an instance of the default NHibernateSession provider
             </summary>
         </member>
-        <member name="P:System.BusinessObjects.Validation.ValidationRuleCollection.IsValid">
+        <member name="P:System.BusinessObjects.Providers.NHibernateSessionProvider.Providers">
             <summary>
-            Returns if the entire list is valid
+            Returns a collection of NHibernateSession providers
             </summary>
         </member>
-        <member name="P:System.BusinessObjects.Validation.ValidationRuleCollection.Messages">
+        <member name="T:System.BusinessObjects.Data.HashtableDataCache">
             <summary>
-            Returns any error messages from the validation of the list
+            A simple cache implementation that stores items in a Hashtable,
+            Item's do not automatically expire, however expired items will be removed when
+            access it attempted.
             </summary>
+            <remarks>This class would typically be used in a testing environment or
+            when no other cache is available see <seealso cref="T:System.BusinessObjects.Data.AspNetDataCache">AspNetDataCache</seealso>
+            </remarks>
+        </member>
+        <member name="M:System.BusinessObjects.Data.HashtableDataCache.Flush">
+            <summary>
+            Removes all items from the cache
+            </summary>
+        </member>
+        <member name="M:System.BusinessObjects.Data.HashtableDataCache.RemoveOldItems">
+            <summary>
+            Removes any expired items from the cache
+            </summary>
+        </member>
+        <member name="M:System.BusinessObjects.Helpers.WebHelper.GetCurrentTrustLevel">
+            <summary>
+            Returns the current trust level for the asp.net hosting
+            </summary>
+            <remarks>taken from http://blogs.msdn.com/dmitryr/archive/2007/01/23/finding-out-the-current-trust-level-in-asp-net.aspx</remarks>
         </member>
         <member name="T:System.BusinessObjects.Providers.ProviderHelper">
             <summary>
             A helper class for loading providers from the configuration file
-            </summary>
-        </member>
-        <member name="T:System.BusinessObjects.Validation.ValidatorTemplate">
-            <summary>
-            Provides a delegate template for validating properties
-            </summary>
-            <param name="propertyName">Name of the property with the validation error</param>
-            <param name="message">Description of the validation error</param>
-            <returns>True if the rule is valid, False if it has been broken</returns>
-        </member>
-        <member name="T:System.BusinessObjects.Controls.BindableDropDownListExtender">
-            <summary>
-            Allows a BusinessObject property to be bound to a listbox.
-            </summary>
-        </member>
-        <member name="P:System.BusinessObjects.Controls.BindableDropDownListExtender.AttachTo">
-            <summary>
-            Specifies the ObjectDataSource to attach to
-            </summary>
-        </member>
-        <member name="M:System.BusinessObjects.Validation.WebValidationControlExtender.OnLoad(System.EventArgs)">
-            <summary>
-            Accessing controls such as LoginView on the OnInit event causes them not to
-            render correctly. This is why the events are now hooked up during onload.
-            </summary>
-        </member>
-        <member name="P:System.BusinessObjects.Validation.WebValidationControlExtender.AttachTo">
-            <summary>
-            Specifies the ObjectDataSource to attach to
-            </summary>
-        </member>
-        <member name="P:System.BusinessObjects.Validation.WebValidationControlExtender.PropertyToValidate">
-            <summary>
-            Optionally. Specifies only one property to validate
-            </summary>
-        </member>
-        <member name="T:System.BusinessObjects.Validation.ValidationLengthAttribute">
-            <summary>
-            Validates false if the target property is more than the speficified length
-            </summary>
-        </member>
-        <member name="T:System.BusinessObjects.Validation.ValidationNotEmptyAttribute">
-            <summary>
-            Validates false if the target property is empty or null
-            </summary>
-        </member>
-        <member name="T:System.BusinessObjects.Data.AspNetDataCache">
-            <summary>
-            Provides a controlled access to the http cache
             </summary>
         </member>
         <member name="T:System.BusinessObjects.Validation.GeneralAssertionTemplate">
@@ -486,6 +432,70 @@
         <member name="M:System.BusinessObjects.Validation.GeneralAssertionTemplate.ValidCharacterRange(System.BusinessObjects.Data.DataObject,System.String,System.String,System.Boolean)">
             <summary>
             Validates that a string contains only the specified characters
+            </summary>
+        </member>
+        <member name="T:System.BusinessObjects.Validation.ValidationLengthAttribute">
+            <summary>
+            Validates false if the target property is more than the speficified length
+            </summary>
+        </member>
+        <member name="T:System.BusinessObjects.Validation.ValidationNotEmptyAttribute">
+            <summary>
+            Validates false if the target property is empty or null
+            </summary>
+        </member>
+        <member name="T:System.BusinessObjects.Validation.ValidatorTemplate">
+            <summary>
+            Provides a delegate template for validating properties
+            </summary>
+            <param name="propertyName">Name of the property with the validation error</param>
+            <param name="message">Description of the validation error</param>
+            <returns>True if the rule is valid, False if it has been broken</returns>
+        </member>
+        <member name="M:System.BusinessObjects.Validation.ValidationRuleCollection.Validate">
+            <summary>
+            Validates the entire list
+            </summary>
+        </member>
+        <member name="P:System.BusinessObjects.Validation.ValidationRuleCollection.IsValid">
+            <summary>
+            Returns if the entire list is valid
+            </summary>
+        </member>
+        <member name="P:System.BusinessObjects.Validation.ValidationRuleCollection.Messages">
+            <summary>
+            Returns any error messages from the validation of the list
+            </summary>
+        </member>
+        <member name="M:System.BusinessObjects.Validation.WebValidationControlExtender.OnLoad(System.EventArgs)">
+            <summary>
+            Accessing controls such as LoginView on the OnInit event causes them not to
+            render correctly. This is why the events are now hooked up during onload.
+            </summary>
+        </member>
+        <member name="P:System.BusinessObjects.Validation.WebValidationControlExtender.AttachTo">
+            <summary>
+            Specifies the ObjectDataSource to attach to
+            </summary>
+        </member>
+        <member name="P:System.BusinessObjects.Validation.WebValidationControlExtender.PropertyToValidate">
+            <summary>
+            Optionally. Specifies only one property to validate
+            </summary>
+        </member>
+        <member name="T:System.BusinessObjects.With.With">
+            <summary>
+            A collection of classes that can perform an action with a delegate
+            </summary>
+        </member>
+        <member name="T:System.BusinessObjects.With.With.Transaction">
+            <summary>
+            With.Transaction creates and executes a transaction
+            </summary>
+        </member>
+        <member name="M:System.BusinessObjects.With.With.Transaction.Execute(System.BusinessObjects.Transactions.WorkUnitDelegate)">
+            <summary>
+            Execute work within a transaction in the current session.
             </summary>
         </member>
     </members>

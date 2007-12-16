@@ -1,41 +1,17 @@
 ﻿
-Microsoft Visual Studio Solution File, Format Version 9.00
-# Visual Studio 2005
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BusinessObject.Framework", "System.BusinessObjects.Framework\BusinessObject.Framework.csproj", "{419FB51B-44D5-4611-B6D4-3154CC8EDCCA}"
-	ProjectSection(WebsiteProperties) = preProject
-		Debug.AspNetCompiler.Debug = "True"
-		Release.AspNetCompiler.Debug = "False"
-	EndProjectSection
-EndProject
+Microsoft Visual Studio Solution File, Format Version 10.00
+# Visual Studio 2008
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Examples", "Examples", "{820971AE-F0C0-470B-8151-765C684055C0}"
-	ProjectSection(WebsiteProperties) = preProject
-		Debug.AspNetCompiler.Debug = "True"
-		Release.AspNetCompiler.Debug = "False"
-	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BusinessObject.Framework", "System.BusinessObjects.Framework\BusinessObject.Framework.csproj", "{419FB51B-44D5-4611-B6D4-3154CC8EDCCA}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sample.Facade", "Examples\Sample.Facade\Sample.Facade.csproj", "{42A626BC-6877-4FF7-9C8A-C9C95B30D54D}"
-	ProjectSection(WebsiteProperties) = preProject
-		Debug.AspNetCompiler.Debug = "True"
-		Release.AspNetCompiler.Debug = "False"
-	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sample.BusinessObjects", "Examples\Sample.BusinessObjects\Sample.BusinessObjects.csproj", "{0B8E754A-1587-4031-ABDB-43324DC917EA}"
-	ProjectSection(WebsiteProperties) = preProject
-		Debug.AspNetCompiler.Debug = "True"
-		Release.AspNetCompiler.Debug = "False"
-	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sample.UI.AddressBook", "Examples\Sample.UI.AddressBook\Sample.UI.AddressBook.csproj", "{AB994279-8969-4622-80CD-8F0017B2533B}"
-	ProjectSection(WebsiteProperties) = preProject
-		Debug.AspNetCompiler.Debug = "True"
-		Release.AspNetCompiler.Debug = "False"
-	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BusinessObject.Framework.Tests", "BusinessObject.Framework.Tests\BusinessObject.Framework.Tests.csproj", "{02162254-F621-4A0C-B165-4CD33B1E5052}"
-	ProjectSection(WebsiteProperties) = preProject
-		Debug.AspNetCompiler.Debug = "True"
-		Release.AspNetCompiler.Debug = "False"
-	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

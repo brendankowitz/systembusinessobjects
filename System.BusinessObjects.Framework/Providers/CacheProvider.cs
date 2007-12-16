@@ -46,6 +46,10 @@ namespace System.BusinessObjects.Providers
             {
                 return _timeout;
             }
+            set
+            {
+                _timeout = value;
+            }
         }
 
         bool _usecache = true;
