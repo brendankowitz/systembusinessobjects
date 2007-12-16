@@ -23,6 +23,17 @@ namespace BusinessObject.Framework.Tests
             Trace.WriteLine(writer.ToString());
         }
 
+        [Test]
+        public void SerialiseFromObject()
+        {
+            Person obj = BusinessObjectFactory.CreateAndFillPerson();
+            obj.ID = 12;
 
+            string xml = obj.SerializeToXml();
+
+            Person p2 = Person.DeserializeFromXml(xml);
+
+            BusinessObjectFactory.CheckPerson(obj, p2);
+        }
     }
 }
