@@ -21,7 +21,6 @@ namespace System.BusinessObjects.Providers
             
         }
 
-        
         public static ISessionFactory CurrentFactory
         {
             get

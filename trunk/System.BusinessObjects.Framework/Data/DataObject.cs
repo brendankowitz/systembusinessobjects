@@ -704,7 +704,7 @@ namespace System.BusinessObjects.Data
         /// <summary>
         /// Reinstantiates an object from Xml
         /// </summary>
-        public virtual T DeserializeFromXml<T>(string xml)
+        public static T DeserializeFromXml<T>(string xml)
         {
             return XmlHelper.Deserialise<T>(xml);
         }
