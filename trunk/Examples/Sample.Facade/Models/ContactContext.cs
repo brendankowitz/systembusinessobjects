@@ -4,10 +4,10 @@ using System.Data;
 using Sample.BusinessObjects.Contacts;
 using Sample.BusinessObjects.Queries;
 
-namespace Sample.Facade.Controllers
+namespace Sample.Facade.Models
 {
     [System.ComponentModel.DataObject]
-    public class ContactController
+    public class ContactContext
     {
         #region Person Members
 
