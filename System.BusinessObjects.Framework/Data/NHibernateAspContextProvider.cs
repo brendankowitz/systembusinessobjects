@@ -26,16 +26,16 @@ namespace System.BusinessObjects.Data
                             //The Reflection optimiser as used in "ClassCompositeIdBinder.cs"
                             //is not compatible with ASP.NET Medium trust, so this provider
                             //will detect this and turn it off.
-                            switch(WebHelper.GetCurrentTrustLevel())
-                            {
-                                case AspNetHostingPermissionLevel.High:
-                                case AspNetHostingPermissionLevel.Unrestricted:
-                                    NHibernate.Cfg.Environment.UseReflectionOptimizer = true;
-                                    break;
-                                default:
-                                    NHibernate.Cfg.Environment.UseReflectionOptimizer = false;
-                                break;
-                            }
+                            //switch(WebHelper.GetCurrentTrustLevel())
+                            //{
+                            //    case AspNetHostingPermissionLevel.High:
+                            //    case AspNetHostingPermissionLevel.Unrestricted:
+                            //        NHibernate.Cfg.Environment.UseReflectionOptimizer = true;
+                            //        break;
+                            //    default:
+                            //        NHibernate.Cfg.Environment.UseReflectionOptimizer = false;
+                            //    break;
+                            //}
 
                             cfg.Configure();
                         }

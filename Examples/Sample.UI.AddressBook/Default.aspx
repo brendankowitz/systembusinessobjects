@@ -41,7 +41,7 @@
     </div>
         <asp:ObjectDataSource ID="ObjectDataSourcePeopleList" runat="server" DataObjectTypeName="Sample.BusinessObjects.Contacts.Person"
             DeleteMethod="DeletePerson" InsertMethod="CreatePerson" OldValuesParameterFormatString="original_{0}"
-            SelectMethod="SearchPeopleByName" TypeName="Sample.Facade.Controllers.ContactController"
+            SelectMethod="SearchPeopleByName" TypeName="Sample.Facade.Models.ContactContext"
             UpdateMethod="UpdatePerson">
             <SelectParameters>
                 <asp:ControlParameter ControlID="TextBoxSearch" Name="name" PropertyName="Text" Type="String" />
@@ -91,7 +91,7 @@
             </asp:GridView>
             <asp:ObjectDataSource ID="ObjectDataSourceAddress" runat="server" DataObjectTypeName="Sample.BusinessObjects.Contacts.Address"
                 DeleteMethod="DeleteAddress" InsertMethod="CreateAddress" OldValuesParameterFormatString="original_{0}"
-                SelectMethod="SearchAddresses" TypeName="Sample.Facade.Controllers.ContactController"
+                SelectMethod="SearchAddresses" TypeName="Sample.Facade.Models.ContactContext"
                 UpdateMethod="UpdateAddress">
                 <SelectParameters>
                     <asp:ControlParameter ControlID="GridViewPeople" Name="personID" PropertyName="SelectedValue"
