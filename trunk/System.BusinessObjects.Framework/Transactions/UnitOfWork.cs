@@ -11,8 +11,6 @@ namespace System.BusinessObjects.Transactions
     {
         private ITransaction currentTransaction;
         private Queue<WorkUnitDelegate> _workQueue;
-        //private static IWindsorContainer container;
-        //private static readonly object containerSync = new object();
 
         /// <summary>
         /// Creates a new instance of Unit Of Work
@@ -22,24 +20,6 @@ namespace System.BusinessObjects.Transactions
             return new UnitOfWork();
         }
 
-        ///// <summary>
-        ///// Returns a static Windsor IoC container
-        ///// </summary>
-        //public static IWindsorContainer IoC
-        //{
-        //    get
-        //    {
-        //        if (container == null)
-        //        {
-        //            lock (containerSync)
-        //            {
-        //                container = new WindsorContainer(new Castle.Windsor.Configuration.Interpreters.XmlInterpreter());
-        //            }
-        //        }
-        //        return container;
-        //    }
-        //}
-
         /// <summary>
         /// Returns the current session
         /// </summary>
@@ -47,9 +27,6 @@ namespace System.BusinessObjects.Transactions
         {
             get 
             {
-                //NHibernateSessionProvider provider = IoC.Resolve(typeof(NHibernateSessionProvider)) as NHibernateSessionProvider;
-                //if(provider == null)
-                //    provider = NHibernateSessionProvider.Provider;
                 return NHibernateSessionProvider.Provider.CurrentSession;
             }
         }

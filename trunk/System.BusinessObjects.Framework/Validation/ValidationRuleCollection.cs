@@ -3,6 +3,9 @@ using System.BusinessObjects.Data;
 
 namespace System.BusinessObjects.Validation
 {
+    /// <summary>
+    /// Defines a list of validation rules
+    /// </summary>
     [Serializable]
     public class ValidationRuleCollection : List<ValidationRule>
     {
@@ -25,6 +28,9 @@ namespace System.BusinessObjects.Validation
             isDirty = true;
         }
 
+        /// <summary>
+        /// Marks the list as dirty, this will force it to be re-evaluated
+        /// </summary>
         public void MarkDirty()
         {
             isDirty = true;
