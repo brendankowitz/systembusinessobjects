@@ -45,13 +45,15 @@ namespace System.BusinessObjects.Data
         private bool _autoFlush = true;
         #endregion
 
+        #region Private Properties
         private EntityEntry Entry
         {
             get
             {
-                return ((SessionImpl)UnitOfWork.CurrentSession).GetEntry(this); ;
+                return ((SessionImpl)UnitOfWork.CurrentSession).GetEntry(this);
             }
         }
+        #endregion
 
         #region Public Properties
         /// <summary>
@@ -661,7 +663,10 @@ namespace System.BusinessObjects.Data
                 foreach (ValidationRule r in ValidationRules)
                 {
                     if (r.PropertyName == columnName && !r.IsValid)
+                    {
                         findError = r.Message;
+                        break;
+                    }
                 }
 
                 return findError;
