@@ -62,7 +62,11 @@ namespace System.BusinessObjects.Providers
             get
             {
                 if (provider == null)
+#if USE_WINDSOR
+                    provider = ServiceLocator.NHibernateSessionProvider;
+#else
                     provider = ProviderHelper.LoadDefaultProvider<NHibernateSessionProvider>("NHibernateSessionProvider");
+#endif
                 return provider;
             }
         }
