@@ -8,6 +8,7 @@ namespace System.BusinessObjects.Providers
 {
     public partial class ServiceLocator
     {
+#if USE_WINDSOR
         static IWindsorContainer container;
 
         public static IWindsorContainer Container
@@ -39,5 +40,8 @@ namespace System.BusinessObjects.Providers
                 return Container.Resolve(typeof(NHibernateSessionProvider)) as NHibernateSessionProvider;
             }
         }
+#else
+
+#endif
     }
 }
