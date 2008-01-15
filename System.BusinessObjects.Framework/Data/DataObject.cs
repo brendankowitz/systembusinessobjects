@@ -190,13 +190,17 @@ namespace System.BusinessObjects.Data
         {
             object obj;
 
-            if (typeof(T) == typeof(int))
-            {
-                obj = GetValue(keyName, -1);
-            }
-            else if (typeof(T) == typeof(bool))
+            if (typeof(T) == typeof(bool))
             {
                 obj = GetValue(keyName, false);
+            }
+            else if (typeof(T).IsPrimitive) //should cover Byte, SByte, Int16, UInt16, Int32, UInt32, Int64, UInt64, Char, Double, and Single.
+            {
+                if (typeof(T) == typeof(Byte) || typeof(T) == typeof(UInt16) || typeof(T) == typeof(UInt32) || 
+                    typeof(T) == typeof(UInt64) || typeof(T) == typeof(char))
+                    obj = GetValue(keyName, default(T));
+                else
+                    obj = GetValue(keyName, -1);
             }
             else if (typeof(T) == typeof(DateTime))
             {

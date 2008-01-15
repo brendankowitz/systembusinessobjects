@@ -9,7 +9,7 @@ using System.Security;
 [assembly: AssemblyTitle("Compact Lite BusinessObject Framework for NHibernate")]
 [assembly: AssemblyDescription("Compact Lite BusinessObject Framework for NHibernate")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("http://www.kowitz.net")]
+[assembly: AssemblyCompany("http://code.google.com/p/systembusinessobjects/")]
 [assembly: AssemblyProduct("DataAccess Foundation")]
 [assembly: AssemblyCopyright("Copyright under BSD License 2007")]
 [assembly: AssemblyTrademark("")]

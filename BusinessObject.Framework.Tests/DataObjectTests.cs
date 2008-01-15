@@ -7,6 +7,7 @@ using Sample.BusinessObjects.Contacts;
 using System.Diagnostics;
 using NHibernate;
 using System.ComponentModel;
+using System.BusinessObjects.Data;
 
 namespace BusinessObject.Framework.Tests
 {
@@ -159,5 +160,62 @@ namespace BusinessObject.Framework.Tests
 
         #endregion
 
+        #region GetValue
+
+        [Test]
+        public void GetPrimitive()
+        {
+            PrimitiveTestClass c = new PrimitiveTestClass();
+
+            Assert.AreEqual(0, c.unsignedLong);
+            Assert.AreEqual(-1, c.integer);
+            Assert.AreEqual(0, c.character);
+            Assert.AreEqual(false, c.boolean);
+        }
+
+        #endregion
+
+        public class PrimitiveTestClass : DataObject
+        {
+            public virtual ulong unsignedLong
+            {
+                get { return GetValue<ulong>("unsignedLong"); }
+                set
+                {
+                    BeginEdit();
+                    SetValue("unsignedLong", value);
+                }
+            }
+
+            public virtual int integer
+            {
+                get { return GetValue<int>("integer"); }
+                set
+                {
+                    BeginEdit();
+                    SetValue("integer", value);
+                }
+            }
+
+            public virtual bool boolean
+            {
+                get { return GetValue<bool>("boolean"); }
+                set
+                {
+                    BeginEdit();
+                    SetValue("boolean", value);
+                }
+            }
+
+            public virtual char character
+            {
+                get { return GetValue<char>("character"); }
+                set
+                {
+                    BeginEdit();
+                    SetValue("character", value);
+                }
+            }
+        }
     }
 }
