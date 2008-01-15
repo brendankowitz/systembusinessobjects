@@ -24,9 +24,10 @@ namespace System.BusinessObjects.Data
     /// </remarks>
     [Serializable]
     public abstract class DataObject : ICloneable, IEditableObject,
-        IDataErrorInfo
+        IDataErrorInfo, INotifyPropertyChanged, INotifyPropertyChanging
     {
         #region Events
+        public virtual event PropertyChangingEventHandler PropertyChanging;
         public virtual event PropertyChangedEventHandler PropertyChanged;
         public virtual event EventHandler OnDeleting;
         public virtual event EventHandler OnDeleted;
@@ -234,6 +235,16 @@ namespace System.BusinessObjects.Data
         /// <param name="value">Value of the property</param>
         protected void SetValue(string keyName, object value)
         {
+            //Fire property changing event
+            string propertyName = string.Empty;
+            if(PropertyChanged != null || PropertyChanging != null)
+                propertyName = new Diagnostics.StackTrace().GetFrame(1).GetMethod().Name;
+            if (PropertyChanging != null && !string.IsNullOrEmpty(propertyName) && propertyName.Length > 3)
+            {
+                PropertyChanging(this, new PropertyChangingEventArgs(propertyName.Substring(4)));
+            }
+
+            //Update property value
             if (value == null) //set the property to null, this will work with the IsNull() method.
             {
                 if (dataValue.ContainsKey(keyName)) { dataValue.Remove(keyName); }
@@ -247,13 +258,10 @@ namespace System.BusinessObjects.Data
                 dataValue[keyName] = value;
             }
 
-            if (PropertyChanged != null)
+            //Fire property changed event
+            if (PropertyChanged != null && !string.IsNullOrEmpty(propertyName) && propertyName.Length > 3)
             {
-                string propertyName = new Diagnostics.StackTrace().GetFrame(1).GetMethod().Name;
-                if (!string.IsNullOrEmpty(propertyName) && propertyName.Length > 3)
-                {
-                    OnPropertyChanged(new PropertyChangedEventArgs(propertyName.Substring(4)));
-                }
+               OnPropertyChanged(new PropertyChangedEventArgs(propertyName.Substring(4)));
             }
         }
 
@@ -381,14 +389,14 @@ namespace System.BusinessObjects.Data
         [Obsolete]
         public static void SetLoadedRowState(IEnumerable list)
         {
-            if (list != null)
-            {
-                IEnumerator e = list.GetEnumerator();
-                while (e.MoveNext())
-                {
-                    ((DataObject) e.Current).SetLoadRowState();
-                }
-            }
+            //if (list != null)
+            //{
+            //    IEnumerator e = list.GetEnumerator();
+            //    while (e.MoveNext())
+            //    {
+            //        ((DataObject) e.Current).SetLoadRowState();
+            //    }
+            //}
         }
 
         /// <summary>
@@ -448,8 +456,6 @@ namespace System.BusinessObjects.Data
         public static T Load<T>(int Id) where T : DataObject
         {
             T newObj = UnitOfWork.CurrentSession.Get<T>(Id);
-            if (newObj != null)
-                newObj.SetLoadRowState();
             return newObj;
         }
 
@@ -460,7 +466,6 @@ namespace System.BusinessObjects.Data
         {
             NHibernate.ICriteria qry = UnitOfWork.CurrentSession.CreateCriteria(typeof(T));
             IList<T> list = qry.List<T>();
-            SetLoadedRowState(list);
             return list;
         }
 
@@ -472,7 +477,6 @@ namespace System.BusinessObjects.Data
             NHibernate.ICriteria qry = UnitOfWork.CurrentSession.CreateCriteria(typeof(T));
             qry.AddOrder(orderBy);
             IList<T> list = qry.List<T>();
-            SetLoadedRowState(list);
             return list;
         }
 
@@ -482,7 +486,6 @@ namespace System.BusinessObjects.Data
         public static IList<T> Search<T>(NHibernate.ICriteria criteria) where T : DataObject
         {
             IList<T> list = criteria.List<T>();
-            SetLoadedRowState(list);
             return list;
         }
 
@@ -492,7 +495,6 @@ namespace System.BusinessObjects.Data
         public static IList<T> Search<T>(NHibernate.IQuery query) where T : DataObject
         {
             IList<T> list = query.List<T>();
-            SetLoadedRowState(list);
             return list;
         }
 
@@ -502,8 +504,6 @@ namespace System.BusinessObjects.Data
         public static T Fetch<T>(NHibernate.ICriteria criteria) where T : DataObject
         {
             T item = criteria.UniqueResult<T>();
-            if (item != null)
-                item.SetLoadRowState();
             return item;
         }
 
@@ -513,8 +513,6 @@ namespace System.BusinessObjects.Data
         public static T Fetch<T>(NHibernate.IQuery query) where T : DataObject
         {
             T item = query.UniqueResult<T>();
-            if (item != null)
-                item.SetLoadRowState();
             return item;
         }
 

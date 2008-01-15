@@ -127,5 +127,37 @@ namespace BusinessObject.Framework.Tests
             Assert.IsNotEmpty(error["FirstName"]);
         }
         #endregion
+
+        #region Property Changed Events
+
+        [Test]
+        public void PropertyChanging()
+        {
+            bool beforeEvent = false;
+            bool afterEvent = false;
+
+            Person p = BusinessObjectFactory.CreateAndFillPerson();
+            p.PropertyChanging += delegate(object sender, PropertyChangingEventArgs e)
+            {
+                beforeEvent = true;
+                Assert.AreEqual("John", p.FirstName);
+                Assert.AreEqual("FirstName", e.PropertyName);
+            };
+            p.PropertyChanged += delegate(object sender, PropertyChangedEventArgs e)
+            {
+                afterEvent = true;
+                Assert.AreEqual("Peter", p.FirstName);
+                Assert.AreEqual("FirstName", e.PropertyName);
+            };
+
+            p.FirstName = "Peter";
+
+            Assert.AreEqual("Peter", p.FirstName);
+            Assert.AreEqual(true, beforeEvent);
+            Assert.AreEqual(true, afterEvent);
+        }
+
+        #endregion
+
     }
 }
