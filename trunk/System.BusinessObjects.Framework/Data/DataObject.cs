@@ -41,7 +41,7 @@ namespace System.BusinessObjects.Data
         [NonSerialized, XmlIgnore]
         protected DataRowState _rowstateOriginal;
         [NonSerialized, XmlIgnore]
-        protected ValidationRuleCollection validationRules;
+        protected IValidationRuleCollection validationRules;
         [NonSerialized, XmlIgnore]
         private bool _autoFlush = true;
         #endregion
@@ -585,8 +585,11 @@ namespace System.BusinessObjects.Data
         /// <summary>
         /// A collection of validation rules used to determine if the data in the object is valid
         /// </summary>
+        /// <remarks>
+        /// Use 'set' to set your own instance/implementation of IValidationRuleCollection then override AddValidationRules to add your own rules.
+        /// </remarks>
         [XmlIgnore]
-        public virtual ValidationRuleCollection ValidationRules
+        public virtual IValidationRuleCollection ValidationRules
         {
             get
             {
@@ -594,38 +597,44 @@ namespace System.BusinessObjects.Data
                 {
                     AddValidationRules();
 
-                    ValidationLengthAttribute lengthAttrib;
-                    ValidationNotEmptyAttribute notEmptyAttrib;
-                    foreach (PropertyDescriptor prop in TypeDescriptor.GetProperties(this))
+                    if (validationRules is ValidationRuleCollection)
                     {
-                       lengthAttrib = (ValidationLengthAttribute)prop.Attributes[typeof(ValidationLengthAttribute)];
-                        notEmptyAttrib = (ValidationNotEmptyAttribute)prop.Attributes[typeof(ValidationNotEmptyAttribute)];
-                        if (lengthAttrib != null)
+                        ValidationLengthAttribute lengthAttrib;
+                        ValidationNotEmptyAttribute notEmptyAttrib;
+                        foreach (PropertyDescriptor prop in TypeDescriptor.GetProperties(this))
                         {
-                            if (lengthAttrib._maxLengthSpecified)
+                            lengthAttrib = (ValidationLengthAttribute)prop.Attributes[typeof(ValidationLengthAttribute)];
+                            notEmptyAttrib = (ValidationNotEmptyAttribute)prop.Attributes[typeof(ValidationNotEmptyAttribute)];
+                            if (lengthAttrib != null)
                             {
-                                ValidationRule rule =
-                                    new ValidationRule(
-                                        GeneralAssertionTemplate.LengthLess(this, prop.Name, lengthAttrib.MaxLength));
+                                if (lengthAttrib._maxLengthSpecified)
+                                {
+                                    ValidationRule rule =
+                                        new ValidationRule(
+                                            GeneralAssertionTemplate.LengthLess(this, prop.Name, lengthAttrib.MaxLength));
+                                    validationRules.Add(rule);
+                                }
+                                if (lengthAttrib._minLengthSpecified)
+                                {
+                                    ValidationRule rule =
+                                        new ValidationRule(
+                                            GeneralAssertionTemplate.LengthGreater(this, prop.Name, lengthAttrib.MinLength));
+                                    validationRules.Add(rule);
+                                }
+                            }
+                            if (notEmptyAttrib != null)
+                            {
+                                ValidationRule rule = new ValidationRule(GeneralAssertionTemplate.IsNotEmpty(this, prop.Name));
                                 validationRules.Add(rule);
                             }
-                            if(lengthAttrib._minLengthSpecified)
-                            {
-                                ValidationRule rule =
-                                    new ValidationRule(
-                                        GeneralAssertionTemplate.LengthGreater(this, prop.Name, lengthAttrib.MinLength));
-                                validationRules.Add(rule);
-                            }
-                        }
-                        if (notEmptyAttrib != null)
-                        {
-                            ValidationRule rule = new ValidationRule(GeneralAssertionTemplate.IsNotEmpty(this, prop.Name));
-                            validationRules.Add(rule);
                         }
                     }
                 }
-
                 return validationRules;
+            }
+            set
+            {
+                validationRules = value;
             }
         }
 
@@ -646,7 +655,7 @@ namespace System.BusinessObjects.Data
             get
             {
                 if (!ValidationRules.Validate() && ValidationRules.Messages.Length > 0)
-                    return ValidationRules.Messages[0];
+                    return ValidationRules.Error;
                 return string.Empty;
             }
         }
@@ -658,20 +667,7 @@ namespace System.BusinessObjects.Data
         {
             get
             {
-                if (ValidationRules.Validate())
-                    return string.Empty;
-
-                string findError = string.Empty;
-                foreach (ValidationRule r in ValidationRules)
-                {
-                    if (r.PropertyName == columnName && !r.IsValid)
-                    {
-                        findError = r.Message;
-                        break;
-                    }
-                }
-
-                return findError;
+                return ((IDataErrorInfo)ValidationRules)[columnName];
             }
         }
 
