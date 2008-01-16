@@ -40,4 +40,13 @@ namespace System.BusinessObjects.Validation
     {
 
     }
+
+    /// <summary>
+    /// Validates false if the target property is empty or null by checking the DataObject.IsNull() function
+    /// </summary>
+    [AttributeUsage(AttributeTargets.Property, Inherited = true)]
+    public class ValidationIsNotNullAttribute : Attribute
+    {
+
+    }
 }
