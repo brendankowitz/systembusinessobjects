@@ -136,6 +136,31 @@ namespace System.BusinessObjects.Validation
         }
 
         /// <summary>
+        /// Validates that a property is not null by checking the DataObject.IsNull() function
+        /// </summary>
+        public static ValidatorTemplate IsBusinessObjectNotNull(DataObject obj, string propertyName)
+        {
+            PropertyInfo info = ValidationHelper.getPropertyInfo(propertyName, obj);
+            ValidatorTemplate temp = delegate(out string propName, out string message)
+            {
+                propName = propertyName;
+                bool retval;
+                message = string.Empty;
+
+                if (obj.IsNull(propertyName))
+                {
+                    retval = false;
+                    message = string.Format("{0} is null where a value is expected.", propertyName);
+                }
+                else
+                    retval = true;
+
+                return retval;
+            };
+            return temp;
+        }
+
+        /// <summary>
         /// Validates that a string has a certain length or a collection is of a certain size
         /// </summary>
         public static ValidatorTemplate LengthGreater(DataObject obj, string propertyName, int expected)

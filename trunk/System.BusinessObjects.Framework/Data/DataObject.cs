@@ -270,7 +270,7 @@ namespace System.BusinessObjects.Data
         }
 
         /// <summary>
-        /// Returns true if the property has been set
+        /// Returns true if the property is null or has never been set
         /// </summary>
         public virtual bool IsNull(string propertyName)
         {
@@ -601,10 +601,12 @@ namespace System.BusinessObjects.Data
                     {
                         ValidationLengthAttribute lengthAttrib;
                         ValidationNotEmptyAttribute notEmptyAttrib;
+                        ValidationIsNotNullAttribute isNotNull;
                         foreach (PropertyDescriptor prop in TypeDescriptor.GetProperties(this))
                         {
                             lengthAttrib = (ValidationLengthAttribute)prop.Attributes[typeof(ValidationLengthAttribute)];
                             notEmptyAttrib = (ValidationNotEmptyAttribute)prop.Attributes[typeof(ValidationNotEmptyAttribute)];
+                            isNotNull = (ValidationIsNotNullAttribute)prop.Attributes[typeof(ValidationIsNotNullAttribute)];
                             if (lengthAttrib != null)
                             {
                                 if (lengthAttrib._maxLengthSpecified)
@@ -625,6 +627,11 @@ namespace System.BusinessObjects.Data
                             if (notEmptyAttrib != null)
                             {
                                 ValidationRule rule = new ValidationRule(GeneralAssertionTemplate.IsNotEmpty(this, prop.Name));
+                                validationRules.Add(rule);
+                            }
+                            if (isNotNull != null)
+                            {
+                                ValidationRule rule = new ValidationRule(GeneralAssertionTemplate.IsBusinessObjectNotNull(this, prop.Name));
                                 validationRules.Add(rule);
                             }
                         }

@@ -48,7 +48,7 @@ namespace Sample.BusinessObjects.Contacts
             }
         }
 
-        [ValidationNotEmpty]
+        [ValidationIsNotNull]
         public virtual string Postcode
         {
             get { return GetValue<string>("Postcode"); }

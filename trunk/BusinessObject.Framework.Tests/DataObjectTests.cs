@@ -127,6 +127,20 @@ namespace BusinessObject.Framework.Tests
             IDataErrorInfo error = p;
             Assert.IsNotEmpty(error["FirstName"]);
         }
+
+        [Test]
+        public void TestNullValidationAttibute()
+        {
+            Address a = new Address();
+            Assert.IsTrue(a.IsNull("Postcode"));
+            IDataErrorInfo error = a;
+            Trace.WriteLine(error["Postcode"]);
+            Assert.IsNotEmpty(error["Postcode"]);
+
+            a.Postcode = "1234";
+            Assert.IsEmpty(error["Postcode"]);
+
+        }
         #endregion
 
         #region Property Changed Events
