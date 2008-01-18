@@ -4,6 +4,7 @@ using System.Text;
 using NUnit.Framework;
 using System.BusinessObjects.With;
 using Sample.BusinessObjects.Contacts;
+using System.Diagnostics;
 
 namespace BusinessObject.Framework.Tests
 {
@@ -25,19 +26,44 @@ namespace BusinessObject.Framework.Tests
         }
 
         [Test]
+        public void TestEachHandleNullArray()
+        {
+            With.Each(null).Item(delegate(Person person)
+            {
+                person.FirstName = "Changed";
+            });
+        }
+
+        [Test]
         public void TestEachFunction()
         {
             List<Person> list = new List<Person>();
             list.Add(BusinessObjectFactory.CreateAndFillPerson());
 
-            With.Each(list).Item((EachItemDelegate<Person>)ChangePersonName);
+            With.Each(list).Item((EachItemFunc<Person>)ChangePersonName);
 
             Assert.AreEqual("Changed", list[0].FirstName);
+        }
+
+        [Test]
+        public void TestEachFunctionCollection()
+        {
+            List<Person> list = new List<Person>();
+            list.Add(BusinessObjectFactory.CreateAndFillPerson());
+
+            IList<string> outputlist = With.Each(list).Item<Person, string>(FormatPerson) as IList<string>;
+
+            Assert.AreEqual("John Smith", outputlist[0]);
         }
 
         public void ChangePersonName(Person person)
         {
             person.FirstName = "Changed";
+        }
+
+        public string FormatPerson(Person person)
+        {
+            return person.FirstName + " " + person.LastName;
         }
     }
 }
