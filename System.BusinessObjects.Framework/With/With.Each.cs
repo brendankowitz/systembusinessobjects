@@ -9,28 +9,51 @@ namespace System.BusinessObjects.With
     /// <summary>
     /// The delegate signature accepted by Each.Item
     /// </summary>
-    public delegate void EachItemDelegate<T>(T item);
+    public delegate void EachItemFunc<T>(T item);
+
+    /// <summary>
+    /// The delegate signature accepted by Each.Item
+    /// </summary>
+    public delegate ROutput EachItemFunc<TInput, ROutput>(TInput item);
 
     /// <summary>
     /// Encapsulates the Each.Item operation
     /// </summary>
     public class EachIterator
     {
-        private ICollection iternalCollection;
-        internal EachIterator(ICollection collection)
+        private IEnumerable internalCollection;
+        internal EachIterator(IEnumerable collection)
         {
-            iternalCollection = collection;
+            if (collection != null)
+                internalCollection = collection;
+            else
+                internalCollection = new ArrayList();
         }
 
         /// <summary>
         /// The operation to perform on each collection item
         /// </summary>
-        public void Item<T>(EachItemDelegate<T> currentItem)
+        public void Item<T>(EachItemFunc<T> currentItem)
         {
-            foreach (T item in iternalCollection)
+            foreach (T item in internalCollection)
             {
                 currentItem(item);
             }
+        }
+
+        /// <summary>
+        /// The operation to perform on each collection item
+        /// </summary>
+        public IEnumerable<ROutput> Item<TInput, ROutput>(EachItemFunc<TInput, ROutput> currentItem)
+        {
+            List<ROutput> outputlist = new List<ROutput>();
+            foreach (TInput item in internalCollection)
+            {
+                ROutput output = currentItem(item);
+                if (output != null)
+                    outputlist.Add(output);
+            }
+            return outputlist;
         }
     }
 
@@ -42,11 +65,9 @@ namespace System.BusinessObjects.With
         /// under some circumstances this may be cleaner. ie. A function that matches the
         /// delegate signature is able to be passed in.
         /// </summary>
-        public static EachIterator Each(ICollection collection)
+        public static EachIterator Each(IEnumerable collection)
         {
             return new EachIterator(collection);
         }
-
-        
     }
 }
