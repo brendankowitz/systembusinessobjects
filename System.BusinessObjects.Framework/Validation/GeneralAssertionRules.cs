@@ -188,7 +188,7 @@ namespace System.BusinessObjects.Validation
                     if (((ICollection)curVal).Count < expected)
                     {
                         retval = false;
-                        message = string.Format("Collection {0} has a length of {1} where a length of {2} was expected.", propertyName, ((ICollection)curVal).Count, expected);
+                        message = string.Format("Collection {0} has a length of {1} where a minimum length of {2} was expected.", propertyName, ((ICollection)curVal).Count, expected);
                     }
                     else
                         retval = true;
@@ -231,7 +231,7 @@ namespace System.BusinessObjects.Validation
                     if (((ICollection)curVal).Count > expected)
                     {
                         retval = false;
-                        message = string.Format("Collection {0} has a length of {1} where a length of less than {2} was expected.", propertyName, ((ICollection)curVal).Count, expected);
+                        message = string.Format("Collection {0} has a length of {1} where a maximum length of {2} was expected.", propertyName, ((ICollection)curVal).Count, expected);
                     }
                     else
                         retval = true;

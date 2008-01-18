@@ -70,6 +70,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ServiceLocatorTests.cs" />
     <Compile Include="UnitOfWorkTests.cs" />
+    <Compile Include="With.cs" />
     <Compile Include="XmlSerialiseTest.cs" />
   </ItemGroup>
   <ItemGroup>

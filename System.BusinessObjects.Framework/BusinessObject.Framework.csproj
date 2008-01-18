@@ -107,6 +107,7 @@
     <Compile Include="Validation\ValidationRule.cs" />
     <Compile Include="Validation\ValidationRuleCollection.cs" />
     <Compile Include="Validation\WebValidationControl.cs" />
+    <Compile Include="With\With.Each.cs" />
     <Compile Include="With\With.Transaction.cs" />
   </ItemGroup>
   <ItemGroup>
