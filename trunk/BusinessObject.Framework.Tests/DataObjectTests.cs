@@ -189,6 +189,7 @@ namespace BusinessObject.Framework.Tests
 
         #endregion
 
+        #region PrimitiveTestClass
         public class PrimitiveTestClass : DataObject
         {
             public virtual ulong unsignedLong
@@ -231,5 +232,6 @@ namespace BusinessObject.Framework.Tests
                 }
             }
         }
+        #endregion
     }
 }

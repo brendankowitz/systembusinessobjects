@@ -10,6 +10,30 @@ using System.Collections;
 using System.Xml.Serialization;
 using System.BusinessObjects.Helpers;
 using NHibernate.Impl;
+using NHibernate;
+
+#if PRE_NET20SP1
+//If .net 2.0 SP1 is not installed, PropertyChangingEventArgs is not defined...
+//
+
+namespace System.ComponentModel
+{
+    public class PropertyChangingEventArgs : EventArgs
+    {
+        private string _propname;
+        public PropertyChangingEventArgs(string propertyName)
+        {
+            _propname = propertyName;
+        }
+        public virtual string PropertyName { get { return _propname; } }
+    }
+    public delegate void PropertyChangingEventHandler(object sender, PropertyChangingEventArgs e);
+    public interface INotifyPropertyChanging
+    {
+        event PropertyChangingEventHandler PropertyChanging;
+    }
+}
+#endif
 
 namespace System.BusinessObjects.Data
 {
@@ -44,6 +68,8 @@ namespace System.BusinessObjects.Data
         protected IValidationRuleCollection validationRules;
         [NonSerialized, XmlIgnore]
         private bool _autoFlush = true;
+        [NonSerialized, XmlIgnore]
+        ISession _entitySession = null;
         #endregion
 
         #region Private Properties
@@ -51,7 +77,16 @@ namespace System.BusinessObjects.Data
         {
             get
             {
-                return ((SessionImpl)UnitOfWork.CurrentSession).GetEntry(this);
+                return ((SessionImpl)entitySession).GetEntry(this);
+            }
+        }
+        private ISession entitySession
+        {
+            get
+            {
+                if (_entitySession == null)
+                    return UnitOfWork.CurrentSession;
+                return _entitySession;
             }
         }
         #endregion
@@ -107,7 +142,7 @@ namespace System.BusinessObjects.Data
                             {
                                 int[] changes =
                                     e.Persister.FindDirty(e.LoadedState, e.Persister.GetPropertyValues(this), this,
-                                                          ((SessionImpl) UnitOfWork.CurrentSession).
+                                                          ((SessionImpl)entitySession).
                                                               GetSessionImplementation());
                                 if (changes == null)
                                     return DataRowState.Unchanged;
@@ -175,6 +210,22 @@ namespace System.BusinessObjects.Data
         public DataObject()
         {
             validationRules = new ValidationRuleCollection(this);
+        }
+
+        /// <summary>
+        /// Initializes a new instance of DataObject with a session
+        /// </summary>
+        public DataObject(ISession session) : this()
+        {
+            _entitySession = session;
+        }
+
+        /// <summary>
+        /// Sets the default session this business object should use
+        /// </summary>
+        public virtual void SetSession(ISession session)
+        {
+            _entitySession = session;
         }
         #endregion
 
@@ -328,7 +379,7 @@ namespace System.BusinessObjects.Data
         /// </summary>
         public virtual void Refresh()
         {
-            UnitOfWork.CurrentSession.Refresh(this);
+            entitySession.Refresh(this);
         }
         #endregion
 
@@ -345,7 +396,7 @@ namespace System.BusinessObjects.Data
             {
                 if(OnDeleting != null)
                     OnDeleting(this, new EventArgs());
-                UnitOfWork.CurrentSession.Delete(this);
+                entitySession.Delete(this);
                 if(OnDeleted != null)
                     OnDeleted(this, new EventArgs());
             }
@@ -353,7 +404,7 @@ namespace System.BusinessObjects.Data
             {
                 if(OnSaving != null)
                     OnSaving(this, new EventArgs());
-                UnitOfWork.CurrentSession.Save(this);
+                entitySession.Save(this);
                 if(OnSaved != null)
                     OnSaved(this, new EventArgs());
             }
@@ -361,9 +412,9 @@ namespace System.BusinessObjects.Data
             {
                 if (OnSaving != null)
                     OnSaving(this, new EventArgs());
-                UnitOfWork.CurrentSession.Update(this);
+                entitySession.Update(this);
                 if (AutoFlush)
-                    UnitOfWork.CurrentSession.Flush();
+                    entitySession.Flush();
                 if (OnSaved != null)
                     OnSaved(this, new EventArgs());
             }
@@ -464,6 +515,17 @@ namespace System.BusinessObjects.Data
         }
 
         /// <summary>
+        /// Loads a business object with the given ID
+        /// </summary>
+        public static T Load<T>(int Id, ISession session) where T : DataObject
+        {
+            T newObj = session.Get<T>(Id);
+            newObj._entitySession = session;
+
+            return newObj;
+        }
+
+        /// <summary>
         /// Returns a list of all business objects of this type
         /// </summary>
         public static IList<T> Search<T>() where T : DataObject
@@ -537,8 +599,8 @@ namespace System.BusinessObjects.Data
         /// </summary>
         public virtual void Evict()
         {
-            if (UnitOfWork.CurrentSession != null)
-                UnitOfWork.CurrentSession.Evict(this);
+            if (entitySession != null)
+                entitySession.Evict(this);
         }
         #endregion
 
