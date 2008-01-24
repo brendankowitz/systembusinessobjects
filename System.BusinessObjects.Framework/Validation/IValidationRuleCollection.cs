@@ -16,7 +16,7 @@ namespace System.BusinessObjects.Validation
         /// </summary>
         void MarkDirty();
         /// <summary>
-        /// Validates the entire list
+        /// Validates the entire list and returns false if there has been an error
         /// </summary>
         bool Validate();
         /// <summary>
