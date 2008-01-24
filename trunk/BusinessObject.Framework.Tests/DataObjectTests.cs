@@ -14,6 +14,16 @@ namespace BusinessObject.Framework.Tests
     [TestFixture]
     public class DataObjectTests : NHibernateInMemoryTestFixtureBase
     {
+        [Test]
+        public void GenericTypeTest()
+        {
+            Type t = typeof(DataObject<Person>);
+
+            Type t2 = Type.GetType("System.BusinessObjects.Data.DataObject`1[[Sample.BusinessObjects.Contacts.Person, Sample.BusinessObjects]], System.BusinessObjects.Framework");
+
+            Assert.AreEqual(t, t2);
+        }
+
         #region RowStateTests
         [Test]
         public void CheckRowStateDetached()

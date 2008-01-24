@@ -48,7 +48,7 @@ namespace System.BusinessObjects.Data
     /// </remarks>
     [Serializable]
     public abstract class DataObject : ICloneable, IEditableObject,
-        IDataErrorInfo, INotifyPropertyChanged, INotifyPropertyChanging
+        IDataErrorInfo, INotifyPropertyChanged, INotifyPropertyChanging, NHibernate.Classic.IValidatable
     {
         #region Events
         public virtual event PropertyChangingEventHandler PropertyChanging;
@@ -737,6 +737,14 @@ namespace System.BusinessObjects.Data
             get
             {
                 return ((IDataErrorInfo)ValidationRules)[columnName];
+            }
+        }
+
+        void NHibernate.Classic.IValidatable.Validate()
+        {
+            if (!ValidationRules.Validate())
+            {
+                throw new NHibernate.Classic.ValidationFailure(ValidationRules.Error);
             }
         }
 

@@ -65,7 +65,7 @@ namespace System.BusinessObjects.Validation
         }
 
         /// <summary>
-        /// Validates the entire list
+        /// Validates the entire list and returns false if there has been an error
         /// </summary>
         public bool Validate()
         {
