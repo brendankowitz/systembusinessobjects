@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Collections;
@@ -47,6 +47,15 @@ namespace System.BusinessObjects.With
         public IEnumerable<ROutput> Item<TInput, ROutput>(EachItemFunc<TInput, ROutput> currentItem)
         {
             List<ROutput> outputlist = new List<ROutput>();
+            return Item(outputlist, currentItem);
+        }
+
+        /// <summary>
+        /// The operation to perform on each collection item
+        /// </summary>
+        public ICollection<ROutput> Item<TInput, ROutput>(ICollection<ROutput> outputArray, EachItemFunc<TInput, ROutput> currentItem)
+        {
+            ICollection<ROutput> outputlist = outputArray;
             foreach (TInput item in internalCollection)
             {
                 ROutput output = currentItem(item);
