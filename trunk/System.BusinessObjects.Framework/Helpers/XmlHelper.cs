@@ -11,7 +11,7 @@ namespace System.BusinessObjects.Helpers
             XmlSerializer serializer;
             if (pStrXMLRootName != null && pStrXMLRootName != string.Empty)
             {
-                serializer = new XmlSerializer(typeToSerialise, CreateXMLRootAttribute(pStrXMLRootName));
+                serializer = new XmlSerializer(typeToSerialise,pStrXMLRootName);
             }
             else
             {
@@ -40,10 +40,10 @@ namespace System.BusinessObjects.Helpers
             return writer.ToString();
         }
 
-        public static string SerializeToXML(Type type, object obj, string pStrXMLRootName)
+        public static string SerializeToXML(object obj, string pStrXMLRootName)
         {
             StringWriter writer = new StringWriter();
-            CreateXMLSerializer(type, pStrXMLRootName).Serialize(writer, obj);
+            CreateXMLSerializer(obj.GetType(), pStrXMLRootName).Serialize(writer, obj);
             writer.Close();
             return writer.ToString();
         }
@@ -65,11 +65,20 @@ namespace System.BusinessObjects.Helpers
             return deserialisedObj;
         }
 
-        public static T Deserialise<T>(Type busObjType, string pStrXMLRootName, Stream stream)
+        public static T Deserialise<T>(string pStrXMLRootName, Stream stream)
         {
             T deserialisedObj;
-            XmlSerializer serialiser = CreateXMLSerializer(busObjType, pStrXMLRootName);
+            XmlSerializer serialiser = CreateXMLSerializer(typeof(T), pStrXMLRootName);
             deserialisedObj = (T)serialiser.Deserialize(stream);
+            return deserialisedObj;
+        }
+
+        public static T Deserialise<T>(string pStrXMLRootName, string xml)
+        {
+            StringReader rd = new StringReader(xml);
+            T deserialisedObj;
+            XmlSerializer serialiser = CreateXMLSerializer(typeof(T), pStrXMLRootName);
+            deserialisedObj = (T)serialiser.Deserialize(rd);
             return deserialisedObj;
         }
 
