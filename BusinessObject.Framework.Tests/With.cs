@@ -40,7 +40,7 @@ namespace BusinessObject.Framework.Tests
             List<Person> list = new List<Person>();
             list.Add(BusinessObjectFactory.CreateAndFillPerson());
 
-            With.Each(list).Item((EachItemFunc<Person>)ChangePersonName);
+            With.Each(list).Item<Person>(ChangePersonName);
 
             Assert.AreEqual("Changed", list[0].FirstName);
         }
@@ -54,6 +54,19 @@ namespace BusinessObject.Framework.Tests
             IList<string> outputlist = With.Each(list).Item<Person, string>(FormatPerson) as IList<string>;
 
             Assert.AreEqual("John Smith", outputlist[0]);
+        }
+
+        [Test]
+        public void TestEachFunctionCollection_WithExistingList()
+        {
+            List<Person> list = new List<Person>();
+            list.Add(BusinessObjectFactory.CreateAndFillPerson());
+
+            IList<string> myConvertToList = new List<string>();
+
+            IList<string> outputlist = With.Each(list).Item<Person, string>(myConvertToList, FormatPerson) as IList<string>;
+
+            Assert.AreEqual("John Smith", myConvertToList[0]);
         }
 
         public void ChangePersonName(Person person)

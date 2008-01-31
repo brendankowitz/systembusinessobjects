@@ -9,6 +9,16 @@ namespace System.BusinessObjects.With
     /// <summary>
     /// The delegate signature accepted by Each.Item
     /// </summary>
+    public delegate void EachItemFunc(object item);
+
+    /// <summary>
+    /// The delegate signature accepted by Each.Item
+    /// </summary>
+    public delegate object EachItemFuncOut(object item);
+
+    /// <summary>
+    /// The delegate signature accepted by Each.Item
+    /// </summary>
     public delegate void EachItemFunc<T>(T item);
 
     /// <summary>
@@ -28,6 +38,32 @@ namespace System.BusinessObjects.With
                 internalCollection = collection;
             else
                 internalCollection = new ArrayList();
+        }
+
+		/// <summary>
+        /// This is used because NHibernate's ISet does not contain a Get() function...
+        /// </summary>
+        public T Select<T>(int itemIndex)
+        {
+            int counter = 0;
+            foreach (T item in internalCollection)
+            {
+                if(counter == itemIndex)
+                    return item;
+                counter++;
+            }
+            return default(T);
+        }
+
+        /// <summary>
+        /// The operation to perform on each collection item
+        /// </summary>
+        public void Item(EachItemFunc currentItem)
+        {
+            foreach (object item in internalCollection)
+            {
+                currentItem(item);
+            }
         }
 
         /// <summary>
@@ -59,6 +95,21 @@ namespace System.BusinessObjects.With
             foreach (TInput item in internalCollection)
             {
                 ROutput output = currentItem(item);
+                if (output != null)
+                    outputlist.Add(output);
+            }
+            return outputlist;
+        }
+
+        /// <summary>
+        /// The operation to perform on each collection item
+        /// </summary>
+        public IList Item(IList outputArray, EachItemFuncOut currentItem)
+        {
+            IList outputlist = outputArray;
+            foreach (object item in internalCollection)
+            {
+                object output = currentItem(item);
                 if (output != null)
                     outputlist.Add(output);
             }
