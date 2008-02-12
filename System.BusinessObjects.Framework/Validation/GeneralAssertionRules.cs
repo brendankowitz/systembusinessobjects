@@ -306,7 +306,7 @@ namespace System.BusinessObjects.Validation
             ValidatorTemplate temp = delegate(out string propName, out string message)
             {
                 propName = propertyName;
-                bool retval = false;
+                bool retval = true;
                 message = string.Empty;
                 object curVal = info.GetValue(obj, null);
                 string casedValid = caseSensitive ? validCharaters : validCharaters.ToUpper();
