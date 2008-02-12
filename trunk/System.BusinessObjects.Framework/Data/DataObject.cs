@@ -104,6 +104,7 @@ namespace System.BusinessObjects.Data
                     _mrowstate = value;
                 else
                 {
+                    _mrowstate = DataRowState.Detached;
                     switch (value)
                     {
                         case DataRowState.Added:
@@ -112,6 +113,7 @@ namespace System.BusinessObjects.Data
                             break;
                         case DataRowState.Deleted:
                             e.Status = Status.Deleted;
+                            e.ExistsInDatabase = true;
                             break;
                         case DataRowState.Modified:
                             e.ExistsInDatabase = true;
@@ -442,17 +444,7 @@ namespace System.BusinessObjects.Data
         /// Marks the BusinessObjects in an enumeration as Loaded
         /// </summary>
         [Obsolete]
-        public static void SetLoadedRowState(IEnumerable list)
-        {
-            //if (list != null)
-            //{
-            //    IEnumerator e = list.GetEnumerator();
-            //    while (e.MoveNext())
-            //    {
-            //        ((DataObject) e.Current).SetLoadRowState();
-            //    }
-            //}
-        }
+        public static void SetLoadedRowState(IEnumerable list){ /* To be removed */ }
 
         /// <summary>
         /// Returns the query action needed to save the current state of the object
@@ -742,6 +734,9 @@ namespace System.BusinessObjects.Data
 
         void NHibernate.Classic.IValidatable.Validate()
         {
+            if (GetPersistanceQueryAction() == QueryAction.Delete)
+                return;
+
             if (!ValidationRules.Validate())
             {
                 throw new NHibernate.Classic.ValidationFailure(ValidationRules.Error);

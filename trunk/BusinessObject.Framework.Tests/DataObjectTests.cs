@@ -151,6 +151,70 @@ namespace BusinessObject.Framework.Tests
             Assert.IsEmpty(error["Postcode"]);
 
         }
+
+        [Test]
+        public void TestInvalidRange()
+        {
+            Address a = new Address();
+            Assert.IsTrue(a.IsNull("Postcode"));
+            
+            IDataErrorInfo error = a;
+            Trace.WriteLine(error["Postcode"]);
+            Assert.IsNotEmpty(error["Postcode"]);
+
+            a.Postcode = "1234a";
+            Assert.IsNotEmpty(error["Postcode"]);
+
+        }
+
+        [Test]
+        [ExpectedException(typeof(NHibernate.Classic.ValidationFailure))]
+        public void TestNHibernateValidationWhenSaving()
+        {
+            Address a = new Address();
+            Assert.IsTrue(a.IsNull("Postcode"));
+
+            IDataErrorInfo error = a;
+            Trace.WriteLine(error["Postcode"]);
+            Assert.IsNotEmpty(error["Postcode"]);
+
+            a.Save();
+
+        }
+
+        [Test]
+        [ExpectedException(typeof(NHibernate.Classic.ValidationFailure))]
+        public void TestNHibernateValidationWhenSaving2()
+        {
+            Address a = new Address();
+            Assert.IsTrue(a.IsNull("Postcode"));
+            a.Postcode = "1234";
+            a.Address1 = "Address1";
+            a.Suburb = "Suburb";
+            a.State = "QLD";
+            a.Save();
+
+            a.Postcode = null;
+            a.Save();
+
+        }
+
+        [Test]
+        public void TestNHibernateValidationWhenDeleting()
+        {
+            Address a = new Address();
+            Assert.IsTrue(a.IsNull("Postcode"));
+            a.Postcode = "1234";
+            a.Address1 = "Address1";
+            a.Suburb = "Suburb";
+            a.State = "QLD";
+            a.Save();
+
+            a.Postcode = null;
+            a.Delete();
+            a.Save();
+
+        }
         #endregion
 
         #region Property Changed Events
