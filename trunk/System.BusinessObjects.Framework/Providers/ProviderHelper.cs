@@ -34,9 +34,12 @@ namespace System.BusinessObjects.Providers
             {
                 lock (syncObject)
                 {
-                    // Get a reference to the provider section
-                    section = (ProviderSectionHandler)GetSection(sectionName);
-                    providerSection.Add(sectionName, section);
+                    if (!providerSection.TryGetValue(sectionName, out section))
+                    {
+                        // Get a reference to the provider section
+                        section = (ProviderSectionHandler)GetSection(sectionName);
+                        providerSection.Add(sectionName, section);
+                    }
                 }
             }
 
@@ -58,9 +61,12 @@ namespace System.BusinessObjects.Providers
             {
                 lock (syncObject)
                 {
-                    // Get a reference to the provider section
-                    section = (ProviderSectionHandler)GetSection(sectionName);
-                    providerSection.Add(sectionName, section);
+                    if (!providerSection.TryGetValue(sectionName, out section))
+                    {
+                        // Get a reference to the provider section
+                        section = (ProviderSectionHandler)GetSection(sectionName);
+                        providerSection.Add(sectionName, section);
+                    }
                 }
             }
 
@@ -76,9 +82,12 @@ namespace System.BusinessObjects.Providers
             {
                 lock (syncObject)
                 {
-                    // Get a reference to the provider section
-                    section = (ProviderSectionHandler)GetSection(sectionName);
-                    providerSection.Add(sectionName, section);
+                    if (!providerSection.TryGetValue(sectionName, out section))
+                    {
+                        // Get a reference to the provider section
+                        section = (ProviderSectionHandler)GetSection(sectionName);
+                        providerSection.Add(sectionName, section);
+                    }
                 }
             }
 
@@ -100,9 +109,12 @@ namespace System.BusinessObjects.Providers
             {
                 lock (syncObject)
                 {
-                    // Get a reference to the provider section
-                    section = (ProviderSectionHandler)GetSection(sectionName);
-                    providerSection.Add(sectionName, section);
+                    if (!providerSection.TryGetValue(sectionName, out section))
+                    {
+                        // Get a reference to the provider section
+                        section = (ProviderSectionHandler)GetSection(sectionName);
+                        providerSection.Add(sectionName, section);
+                    }
                 }
             }
 

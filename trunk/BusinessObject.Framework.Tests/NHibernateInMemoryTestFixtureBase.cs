@@ -54,7 +54,7 @@ namespace BusinessObject.Framework.Tests
             [TestInitialize]
             public void Setup()
             {
-                OneTimeInitalize(typeof(Person).Assembly);
+                OneTimeInitalize(typeof(Person).Assembly, this.GetType().Assembly);
                 NHibernateSessionProvider.CurrentFactory = sessionFactory;
                 session = CreateSession();
                 NHibernateSessionProvider.Provider.CurrentSession = session;
