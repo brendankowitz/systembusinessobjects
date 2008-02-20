@@ -84,6 +84,7 @@
     <Compile Include="AspNetDataCache.cs" />
     <Compile Include="Controls\BindableDropDownListExtender.cs" />
     <Compile Include="Data\DataObject.Generic.cs" />
+    <Compile Include="Data\GenericObjectComparer.cs" />
     <Compile Include="Data\NHibernateAspContextProvider.cs" />
     <Compile Include="Data\NHibernateThreadSlotProvider.cs" />
     <Compile Include="HashtableDataCache.cs" />
