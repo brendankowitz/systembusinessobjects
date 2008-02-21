@@ -65,13 +65,23 @@ namespace System.BusinessObjects.Data
             // Get the property value of each field in our list
             foreach (string field in fieldParts)
             {
-                compareValX = GetPropertyValue(compareValX, field);
-                compareValY = GetPropertyValue(compareValY, field);
+                if (compareValX != null)
+                    compareValX = GetPropertyValue(compareValX, field);
+                if (compareValY != null)
+                    compareValY = GetPropertyValue(compareValY, field);
             }
-            
-            // Compare the values
-            int compareValue = ((IComparable)compareValX).CompareTo(compareValY);
-            
+
+            //Handle null values
+            int compareValue;
+            if (compareValX == null && compareValY == null)
+                compareValue = 0;
+            else if (compareValX == null && compareValY != null)
+                compareValue = -1;
+            else if (compareValX != null && compareValY == null)
+                compareValue = 1;
+            else
+                compareValue = ((IComparable)compareValX).CompareTo(compareValY);
+
             // Quick switch of the result if we're descending
             if (_direction.ToUpper() == "DESC")
                 compareValue = -1 * compareValue;
@@ -80,12 +90,12 @@ namespace System.BusinessObjects.Data
         }
 
         private object GetPropertyValue(object o, string property)
-        {           
+        {
             PropertyInfo propInfo = o.GetType().GetProperty(property);
             object val = propInfo.GetValue(o, null);
             return val;
         }
 
         #endregion
-    } 
+    }
 }
