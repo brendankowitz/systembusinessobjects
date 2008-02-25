@@ -109,8 +109,10 @@ namespace System.BusinessObjects.Data
                             e.ExistsInDatabase = false;
                             break;
                         case DataRowState.Deleted:
-                            e.Status = Status.Deleted;
-                            e.ExistsInDatabase = true;
+                            //e.Status = Status.Deleted;
+                            //e.ExistsInDatabase = true;
+                            //e.DeletedState = e.LoadedState;
+                            _mrowstate = DataRowState.Deleted;
                             break;
                         case DataRowState.Modified:
                             e.ExistsInDatabase = true;
@@ -453,12 +455,10 @@ namespace System.BusinessObjects.Data
             if (_rowstate == DataRowState.Detached)
             {
                 action = QueryAction.Insert;
-                //_mrowstate = DataRowState.Detached;
             }
             else if (_rowstate == DataRowState.Modified)
             {
                 action = QueryAction.Update;
-                //_mrowstate = DataRowState.Detached;
             }
             else if (_rowstate == DataRowState.Deleted)
             {
@@ -467,7 +467,6 @@ namespace System.BusinessObjects.Data
             else if (_rowstate == DataRowState.Added)
             {
                 action = QueryAction.Insert;
-                //_mrowstate = DataRowState.Detached;
             }
             else if (_rowstate == DataRowState.Unchanged)
             {
