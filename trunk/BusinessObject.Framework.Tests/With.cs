@@ -69,6 +69,25 @@ namespace BusinessObject.Framework.Tests
             Assert.AreEqual("John Smith", myConvertToList[0]);
         }
 
+        [Test]
+        public void TestWithSplit()
+        {
+            List<int> list = new List<int>();
+            list.Add(1);
+            list.Add(2);
+            list.Add(3);
+            list.Add(4);
+            list.Add(5);
+
+            IList<int>[] array = With.Each(list).Split<int>(3);
+
+            Assert.AreEqual(3, array[0].Count);
+            Assert.AreEqual(2, array[1].Count);
+
+            Assert.AreEqual(1, array[0][0]);
+            Assert.AreEqual(4, array[1][0]);
+        }
+
         public void ChangePersonName(Person person)
         {
             person.FirstName = "Changed";

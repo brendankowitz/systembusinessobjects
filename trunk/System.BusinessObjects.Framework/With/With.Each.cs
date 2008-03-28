@@ -56,6 +56,30 @@ namespace System.BusinessObjects.With
         }
 
         /// <summary>
+        /// Splits an IList into an array of smaller ILists
+        /// </summary>
+        public IList<T>[] Split<T>(int segmentSize)
+        {
+            List<List<T>> list = new List<List<T>>();
+            List<T> curGroup = new List<T>();
+
+            foreach (T item in internalCollection)
+            {
+                if (curGroup.Count >= segmentSize)
+                {
+                    list.Add(curGroup);
+                    curGroup = new List<T>();
+                }
+                curGroup.Add(item);
+            }
+
+            if (curGroup.Count > 0)
+                list.Add(curGroup);
+
+            return list.ToArray();
+        }
+
+        /// <summary>
         /// The operation to perform on each collection item
         /// </summary>
         public void Item(EachItemFunc currentItem)

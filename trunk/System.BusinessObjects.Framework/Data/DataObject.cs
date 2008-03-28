@@ -2,13 +2,14 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.IO;
+using System.Collections;
+using System.Xml.Serialization;
 using System.Runtime.Serialization.Formatters.Binary;
 
 using System.BusinessObjects.Validation;
 using System.BusinessObjects.Transactions;
-using System.Collections;
-using System.Xml.Serialization;
 using System.BusinessObjects.Helpers;
+
 using NHibernate.Impl;
 using NHibernate;
 
