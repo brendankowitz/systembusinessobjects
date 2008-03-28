@@ -97,5 +97,19 @@ namespace BusinessObject.Framework.Tests
         {
             return person.FirstName + " " + person.LastName;
         }
+
+#if DOT_NET_35
+        [Test]
+        public void TestEachFunctionCollectionExtension()
+        {
+            List<Person> list = new List<Person>();
+            list.Add(BusinessObjectFactory.CreateAndFillPerson());
+
+            IList<string> outputlist = list.Each().Item<Person, string>(FormatPerson) as IList<string>;
+
+            Assert.AreEqual("John Smith", outputlist[0]);
+        }
+#endif
+
     }
 }

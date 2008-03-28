@@ -154,4 +154,24 @@ namespace System.BusinessObjects.With
             return new EachIterator(collection);
         }
     }
+
+
+#if DOT_NET_35
+    /// <summary>
+    /// Provides .net 3.5 extensions for the With Class
+    /// </summary>
+    public static class WithExtension
+    {
+        /// <summary>
+        /// Performs a Ruby-style Collection.Each operation
+        /// A more efficient method is to use the 'foreach' statement, however
+        /// under some circumstances this may be cleaner. ie. A function that matches the
+        /// delegate signature is able to be passed in.
+        /// </summary>
+        public static EachIterator Each(this IEnumerable collection)
+        {
+            return new EachIterator(collection);
+        }
+    }
+#endif
 }

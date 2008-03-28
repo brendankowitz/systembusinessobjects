@@ -10,7 +10,7 @@
   <property name="solution.file" value="System.BusinessObjects.sln" />
   <property name="build.path" value="${project.base.dir}/" />
   <property name="nant.settings.currentframework" value="net-2.0"/>
-  <property name="msbuild.settings.currentframework" value="v2.0"/>
+  <property name="msbuild.settings.currentframework" value="v3.5"/>
 
   <!-- Fileset Patterns -->
   <property name="fxcop.include.pattern" value="./**/bin/${build.mode}/*.dll" />
