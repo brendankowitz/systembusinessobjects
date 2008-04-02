@@ -48,7 +48,7 @@ namespace BusinessObject.Framework.Tests
             cache.SetCache("person", p);
             Assert.AreEqual(1, cache.ItemCount);
 
-            Thread.Sleep(1001);
+            Thread.Sleep(1100);
             Assert.IsNull(cache.GetCache<Person>("person"));
             Assert.AreEqual(0, cache.ItemCount);
         }
@@ -63,7 +63,7 @@ namespace BusinessObject.Framework.Tests
             cache.SetCache("person", p);
             Assert.AreEqual(1, cache.ItemCount);
 
-            Thread.Sleep(1001);
+            Thread.Sleep(1100);
 
             cache.RemoveOldItems();
             Assert.AreEqual(0, cache.ItemCount);

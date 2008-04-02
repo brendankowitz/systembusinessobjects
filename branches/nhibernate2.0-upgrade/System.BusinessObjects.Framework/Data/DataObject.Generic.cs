@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using NHibernate.Criterion;
 
 namespace System.BusinessObjects.Data
 {
@@ -39,7 +40,7 @@ namespace System.BusinessObjects.Data
         /// <summary>
         /// Gets a strongly typed list of all business objects of this type
         /// </summary>
-        public static IList<T> Search(NHibernate.Expression.Order orderBy)
+        public static IList<T> Search(NHibernate.Criterion.Order orderBy)
         {
             return Search<T>(orderBy);
         }

@@ -12,6 +12,7 @@ using System.BusinessObjects.Helpers;
 
 using NHibernate.Impl;
 using NHibernate;
+using NHibernate.Engine;
 
 //////If .net 2.0 SP1 is not installed, PropertyChangingEventArgs is not defined...
 //////
@@ -75,7 +76,7 @@ namespace System.BusinessObjects.Data
         {
             get
             {
-                return ((SessionImpl)entitySession).GetEntry(this);
+                return ((SessionImpl)entitySession).PersistenceContext.GetEntry(this);
             }
         }
         private ISession entitySession
@@ -107,7 +108,6 @@ namespace System.BusinessObjects.Data
                     {
                         case DataRowState.Added:
                         case DataRowState.Detached:
-                            e.ExistsInDatabase = false;
                             break;
                         case DataRowState.Deleted:
                             //e.Status = Status.Deleted;
@@ -116,10 +116,8 @@ namespace System.BusinessObjects.Data
                             _mrowstate = DataRowState.Deleted;
                             break;
                         case DataRowState.Modified:
-                            e.ExistsInDatabase = true;
                             break;
                         case DataRowState.Unchanged:
-                            e.ExistsInDatabase = true;
                             e.Status = Status.Loaded;
                             break;
                     }
@@ -143,7 +141,7 @@ namespace System.BusinessObjects.Data
                             try
                             {
                                 int[] changes =
-                                    e.Persister.FindDirty(e.LoadedState, e.Persister.GetPropertyValues(this), this,
+                                    e.Persister.FindDirty(e.LoadedState, e.Persister.GetPropertyValues(this, EntityMode.Map), this,
                                                           ((SessionImpl)entitySession).
                                                               GetSessionImplementation());
                                 if (changes == null)
@@ -527,7 +525,7 @@ namespace System.BusinessObjects.Data
         /// <summary>
         /// Returns a list of all business objects of this type
         /// </summary>
-        public static IList<T> Search<T>(NHibernate.Expression.Order orderBy) where T : DataObject
+        public static IList<T> Search<T>(NHibernate.Criterion.Order orderBy) where T : DataObject
         {
             NHibernate.ICriteria qry = UnitOfWork.CurrentSession.CreateCriteria(typeof(T));
             qry.AddOrder(orderBy);

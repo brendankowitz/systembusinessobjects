@@ -127,7 +127,7 @@ namespace System.BusinessObjects.Data
       } 
    } 
 
-   public class DataObjectInterceptor : Castle.DynamicProxy.IInterceptor 
+   public class DataObjectInterceptor : Castle.Core.Interceptor.IInterceptor 
    { 
       private static object _syncRoot = new object(); 
       private static Dictionary<string, MethodInfo> _methodCache = new Dictionary<string, MethodInfo>(); 
@@ -136,9 +136,14 @@ namespace System.BusinessObjects.Data
       public DataObjectInterceptor(object target) 
       { 
          _target = target; 
-      } 
+      }
 
-      public object Intercept(Castle.DynamicProxy.IInvocation invocation, params object[] args) 
+      public void Intercept(Castle.Core.Interceptor.IInvocation invocation)
+      {
+          Intercept(invocation, new object[]{});
+      }
+
+      public object Intercept(Castle.Core.Interceptor.IInvocation invocation, params object[] args) 
       { 
          // it's possible that the type that the proxy was built on is not the type of 
          // the _target object.  If it is, simply invoke MethodInfo, if it's not, we have 
@@ -154,7 +159,7 @@ namespace System.BusinessObjects.Data
          } 
       } 
 
-      private MethodInfo GetMethod(Castle.DynamicProxy.IInvocation invocation) 
+      private MethodInfo GetMethod(Castle.Core.Interceptor.IInvocation invocation) 
       { 
 
          Type targetType = _target.GetType(); 
@@ -201,7 +206,7 @@ namespace System.BusinessObjects.Data
          return null; 
       } 
 
-      private MethodInfo GetPropertyMethod(Type targetType, Castle.DynamicProxy.IInvocation invocation) 
+      private MethodInfo GetPropertyMethod(Type targetType, Castle.Core.Interceptor.IInvocation invocation) 
       { 
          string propertyName = invocation.Method.Name.Split('_')[1]; 
          bool isGet = invocation.Method.Name.StartsWith("get_"); 
@@ -232,6 +237,6 @@ namespace System.BusinessObjects.Data
       private string GetMethodKey(Type targetType, string methodName) 
       { 
          return targetType.ToString() + "." + methodName; 
-      } 
+      }
    } 
 }
