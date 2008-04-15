@@ -17,16 +17,6 @@ namespace System.BusinessObjects.With
     public delegate object EachItemFuncOut(object item);
 
     /// <summary>
-    /// The delegate signature accepted by Each.Item
-    /// </summary>
-    public delegate void EachItemFunc<T>(T item);
-
-    /// <summary>
-    /// The delegate signature accepted by Each.Item
-    /// </summary>
-    public delegate ROutput EachItemFunc<TInput, ROutput>(TInput item);
-
-    /// <summary>
     /// Encapsulates the Each.Item operation
     /// </summary>
     public class EachIterator
@@ -79,6 +69,7 @@ namespace System.BusinessObjects.With
             return list.ToArray();
         }
 
+
         /// <summary>
         /// The operation to perform on each collection item
         /// </summary>
@@ -93,7 +84,7 @@ namespace System.BusinessObjects.With
         /// <summary>
         /// The operation to perform on each collection item
         /// </summary>
-        public void Item<T>(EachItemFunc<T> currentItem)
+        public void Item<T>(Action<T> currentItem)
         {
             foreach (T item in internalCollection)
             {
@@ -104,7 +95,7 @@ namespace System.BusinessObjects.With
         /// <summary>
         /// The operation to perform on each collection item
         /// </summary>
-        public IEnumerable<ROutput> Item<TInput, ROutput>(EachItemFunc<TInput, ROutput> currentItem)
+        public IEnumerable<ROutput> Item<TInput, ROutput>(Converter<TInput, ROutput> currentItem)
         {
             List<ROutput> outputlist = new List<ROutput>();
             return Item(outputlist, currentItem);
@@ -113,7 +104,7 @@ namespace System.BusinessObjects.With
         /// <summary>
         /// The operation to perform on each collection item
         /// </summary>
-        public ICollection<ROutput> Item<TInput, ROutput>(ICollection<ROutput> outputArray, EachItemFunc<TInput, ROutput> currentItem)
+        public ICollection<ROutput> Item<TInput, ROutput>(ICollection<ROutput> outputArray, Converter<TInput, ROutput> currentItem)
         {
             ICollection<ROutput> outputlist = outputArray;
             foreach (TInput item in internalCollection)
@@ -171,6 +162,17 @@ namespace System.BusinessObjects.With
         public static EachIterator Each(this IEnumerable collection)
         {
             return new EachIterator(collection);
+        }
+
+        /// <summary>
+        /// Performs a Ruby-style Collection.Each operation
+        /// A more efficient method is to use the 'foreach' statement, however
+        /// under some circumstances this may be cleaner. ie. A function that matches the
+        /// delegate signature is able to be passed in.
+        /// </summary>
+        public static void Each<T>(this IEnumerable collection, Action<T> action)
+        {
+            new EachIterator(collection).Item<T>(action);
         }
     }
 #endif

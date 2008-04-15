@@ -14,26 +14,6 @@ using NHibernate.Impl;
 using NHibernate;
 using NHibernate.Engine;
 
-//////If .net 2.0 SP1 is not installed, PropertyChangingEventArgs is not defined...
-//////
-//namespace System.ComponentModel
-//{
-//    public class PropertyChangingEventArgs : EventArgs
-//    {
-//        private string _propname;
-//        public PropertyChangingEventArgs(string propertyName)
-//        {
-//            _propname = propertyName;
-//        }
-//        public virtual string PropertyName { get { return _propname; } }
-//    }
-//    public delegate void PropertyChangingEventHandler(object sender, PropertyChangingEventArgs e);
-//    public interface INotifyPropertyChanging
-//    {
-//        event PropertyChangingEventHandler PropertyChanging;
-//    }
-//}
-
 namespace System.BusinessObjects.Data
 {
     /// <summary>
