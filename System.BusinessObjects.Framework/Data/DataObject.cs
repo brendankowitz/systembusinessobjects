@@ -731,8 +731,9 @@ namespace System.BusinessObjects.Data
 
         void NHibernate.Classic.IValidatable.Validate()
         {
+            //when deleting return, validation is not required.
             if (GetPersistanceQueryAction() == QueryAction.Delete)
-                return;
+                return; 
 
             if (!ValidationRules.Validate())
             {

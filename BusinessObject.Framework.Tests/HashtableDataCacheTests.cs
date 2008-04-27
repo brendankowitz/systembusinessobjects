@@ -13,6 +13,16 @@ namespace BusinessObject.Framework.Tests
     {
         HashtableDataCache cache;
 
+        [Test]
+        public void CacheStringFromArray()
+        {
+            List<int> items = new List<int>();
+            items.AddRange(new int[]{ 1, 2, 3 });
+
+            string retval = HashtableDataCache.CreateCacheString("test", items.ToArray());
+
+            Assert.AreEqual("test_1_2_3", retval);
+        }
 
         [Test]
         public void AddItem_BusinessObject()
