@@ -46,10 +46,10 @@ namespace System.BusinessObjects.Data
     /// </remarks>
     [Serializable]
     public abstract class DataObject : ICloneable, IEditableObject,
-        IDataErrorInfo, INotifyPropertyChanged, INotifyPropertyChanging, NHibernate.Classic.IValidatable
+        IDataErrorInfo, INotifyPropertyChanged, /*INotifyPropertyChanging,*/ NHibernate.Classic.IValidatable
     {
         #region Events
-        public virtual event PropertyChangingEventHandler PropertyChanging;
+        /*public virtual event PropertyChangingEventHandler PropertyChanging;*/
         public virtual event PropertyChangedEventHandler PropertyChanged;
         public virtual event EventHandler OnDeleting;
         public virtual event EventHandler OnDeleted;
@@ -234,6 +234,19 @@ namespace System.BusinessObjects.Data
         #region Get / Set Properties
 
         /// <summary>
+        /// Gets a value from the internal data store, using the method name from the parent property
+        /// </summary>
+        protected T GetValue<T>()
+        {
+            string propertyName = new Diagnostics.StackTrace().GetFrame(1).GetMethod().Name;
+            if (string.IsNullOrEmpty(propertyName))
+            {
+                throw new ArgumentNullException();
+            }
+            return GetValue<T>(propertyName.Substring(4));
+        }
+
+        /// <summary>
         /// Gets a value from the internal data store
         /// </summary>
         /// <typeparam name="T">Type of the object</typeparam>
@@ -287,6 +300,21 @@ namespace System.BusinessObjects.Data
         /// <summary>
         /// Sets a property value in the internal property store.
         /// If a null is passed the property will be reset and removed.
+        /// Uses the method name from the parent property
+        /// </summary>
+        protected void SetValue(object value)
+        {
+            string propertyName = new Diagnostics.StackTrace().GetFrame(1).GetMethod().Name;
+            if (string.IsNullOrEmpty(propertyName))
+            {
+                throw new ArgumentNullException();
+            }
+            SetValue(propertyName.Substring(4), value);
+        }
+
+        /// <summary>
+        /// Sets a property value in the internal property store.
+        /// If a null is passed the property will be reset and removed.
         /// </summary>
         /// <param name="keyName">Property name of whos value is to be set</param>
         /// <param name="value">Value of the property</param>
@@ -294,12 +322,12 @@ namespace System.BusinessObjects.Data
         {
             //Fire property changing event
             string propertyName = string.Empty;
-            if(PropertyChanged != null || PropertyChanging != null)
-                propertyName = new Diagnostics.StackTrace().GetFrame(1).GetMethod().Name;
-            if (PropertyChanging != null && !string.IsNullOrEmpty(propertyName) && propertyName.Length > 3)
+            if(PropertyChanged != null /* || PropertyChanging != null*/)
+                propertyName = keyName; // new Diagnostics.StackTrace().GetFrame(1).GetMethod().Name;
+            /*if (PropertyChanging != null && !string.IsNullOrEmpty(propertyName) && propertyName.Length > 3)
             {
                 PropertyChanging(this, new PropertyChangingEventArgs(propertyName.Substring(4)));
-            }
+            }*/
 
             //Update property value
             if (value == null) //set the property to null, this will work with the IsNull() method.
@@ -316,9 +344,9 @@ namespace System.BusinessObjects.Data
             }
 
             //Fire property changed event
-            if (PropertyChanged != null && !string.IsNullOrEmpty(propertyName) && propertyName.Length > 3)
+            if (PropertyChanged != null && !string.IsNullOrEmpty(propertyName))
             {
-               OnPropertyChanged(new PropertyChangedEventArgs(propertyName.Substring(4)));
+               OnPropertyChanged(new PropertyChangedEventArgs(propertyName));
             }
         }
 
