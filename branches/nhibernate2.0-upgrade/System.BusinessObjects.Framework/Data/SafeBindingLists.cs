@@ -7,8 +7,8 @@ using Iesi.Collections.Generic;
 namespace System.BusinessObjects.Data
 {
     /// <summary>
-    /// This class it used to ensure all object instances in the list are eigther the original object,
-    /// or all proxy objects.
+    /// This class is used to ensure all object instances in the list are either the original object,
+    /// or all the proxied version.
     /// 
     /// Can be used when you get the following exceptions:
     /// Exception Details: System.Reflection.TargetException: Object does not match target type.
@@ -19,8 +19,10 @@ namespace System.BusinessObjects.Data
     /// System.Reflection.RuntimeMethodInfo.Invoke(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture) +29
     /// System.ComponentModel.ReflectPropertyDescriptor.GetValue(Object component) +86
     /// </summary>
-    /// <remarks>Original code found at:
+    /// <remarks>
+    /// Original code found at:
     /// http://forum.hibernate.org/viewtopic.php?t=959464&start=0&postdays=0&postorder=asc&highlight=
+    /// This file has been updated to support DynamicProxy2.
     /// </remarks>
     public class SafeDataBindingList<T> : List<T>
     {
