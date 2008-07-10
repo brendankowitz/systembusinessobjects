@@ -54,6 +54,14 @@ namespace System.BusinessObjects.Data
         }
 
         /// <summary>
+        /// Gets a strongly typed list of business objects based on a linq expression
+        /// </summary>
+        public static IList<T> Search(IEnumerable<T> linqExpression)
+        {
+            return Search<T>(linqExpression);
+        }
+
+        /// <summary>
         /// Gets a strongly typed list of business objects based on an NHibernate Query
         /// </summary>
         public static IList<T> Search(NHibernate.IQuery query)
@@ -67,6 +75,14 @@ namespace System.BusinessObjects.Data
         public static T Fetch(NHibernate.ICriteria criteria)
         {
             return Fetch<T>(criteria);
+        }
+
+        /// <summary>
+        /// Gets a strongly typed business object based on a linq expression
+        /// </summary>
+        public static T Fetch(IEnumerable<T> linqExpression)
+        {
+            return Fetch<T>(linqExpression);
         }
 
         /// <summary>

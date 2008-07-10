@@ -5,6 +5,7 @@ using System.IO;
 using System.Collections;
 using System.Xml.Serialization;
 using System.Runtime.Serialization.Formatters.Binary;
+using System.Linq;
 
 using System.BusinessObjects.Validation;
 using System.BusinessObjects.Transactions;
@@ -523,6 +524,15 @@ namespace System.BusinessObjects.Data
         }
 
         /// <summary>
+        /// Gets a strongly typed list of business objects based on a linq expression
+        /// </summary>
+        public static IList<T> Search<T>(IEnumerable<T> linqExpression) where T : DataObject
+        {
+            IList<T> list = linqExpression.ToList();
+            return list;
+        }
+
+        /// <summary>
         /// Gets a strongly typed list of business objects based on an NHibernate Query
         /// </summary>
         public static IList<T> Search<T>(NHibernate.IQuery query) where T : DataObject
@@ -537,6 +547,15 @@ namespace System.BusinessObjects.Data
         public static T Fetch<T>(NHibernate.ICriteria criteria) where T : DataObject
         {
             T item = criteria.UniqueResult<T>();
+            return item;
+        }
+
+        /// <summary>
+        /// Gets a strongly typed business object based on a linq expression
+        /// </summary>
+        public static T Fetch<T>(IEnumerable<T> linqExpression) where T : DataObject
+        {
+            T item = linqExpression.FirstOrDefault();
             return item;
         }
 
