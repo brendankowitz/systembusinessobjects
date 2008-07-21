@@ -11,7 +11,7 @@ using System.Security;
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("http://code.google.com/p/systembusinessobjects/")]
 [assembly: AssemblyProduct("DataAccess Foundation")]
-[assembly: AssemblyCopyright("Copyright under BSD License 2007")]
+[assembly: AssemblyCopyright("Copyright under BSD License 2007-2008")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 [assembly: SecurityPermission(SecurityAction.RequestMinimum, Execution = true)]
@@ -35,5 +35,7 @@ using System.Security;
 //
 // You can specify all the values or you can default the Revision and Build Numbers 
 // by using the '*' as shown below:
-[assembly: AssemblyVersion("1.0.0.8")]
-[assembly: AssemblyFileVersion("1.0.0.8")]
+
+//NHibernate 2.0 Versions of System.BusinessObjects are now prefixed 1.1.x.x
+[assembly: AssemblyVersion("1.1.0.0")]
+[assembly: AssemblyFileVersion("1.1.0.0")]

@@ -104,6 +104,7 @@
     <Compile Include="Data\NHibernateThreadSlotProvider.cs" />
     <Compile Include="Data\SafeBindingLists.cs" />
     <Compile Include="HashtableDataCache.cs" />
+    <Compile Include="Helpers\PropertyHelper.cs" />
     <Compile Include="Helpers\WebHelper.cs" />
     <Compile Include="Helpers\XmlHelper.cs" />
     <Compile Include="NamespaceDocumentation.cs" />
@@ -120,7 +121,6 @@
     <Compile Include="Validation\GeneralAssertionRules.cs" />
     <Compile Include="Validation\IValidationRuleCollection.cs" />
     <Compile Include="Validation\ValidationAttributes.cs" />
-    <Compile Include="Validation\ValidationHelper.cs" />
     <Compile Include="Validation\ValidationRule.cs" />
     <Compile Include="Validation\ValidationRuleCollection.cs" />
     <Compile Include="Validation\WebValidationControl.cs" />

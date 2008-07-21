@@ -681,40 +681,21 @@ namespace System.BusinessObjects.Data
 
                     if (validationRules is ValidationRuleCollection)
                     {
-                        ValidationLengthAttribute lengthAttrib;
-                        ValidationNotEmptyAttribute notEmptyAttrib;
-                        ValidationIsNotNullAttribute isNotNull;
+                        //automatically add rules that inherit from ValidationBaseAttribute
                         foreach (PropertyDescriptor prop in TypeDescriptor.GetProperties(this))
                         {
-                            lengthAttrib = (ValidationLengthAttribute)prop.Attributes[typeof(ValidationLengthAttribute)];
-                            notEmptyAttrib = (ValidationNotEmptyAttribute)prop.Attributes[typeof(ValidationNotEmptyAttribute)];
-                            isNotNull = (ValidationIsNotNullAttribute)prop.Attributes[typeof(ValidationIsNotNullAttribute)];
-                            if (lengthAttrib != null)
+                            foreach(Attribute customAtt in prop.Attributes)
                             {
-                                if (lengthAttrib._maxLengthSpecified)
+                                if(customAtt is ValidationBaseAttribute)
                                 {
-                                    ValidationRule rule =
-                                        new ValidationRule(
-                                            GeneralAssertionTemplate.LengthLess(this, prop.Name, lengthAttrib.MaxLength));
-                                    validationRules.Add(rule);
+                                    ValidationBaseAttribute attrib = (ValidationBaseAttribute)customAtt;
+                                    IList<ValidationRule> tRules = attrib.GetValidationRules(this, prop.Name);
+                                    if(tRules != null && tRules.Count > 0)
+                                    {
+                                        foreach(ValidationRule r in tRules)
+                                            validationRules.Add(r);
+                                    }
                                 }
-                                if (lengthAttrib._minLengthSpecified)
-                                {
-                                    ValidationRule rule =
-                                        new ValidationRule(
-                                            GeneralAssertionTemplate.LengthGreater(this, prop.Name, lengthAttrib.MinLength));
-                                    validationRules.Add(rule);
-                                }
-                            }
-                            if (notEmptyAttrib != null)
-                            {
-                                ValidationRule rule = new ValidationRule(GeneralAssertionTemplate.IsNotEmpty(this, prop.Name));
-                                validationRules.Add(rule);
-                            }
-                            if (isNotNull != null)
-                            {
-                                ValidationRule rule = new ValidationRule(GeneralAssertionTemplate.IsBusinessObjectNotNull(this, prop.Name));
-                                validationRules.Add(rule);
                             }
                         }
                     }
