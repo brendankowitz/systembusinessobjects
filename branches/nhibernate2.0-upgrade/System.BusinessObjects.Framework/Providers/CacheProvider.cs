@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Configuration.Provider;
+using System.Collections;
 
 namespace System.BusinessObjects.Providers
 {
@@ -107,6 +108,14 @@ namespace System.BusinessObjects.Providers
             {
                 if (obj != null)
                 {
+                    if (obj.GetType().IsArray)
+                    {
+                        foreach (object o in (IEnumerable)obj)
+                        {
+                            retval = string.Format("{0}_{1}", retval, o.ToString());
+                        }
+                    }
+                    else
                     retval = string.Format("{0}_{1}", retval, obj.ToString());
                 }
                 else

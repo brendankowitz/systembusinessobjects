@@ -213,6 +213,22 @@ namespace System.BusinessObjects.Data
         #region Get / Set Properties
 
         /// <summary>
+        /// Gets a value from the internal data store, using the method name from the parent property
+        /// If using this method remember to add: [MethodImpl( MethodImplOptions.NoInlining )] 
+        /// to the method.
+        /// </summary>
+        [System.Runtime.CompilerServices.MethodImpl(System.Runtime.CompilerServices.MethodImplOptions.NoInlining)]
+        protected T GetValue<T>()
+        {
+            string propertyName = new Diagnostics.StackTrace().GetFrame(1).GetMethod().Name;
+            if (string.IsNullOrEmpty(propertyName))
+            {
+                throw new ArgumentNullException();
+            }
+            return GetValue<T>(propertyName.Substring(4));
+        }
+
+        /// <summary>
         /// Gets a value from the internal data store
         /// </summary>
         /// <typeparam name="T">Type of the object</typeparam>
@@ -261,6 +277,24 @@ namespace System.BusinessObjects.Data
             }
 
             return (T)obj;
+        }
+
+        /// <summary>
+        /// Sets a property value in the internal property store.
+        /// If a null is passed the property will be reset and removed.
+        /// Uses the method name from the parent property
+        /// If using this method remember to add: [MethodImpl( MethodImplOptions.NoInlining )] 
+        /// to the method.
+        /// </summary>
+        [System.Runtime.CompilerServices.MethodImpl(System.Runtime.CompilerServices.MethodImplOptions.NoInlining)]
+        protected void SetValue(object value)
+        {
+            string propertyName = new Diagnostics.StackTrace().GetFrame(1).GetMethod().Name;
+            if (string.IsNullOrEmpty(propertyName))
+            {
+                throw new ArgumentNullException();
+            }
+            SetValue(propertyName.Substring(4), value);
         }
 
         /// <summary>
