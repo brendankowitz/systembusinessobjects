@@ -1,0 +1,165 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using NHibernate.Criterion;
+using System.Linq.Expressions;
+
+namespace System.BusinessObjects.Helpers
+{
+    /// <summary>
+    /// Provides overloads for some operations in <see cref="NHibernate.Criterion.Restrictions"/> as Lamba expressions
+    /// </summary>
+    public class RestrictBy
+    {
+        private RestrictBy() { }
+
+#if DOT_NET_35
+        public static SimpleExpression Eq(Expression<Func<object>> propertyLambda)
+        {
+            ResolveLamba r = new ResolveLamba(propertyLambda);
+            if (r.OperationType != "op_Equality")
+            {
+                throw new NotSupportedException("Only equals operator supported in this function");
+            }
+            return Restrictions.Eq(r.PropertyName, r.Value);
+        }
+
+        public static AbstractEmptinessExpression IsEmpty(Expression<Func<object>> propertyLambda)
+        {
+            ResolveLamba r = new ResolveLamba(propertyLambda);
+            if (!string.IsNullOrEmpty(r.OperationType))
+            {
+                throw new NotSupportedException("Only a property name is required");
+            }
+            return Restrictions.IsEmpty(r.PropertyName);
+        }
+
+        public static AbstractEmptinessExpression IsNotEmpty(Expression<Func<object>> propertyLambda)
+        {
+            ResolveLamba r = new ResolveLamba(propertyLambda);
+            if (!string.IsNullOrEmpty(r.OperationType))
+            {
+                throw new NotSupportedException("Only a property name is required");
+            }
+            return Restrictions.IsNotEmpty(r.PropertyName);
+        }
+
+        public static AbstractCriterion IsNotNull(Expression<Func<object>> propertyLambda)
+        {
+            ResolveLamba r = new ResolveLamba(propertyLambda);
+            if (!string.IsNullOrEmpty(r.OperationType))
+            {
+                throw new NotSupportedException("Only a property name is required");
+            }
+            return Restrictions.IsNotNull(r.PropertyName);
+        }
+
+        public static AbstractCriterion IsNull(Expression<Func<object>> propertyLambda)
+        {
+            ResolveLamba r = new ResolveLamba(propertyLambda);
+            if (!string.IsNullOrEmpty(r.OperationType))
+            {
+                throw new NotSupportedException("Only a property name is required");
+            }
+            return Restrictions.IsNull(r.PropertyName);
+        }
+
+#endif
+    }
+
+    #region ResolveLamba
+#if DOT_NET_35
+    /// <summary>
+    /// Helper class to break down and resolve lamba values
+    /// </summary>
+    internal class ResolveLamba
+    {
+        internal string PropertyName = "";
+        internal object Value = null;
+        internal string OperationType = "";
+
+        internal ResolveLamba(Expression<Func<object>> lamba)
+        {
+            Visit(lamba);
+        }
+
+        internal void Visit(Expression<Func<object>> lamba)
+        {
+            Visit(lamba.Body);
+        }
+        internal void Visit(System.Linq.Expressions.Expression lamba)
+        {
+            switch (lamba.NodeType)
+            {
+                case ExpressionType.Negate:
+                case ExpressionType.NegateChecked:
+                case ExpressionType.Not:
+                case ExpressionType.Convert:
+                case ExpressionType.ConvertChecked:
+                case ExpressionType.ArrayLength:
+                case ExpressionType.Quote:
+                case ExpressionType.TypeAs:
+                case ExpressionType.Add:
+                case ExpressionType.AddChecked:
+                case ExpressionType.Subtract:
+                case ExpressionType.SubtractChecked:
+                case ExpressionType.Multiply:
+                case ExpressionType.MultiplyChecked:
+                case ExpressionType.Divide:
+                case ExpressionType.Modulo:
+                case ExpressionType.And:
+                case ExpressionType.AndAlso:
+                case ExpressionType.Or:
+                case ExpressionType.OrElse:
+                case ExpressionType.LessThan:
+                case ExpressionType.LessThanOrEqual:
+                case ExpressionType.GreaterThan:
+                case ExpressionType.GreaterThanOrEqual:
+                case ExpressionType.Equal:
+                case ExpressionType.NotEqual:
+                case ExpressionType.Coalesce:
+                case ExpressionType.ArrayIndex:
+                case ExpressionType.RightShift:
+                case ExpressionType.LeftShift:
+                case ExpressionType.ExclusiveOr:
+                case ExpressionType.TypeIs:
+                    if (lamba is BinaryExpression)
+                        Visit((BinaryExpression)lamba);
+                    else if (lamba is UnaryExpression)
+                        Visit((UnaryExpression)lamba);
+                    break;
+                case ExpressionType.Constant:
+                    Visit((ConstantExpression)lamba);
+                    break;
+                case ExpressionType.MemberAccess:
+                    Visit((MemberExpression)lamba);
+                    break;
+                default:
+                    throw new NotSupportedException(string.Format("Lamba expression with type {0} not supported", lamba.NodeType));
+
+            }
+        }
+        internal void Visit(System.Linq.Expressions.UnaryExpression lamba)
+        {
+            Visit(lamba.Operand);
+        }
+        internal void Visit(System.Linq.Expressions.BinaryExpression lamba)
+        {
+            OperationType = lamba.Method.ReturnParameter.Member.Name;
+            Visit(lamba.Left);
+            Visit(lamba.Right);
+        }
+        internal void Visit(System.Linq.Expressions.ConstantExpression lamba)
+        {
+            Value = lamba.Value;
+        }
+        internal void Visit(System.Linq.Expressions.MemberExpression lamba)
+        {
+            PropertyName = lamba.Member.Name;
+        }
+    }
+
+#endif
+    #endregion
+}

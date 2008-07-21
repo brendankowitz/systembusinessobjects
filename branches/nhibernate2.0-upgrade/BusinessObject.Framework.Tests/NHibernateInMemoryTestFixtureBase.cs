@@ -5,6 +5,8 @@ using System.Reflection;
 using NHibernate;
 using NHibernate.Cfg;
 using NHibernate.Tool.hbm2ddl;
+using Sample.BusinessObjects.Contacts;
+using System.Collections.Generic;
 
 //#if !NUNIT
 //    using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -16,8 +18,7 @@ using TestInitialize = NUnit.Framework.SetUpAttribute;
 using TestCleanup = NUnit.Framework.TearDownAttribute;
 using ClassInitialize = NUnit.Framework.TestFixtureSetUpAttribute;
 using ClassCleanup = NUnit.Framework.TestFixtureTearDownAttribute;
-using Sample.BusinessObjects.Contacts;
-using System.Collections.Generic;
+
 //#endif
 
 namespace BusinessObject.Framework.Tests
@@ -59,6 +60,7 @@ namespace BusinessObject.Framework.Tests
                 NHibernateSessionProvider.CurrentFactory = sessionFactory;
                 session = CreateSession();
                 NHibernateSessionProvider.Provider.CurrentSession = session;
+                session.BeginTransaction();
             }
 
             [TestCleanup]
@@ -66,6 +68,7 @@ namespace BusinessObject.Framework.Tests
             {
                 session.Dispose();
                 session = null;
+
                 //sessionFactory.Dispose();
             }
 

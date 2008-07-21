@@ -104,7 +104,8 @@
     <Compile Include="Data\NHibernateThreadSlotProvider.cs" />
     <Compile Include="Data\SafeBindingLists.cs" />
     <Compile Include="HashtableDataCache.cs" />
-    <Compile Include="Helpers\PropertyHelper.cs" />
+    <Compile Include="Helpers\Property.cs" />
+    <Compile Include="Helpers\RestrictBy.cs" />
     <Compile Include="Helpers\WebHelper.cs" />
     <Compile Include="Helpers\XmlHelper.cs" />
     <Compile Include="NamespaceDocumentation.cs" />
