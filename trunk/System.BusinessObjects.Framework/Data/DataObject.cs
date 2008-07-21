@@ -235,7 +235,10 @@ namespace System.BusinessObjects.Data
 
         /// <summary>
         /// Gets a value from the internal data store, using the method name from the parent property
+        /// If using this method remember to add: [MethodImpl( MethodImplOptions.NoInlining )] 
+        /// to the method.
         /// </summary>
+        [System.Runtime.CompilerServices.MethodImpl(System.Runtime.CompilerServices.MethodImplOptions.NoInlining)]
         protected T GetValue<T>()
         {
             string propertyName = new Diagnostics.StackTrace().GetFrame(1).GetMethod().Name;
