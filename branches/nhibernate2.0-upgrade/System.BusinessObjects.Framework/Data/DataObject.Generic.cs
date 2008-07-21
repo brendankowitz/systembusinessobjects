@@ -53,6 +53,7 @@ namespace System.BusinessObjects.Data
             return Search<T>(criteria);
         }
 
+#if DOT_NET_35
         /// <summary>
         /// Gets a strongly typed list of business objects based on a linq expression
         /// </summary>
@@ -60,6 +61,7 @@ namespace System.BusinessObjects.Data
         {
             return Search<T>(linqExpression);
         }
+#endif
 
         /// <summary>
         /// Gets a strongly typed list of business objects based on an NHibernate Query
@@ -77,6 +79,7 @@ namespace System.BusinessObjects.Data
             return Fetch<T>(criteria);
         }
 
+#if DOT_NET_35
         /// <summary>
         /// Gets a strongly typed business object based on a linq expression
         /// </summary>
@@ -84,6 +87,7 @@ namespace System.BusinessObjects.Data
         {
             return Fetch<T>(linqExpression);
         }
+#endif
 
         /// <summary>
         /// Gets a strongly typed business object based on an NHibernate Query

@@ -1,9 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Text;
 using System.Reflection;
 using System.BusinessObjects.Data;
+
+#if DOT_NET_35
+using System.Linq;
+#endif
 
 namespace System.BusinessObjects.Helpers
 {

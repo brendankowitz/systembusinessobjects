@@ -1,9 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Text;
 using NHibernate.Criterion;
+
+#if DOT_NET_35
+using System.Linq;
 using System.Linq.Expressions;
+#endif
 
 namespace System.BusinessObjects.Helpers
 {

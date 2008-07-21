@@ -5,7 +5,6 @@ using System.IO;
 using System.Collections;
 using System.Xml.Serialization;
 using System.Runtime.Serialization.Formatters.Binary;
-using System.Linq;
 
 using System.BusinessObjects.Validation;
 using System.BusinessObjects.Transactions;
@@ -14,6 +13,10 @@ using System.BusinessObjects.Helpers;
 using NHibernate.Impl;
 using NHibernate;
 using NHibernate.Engine;
+
+#if DOT_NET_35
+using System.Linq;
+#endif
 
 namespace System.BusinessObjects.Data
 {
@@ -557,6 +560,7 @@ namespace System.BusinessObjects.Data
             return list;
         }
 
+#if DOT_NET_35
         /// <summary>
         /// Gets a strongly typed list of business objects based on a linq expression
         /// </summary>
@@ -565,6 +569,7 @@ namespace System.BusinessObjects.Data
             IList<T> list = linqExpression.ToList();
             return list;
         }
+#endif
 
         /// <summary>
         /// Gets a strongly typed list of business objects based on an NHibernate Query
@@ -584,6 +589,7 @@ namespace System.BusinessObjects.Data
             return item;
         }
 
+#if DOT_NET_35
         /// <summary>
         /// Gets a strongly typed business object based on a linq expression
         /// </summary>
@@ -592,6 +598,7 @@ namespace System.BusinessObjects.Data
             T item = linqExpression.FirstOrDefault();
             return item;
         }
+#endif
 
         /// <summary>
         /// Gets a strongly typed business object based on an NHibernate Query
