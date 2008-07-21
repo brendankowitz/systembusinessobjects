@@ -68,6 +68,35 @@ namespace System.BusinessObjects.Helpers
 #endif
     }
 
+#if DOT_NET_35
+    /// <summary>
+    /// A set of extensions methods for ICriteria to remove the need for .Add()
+    /// </summary>
+    public static class RestrictByExtensions
+    {
+        public static NHibernate.ICriteria AddEq(this NHibernate.ICriteria c, Expression<Func<object>> propertyLambda)
+        {
+            return c.Add(RestrictBy.Eq(propertyLambda));
+        }
+        public static NHibernate.ICriteria AddIsEmpty(this NHibernate.ICriteria c, Expression<Func<object>> propertyLambda)
+        {
+            return c.Add(RestrictBy.IsEmpty(propertyLambda));
+        }
+        public static NHibernate.ICriteria AddIsNotEmpty(this NHibernate.ICriteria c, Expression<Func<object>> propertyLambda)
+        {
+            return c.Add(RestrictBy.IsNotEmpty(propertyLambda));
+        }
+        public static NHibernate.ICriteria AddIsNotNull(this NHibernate.ICriteria c, Expression<Func<object>> propertyLambda)
+        {
+            return c.Add(RestrictBy.IsNotNull(propertyLambda));
+        }
+        public static NHibernate.ICriteria AddIsNull(this NHibernate.ICriteria c, Expression<Func<object>> propertyLambda)
+        {
+            return c.Add(RestrictBy.IsNull(propertyLambda));
+        }
+    }
+#endif
+
     #region ResolveLamba
 #if DOT_NET_35
     /// <summary>

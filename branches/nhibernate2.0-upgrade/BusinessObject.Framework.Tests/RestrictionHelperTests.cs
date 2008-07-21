@@ -54,5 +54,33 @@ namespace BusinessObject.Framework.Tests
 
             c.UniqueResult();
         }
+
+#if DOT_NET_35
+        [Test]
+        public void CanUseIsNotNullExtension()
+        {
+            Person p = BusinessObjectFactory.CreateAndFillPerson();
+            p.SetSession(session);
+            p.AutoFlush = false;
+            p.Save();
+
+            ICriteria c = UnitOfWork.CurrentSession.CreateCriteria(typeof(Person));
+            c.AddIsNotNull(() => new Person().FirstName);
+
+            c.UniqueResult();
+        }
+        public void CanUseEqLambaExtension()
+        {
+            Person p = BusinessObjectFactory.CreateAndFillPerson();
+            p.SetSession(session);
+            p.AutoFlush = false;
+            p.Save();
+
+            ICriteria c = session.CreateCriteria(typeof(Person));
+            c.AddEq(() => new Person().FirstName == "John");
+
+            c.UniqueResult();
+        }
+#endif
     }
 }
