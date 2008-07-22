@@ -11,7 +11,7 @@ using System.Linq.Expressions;
 namespace System.BusinessObjects.Helpers
 {
     /// <summary>
-    /// Provides overloads for some operations in <see cref="NHibernate.Criterion.Restrictions"/> as Lamba expressions
+    /// Provides overloads for some operations in <see cref="NHibernate.Criterion.Restrictions"/> as lambda expressions
     /// </summary>
     public class RestrictBy
     {
@@ -20,7 +20,7 @@ namespace System.BusinessObjects.Helpers
 #if DOT_NET_35
         public static SimpleExpression Eq(Expression<Func<object>> propertyLambda)
         {
-            ResolveLamba r = new ResolveLamba(propertyLambda);
+            ResolveLambda r = new ResolveLambda(propertyLambda);
             if (r.OperationType != "op_Equality")
             {
                 throw new NotSupportedException("Only equals operator supported in this function");
@@ -30,7 +30,7 @@ namespace System.BusinessObjects.Helpers
 
         public static AbstractEmptinessExpression IsEmpty(Expression<Func<object>> propertyLambda)
         {
-            ResolveLamba r = new ResolveLamba(propertyLambda);
+            ResolveLambda r = new ResolveLambda(propertyLambda);
             if (!string.IsNullOrEmpty(r.OperationType))
             {
                 throw new NotSupportedException("Only a property name is required");
@@ -40,7 +40,7 @@ namespace System.BusinessObjects.Helpers
 
         public static AbstractEmptinessExpression IsNotEmpty(Expression<Func<object>> propertyLambda)
         {
-            ResolveLamba r = new ResolveLamba(propertyLambda);
+            ResolveLambda r = new ResolveLambda(propertyLambda);
             if (!string.IsNullOrEmpty(r.OperationType))
             {
                 throw new NotSupportedException("Only a property name is required");
@@ -50,7 +50,7 @@ namespace System.BusinessObjects.Helpers
 
         public static AbstractCriterion IsNotNull(Expression<Func<object>> propertyLambda)
         {
-            ResolveLamba r = new ResolveLamba(propertyLambda);
+            ResolveLambda r = new ResolveLambda(propertyLambda);
             if (!string.IsNullOrEmpty(r.OperationType))
             {
                 throw new NotSupportedException("Only a property name is required");
@@ -60,7 +60,7 @@ namespace System.BusinessObjects.Helpers
 
         public static AbstractCriterion IsNull(Expression<Func<object>> propertyLambda)
         {
-            ResolveLamba r = new ResolveLamba(propertyLambda);
+            ResolveLambda r = new ResolveLambda(propertyLambda);
             if (!string.IsNullOrEmpty(r.OperationType))
             {
                 throw new NotSupportedException("Only a property name is required");
@@ -100,29 +100,29 @@ namespace System.BusinessObjects.Helpers
     }
 #endif
 
-    #region ResolveLamba
+    #region Resolvelambda
 #if DOT_NET_35
     /// <summary>
-    /// Helper class to break down and resolve lamba values
+    /// Helper class to break down and resolve lambda values
     /// </summary>
-    internal class ResolveLamba
+    internal class ResolveLambda
     {
         internal string PropertyName = "";
         internal object Value = null;
         internal string OperationType = "";
 
-        internal ResolveLamba(Expression<Func<object>> lamba)
+        internal ResolveLambda(Expression<Func<object>> lambda)
         {
-            Visit(lamba);
+            Visit(lambda);
         }
 
-        internal void Visit(Expression<Func<object>> lamba)
+        internal void Visit(Expression<Func<object>> lambda)
         {
-            Visit(lamba.Body);
+            Visit(lambda.Body);
         }
-        internal void Visit(System.Linq.Expressions.Expression lamba)
+        internal void Visit(System.Linq.Expressions.Expression lambda)
         {
-            switch (lamba.NodeType)
+            switch (lambda.NodeType)
             {
                 case ExpressionType.Negate:
                 case ExpressionType.NegateChecked:
@@ -156,39 +156,39 @@ namespace System.BusinessObjects.Helpers
                 case ExpressionType.LeftShift:
                 case ExpressionType.ExclusiveOr:
                 case ExpressionType.TypeIs:
-                    if (lamba is BinaryExpression)
-                        Visit((BinaryExpression)lamba);
-                    else if (lamba is UnaryExpression)
-                        Visit((UnaryExpression)lamba);
+                    if (lambda is BinaryExpression)
+                        Visit((BinaryExpression)lambda);
+                    else if (lambda is UnaryExpression)
+                        Visit((UnaryExpression)lambda);
                     break;
                 case ExpressionType.Constant:
-                    Visit((ConstantExpression)lamba);
+                    Visit((ConstantExpression)lambda);
                     break;
                 case ExpressionType.MemberAccess:
-                    Visit((MemberExpression)lamba);
+                    Visit((MemberExpression)lambda);
                     break;
                 default:
-                    throw new NotSupportedException(string.Format("Lamba expression with type {0} not supported", lamba.NodeType));
+                    throw new NotSupportedException(string.Format("lambda expression with type {0} not supported", lambda.NodeType));
 
             }
         }
-        internal void Visit(System.Linq.Expressions.UnaryExpression lamba)
+        internal void Visit(System.Linq.Expressions.UnaryExpression lambda)
         {
-            Visit(lamba.Operand);
+            Visit(lambda.Operand);
         }
-        internal void Visit(System.Linq.Expressions.BinaryExpression lamba)
+        internal void Visit(System.Linq.Expressions.BinaryExpression lambda)
         {
-            OperationType = lamba.Method.ReturnParameter.Member.Name;
-            Visit(lamba.Left);
-            Visit(lamba.Right);
+            OperationType = lambda.Method.ReturnParameter.Member.Name;
+            Visit(lambda.Left);
+            Visit(lambda.Right);
         }
-        internal void Visit(System.Linq.Expressions.ConstantExpression lamba)
+        internal void Visit(System.Linq.Expressions.ConstantExpression lambda)
         {
-            Value = lamba.Value;
+            Value = lambda.Value;
         }
-        internal void Visit(System.Linq.Expressions.MemberExpression lamba)
+        internal void Visit(System.Linq.Expressions.MemberExpression lambda)
         {
-            PropertyName = lamba.Member.Name;
+            PropertyName = lambda.Member.Name;
         }
     }
 

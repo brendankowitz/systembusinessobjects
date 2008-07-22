@@ -111,7 +111,7 @@ namespace BusinessObject.Framework.Tests
         }
 
         [Test]
-        public void TestLambaEachFunctionCollectionExtension()
+        public void TestlambdaEachFunctionCollectionExtension()
         {
             List<Person> list = new List<Person>();
             list.Add(BusinessObjectFactory.CreateAndFillPerson());
@@ -122,7 +122,7 @@ namespace BusinessObject.Framework.Tests
         }
 
         [Test]
-        public void TestLambaEachFunctionCollectionConvertExtension()
+        public void TestlambdaEachFunctionCollectionConvertExtension()
         {
             List<Person> list = new List<Person>();
             list.Add(BusinessObjectFactory.CreateAndFillPerson());
@@ -134,7 +134,7 @@ namespace BusinessObject.Framework.Tests
         }
 
         [Test]
-        public void TestLambaEachFunctionCollectionConvertOutputExtension()
+        public void TestlambdaEachFunctionCollectionConvertOutputExtension()
         {
             List<Person> list = new List<Person>();
             list.Add(BusinessObjectFactory.CreateAndFillPerson());

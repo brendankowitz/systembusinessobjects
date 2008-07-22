@@ -32,7 +32,7 @@ namespace BusinessObject.Framework.Tests
         }
 
         [Test]
-        public void CanUseEqLamba()
+        public void CanUseEqlambda()
         {
             Person p = BusinessObjectFactory.CreateAndFillPerson();
             p.SetSession(session);
@@ -48,7 +48,7 @@ namespace BusinessObject.Framework.Tests
         }
 
         [Test]
-        public void CanUseIsNullLamba()
+        public void CanUseIsNulllambda()
         {
             Person p = BusinessObjectFactory.CreateAndFillPerson();
             p.SetSession(session);
@@ -90,7 +90,7 @@ namespace BusinessObject.Framework.Tests
 
             c.UniqueResult();
         }
-        public void CanUseEqLambaExtension()
+        public void CanUseEqlambdaExtension()
         {
             Person p = BusinessObjectFactory.CreateAndFillPerson();
             p.SetSession(session);
