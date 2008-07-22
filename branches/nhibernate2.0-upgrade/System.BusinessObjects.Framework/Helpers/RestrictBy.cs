@@ -18,20 +18,36 @@ namespace System.BusinessObjects.Helpers
         private RestrictBy() { }
 
 #if DOT_NET_35
+        /// <summary>
+        /// Handles "Equals", "Greater Than", "Less Than", "Greater Than or Equal", "Less Than or Equal"
+        /// </summary>
+        /// <param name="propertyLambda">lambda function to evaluate: ()=> obj.A == 1</param>
+        /// <returns>NHibernate SimpleExpression</returns>
         public static SimpleExpression Eq(Expression<Func<object>> propertyLambda)
         {
             ResolveLambda r = new ResolveLambda(propertyLambda);
-            if (r.OperationType != "op_Equality")
+
+            switch (r.OperationType)
             {
-                throw new NotSupportedException("Only equals operator supported in this function");
+                case ExpressionType.Equal:
+                    return Restrictions.Eq(r.PropertyName, r.Value);
+                case ExpressionType.GreaterThanOrEqual:
+                    return Restrictions.Ge(r.PropertyName, r.Value);
+                case ExpressionType.GreaterThan:
+                    return Restrictions.Gt(r.PropertyName, r.Value);
+                case ExpressionType.LessThanOrEqual:
+                    return Restrictions.Le(r.PropertyName, r.Value);
+                case ExpressionType.LessThan:
+                    return Restrictions.Lt(r.PropertyName, r.Value);
+                default:
+                    throw new NotSupportedException("Only ==,<,>,>=,<= operators supported in this function");
             }
-            return Restrictions.Eq(r.PropertyName, r.Value);
         }
 
         public static AbstractEmptinessExpression IsEmpty(Expression<Func<object>> propertyLambda)
         {
             ResolveLambda r = new ResolveLambda(propertyLambda);
-            if (!string.IsNullOrEmpty(r.OperationType))
+            if (r.OperationTypeSpecified)
             {
                 throw new NotSupportedException("Only a property name is required");
             }
@@ -41,7 +57,7 @@ namespace System.BusinessObjects.Helpers
         public static AbstractEmptinessExpression IsNotEmpty(Expression<Func<object>> propertyLambda)
         {
             ResolveLambda r = new ResolveLambda(propertyLambda);
-            if (!string.IsNullOrEmpty(r.OperationType))
+            if (r.OperationTypeSpecified)
             {
                 throw new NotSupportedException("Only a property name is required");
             }
@@ -51,7 +67,7 @@ namespace System.BusinessObjects.Helpers
         public static AbstractCriterion IsNotNull(Expression<Func<object>> propertyLambda)
         {
             ResolveLambda r = new ResolveLambda(propertyLambda);
-            if (!string.IsNullOrEmpty(r.OperationType))
+            if (r.OperationTypeSpecified)
             {
                 throw new NotSupportedException("Only a property name is required");
             }
@@ -61,7 +77,7 @@ namespace System.BusinessObjects.Helpers
         public static AbstractCriterion IsNull(Expression<Func<object>> propertyLambda)
         {
             ResolveLambda r = new ResolveLambda(propertyLambda);
-            if (!string.IsNullOrEmpty(r.OperationType))
+            if (r.OperationTypeSpecified)
             {
                 throw new NotSupportedException("Only a property name is required");
             }
@@ -77,6 +93,9 @@ namespace System.BusinessObjects.Helpers
     /// </summary>
     public static class RestrictByExtensions
     {
+        /// <summary>
+        /// Handles "Equals", "Greater Than", "Less Than", "Greater Than or Equal", "Less Than or Equal"
+        /// </summary>
         public static NHibernate.ICriteria AddEq(this NHibernate.ICriteria c, Expression<Func<object>> propertyLambda)
         {
             return c.Add(RestrictBy.Eq(propertyLambda));
@@ -100,7 +119,7 @@ namespace System.BusinessObjects.Helpers
     }
 #endif
 
-    #region Resolvelambda
+    #region Resolve Lambda Helper
 #if DOT_NET_35
     /// <summary>
     /// Helper class to break down and resolve lambda values
@@ -109,20 +128,34 @@ namespace System.BusinessObjects.Helpers
     {
         internal string PropertyName = "";
         internal object Value = null;
-        internal string OperationType = "";
+        private ExpressionType _operationType;
+        internal bool OperationTypeSpecified = false;
 
-        internal ResolveLambda(Expression<Func<object>> lambda)
+        public ExpressionType OperationType
         {
-            Visit(lambda);
+            get
+            {
+                return _operationType;
+            }
+            set
+            {
+                OperationTypeSpecified = true;
+                _operationType = value;
+            }
         }
 
-        internal void Visit(Expression<Func<object>> lambda)
+        internal ResolveLambda(Expression<Func<object>> expression)
         {
-            Visit(lambda.Body);
+            Visit(expression);
         }
-        internal void Visit(System.Linq.Expressions.Expression lambda)
+
+        internal void Visit(Expression<Func<object>> expression)
         {
-            switch (lambda.NodeType)
+            Visit(expression.Body);
+        }
+        internal void Visit(System.Linq.Expressions.Expression expression)
+        {
+            switch (expression.NodeType)
             {
                 case ExpressionType.Negate:
                 case ExpressionType.NegateChecked:
@@ -156,39 +189,40 @@ namespace System.BusinessObjects.Helpers
                 case ExpressionType.LeftShift:
                 case ExpressionType.ExclusiveOr:
                 case ExpressionType.TypeIs:
-                    if (lambda is BinaryExpression)
-                        Visit((BinaryExpression)lambda);
-                    else if (lambda is UnaryExpression)
-                        Visit((UnaryExpression)lambda);
+                    if (expression is BinaryExpression)
+                        Visit((BinaryExpression)expression);
+                    else if (expression is UnaryExpression)
+                        Visit((UnaryExpression)expression);
                     break;
                 case ExpressionType.Constant:
-                    Visit((ConstantExpression)lambda);
+                    Visit((ConstantExpression)expression);
                     break;
                 case ExpressionType.MemberAccess:
-                    Visit((MemberExpression)lambda);
+                    Visit((MemberExpression)expression);
                     break;
                 default:
-                    throw new NotSupportedException(string.Format("lambda expression with type {0} not supported", lambda.NodeType));
+                    throw new NotSupportedException(string.Format("lambda expression with type {0} not supported", expression.NodeType));
 
             }
         }
-        internal void Visit(System.Linq.Expressions.UnaryExpression lambda)
+        internal void Visit(System.Linq.Expressions.UnaryExpression expression)
         {
-            Visit(lambda.Operand);
+            Visit(expression.Operand);
         }
-        internal void Visit(System.Linq.Expressions.BinaryExpression lambda)
+        internal void Visit(System.Linq.Expressions.BinaryExpression expression)
         {
-            OperationType = lambda.Method.ReturnParameter.Member.Name;
-            Visit(lambda.Left);
-            Visit(lambda.Right);
+            OperationType = expression.NodeType;
+
+            Visit(expression.Left);
+            Visit(expression.Right);
         }
-        internal void Visit(System.Linq.Expressions.ConstantExpression lambda)
+        internal void Visit(System.Linq.Expressions.ConstantExpression expression)
         {
-            Value = lambda.Value;
+            Value = expression.Value;
         }
-        internal void Visit(System.Linq.Expressions.MemberExpression lambda)
+        internal void Visit(System.Linq.Expressions.MemberExpression expression)
         {
-            PropertyName = lambda.Member.Name;
+            PropertyName = expression.Member.Name;
         }
     }
 
