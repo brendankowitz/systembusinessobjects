@@ -505,7 +505,7 @@ namespace System.BusinessObjects.Data
         /// <summary>
         /// Loads a business object with the given ID
         /// </summary>
-        public static DataObject Load(int Id)
+        public static DataObject Load(object Id)
         {
             throw new NotImplementedException("Load not implemented at abstract DataObject level");
         }
@@ -513,7 +513,7 @@ namespace System.BusinessObjects.Data
         /// <summary>
         /// Loads a business object with the given ID
         /// </summary>
-        public static T Load<T>(int Id) where T : DataObject
+        public static T Load<T>(object Id) where T : DataObject
         {
             T newObj = UnitOfWork.CurrentSession.Get<T>(Id);
             return newObj;
@@ -522,7 +522,7 @@ namespace System.BusinessObjects.Data
         /// <summary>
         /// Loads a business object with the given ID
         /// </summary>
-        public static T Load<T>(int Id, ISession session) where T : DataObject
+        public static T Load<T>(object Id, ISession session) where T : DataObject
         {
             T newObj = session.Get<T>(Id);
             newObj._entitySession = session;

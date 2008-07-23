@@ -24,7 +24,7 @@ namespace System.BusinessObjects.Data
         /// <summary>
         /// Loads a business object with the given ID
         /// </summary>
-        public static new T Load(int Id)
+        public static new T Load(object Id)
         {
             return Load<T>(Id);
         }
