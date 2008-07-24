@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<hibernate-mapping xmlns="urn:nhibernate-mapping-2.2" assembly="System.BusinessObjects.Membership" namespace="System.BusinessObjects.Membership">
+    <class name="Role" table="aspnet_Roles" >
+    <id name="ID" type="System.Guid" column="RoleId">
+      <generator class="guid"></generator>
+    </id>
+    <property name="RoleName" column="RoleName" type="System.String" not-null="true" length="256"/>
+    <property name="LoweredRoleName" column="LoweredRoleName" type="System.String" not-null="true" length="256"/>
+    <property name="Description" column="Description" type="System.String" not-null="false" length="256"/>
+    <many-to-one name="Application" column="ApplicationId" class="Application" />
+ </class>
+</hibernate-mapping>

@@ -103,6 +103,7 @@
     <Compile Include="Data\NHibernateAspContextProvider.cs" />
     <Compile Include="Data\NHibernateThreadSlotProvider.cs" />
     <Compile Include="Data\SafeBindingLists.cs" />
+    <Compile Include="Properties\GlobalAssemblyInfo.cs" />
     <Compile Include="HashtableDataCache.cs" />
     <Compile Include="Helpers\Property.cs" />
     <Compile Include="Helpers\RestrictBy.cs" />

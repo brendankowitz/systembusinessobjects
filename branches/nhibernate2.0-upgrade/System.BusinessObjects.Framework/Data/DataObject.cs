@@ -261,7 +261,7 @@ namespace System.BusinessObjects.Data
             {
                 obj = GetValue<object>(keyName, null);
             }
-            return (T)obj;
+            return (T) (obj ?? default(T));
         }
 
         /// <summary>
