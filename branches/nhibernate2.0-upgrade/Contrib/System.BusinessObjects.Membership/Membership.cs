@@ -59,6 +59,7 @@ namespace System.BusinessObjects.Membership
             {
                 BeginEdit();
                 SetValue("Email", value);
+                SetValue("LoweredEmail", value.ToLower());
             }
         }
 
@@ -67,8 +68,6 @@ namespace System.BusinessObjects.Membership
             get { return GetValue<String>("LoweredEmail"); }
             set
             {
-                BeginEdit();
-                SetValue("LoweredEmail", value);
             }
         }
 

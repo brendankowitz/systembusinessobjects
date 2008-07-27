@@ -14,16 +14,7 @@ namespace System.BusinessObjects.Membership
     {
         private const string STR_UnableToGetMembershipUser = "Unable to get membership user";
         private const string STR_TooManyMatchingUsers = "Too many matching users";
-        #region Enumerations
-        /// <summary>
-        /// Types of failure that need to be tracked on a per user basis.
-        /// </summary>
-        private enum FailureType
-        {
-            Password,
-            PasswordAnswer
-        }
-        #endregion
+        private const string STR_PasswordResetCancelledBecauseAccountItLocked = "Password reset cancelled because account it locked.";
 
         #region Fields
         private Application application = new Application();
@@ -251,12 +242,87 @@ namespace System.BusinessObjects.Membership
 
         public override bool ChangePassword(string username, string oldPassword, string newPassword)
         {
-            throw new NotImplementedException();
+            // Assume we are unable to perform the operation.
+            bool result = false;
+
+            // Ensure we are dealing with a valid user.
+            if (ValidateUser(username, oldPassword))
+            {
+                // Raise the ValidatingPassword event in case an event handler has been defined.
+                SystemWeb.ValidatePasswordEventArgs args = new SystemWeb.ValidatePasswordEventArgs(username, newPassword, true);
+                OnValidatingPassword(args);
+                if (args.Cancel)
+                {
+                    // Check for a specific error message.
+                    if (null != args.FailureInformation)
+                    {
+                        throw (args.FailureInformation);
+                    }
+                    else
+                    {
+                        throw new ProviderException("Password change cancelled.");
+                    }
+                }
+
+                // Get the user from the data store.
+                Membership user = Membership.Fetch<Membership>(QryFetchMemberByName.Query(username, application.ID));
+
+                if (null != user)
+                {
+                    try
+                    {
+                        // Encode the new password.
+                        user.Password = EncodePassword(newPassword, user.PasswordSalt);
+                        user.LastPasswordChangedDate = DateTime.Now;
+                        user.LastActivityDate = DateTime.Now;
+
+                        // Update user record with the new password.
+                        user.Save();
+                        result = true;
+                    }
+                    catch
+                    {
+                        throw new SystemWeb.MembershipPasswordException("Password change cancelled due to account being locked.");
+                    }
+                }
+            }
+
+            // Return the result of the operation.
+            return result;
         }
 
         public override bool ChangePasswordQuestionAndAnswer(string username, string password, string newPasswordQuestion, string newPasswordAnswer)
         {
-            throw new NotImplementedException();
+            // Assume we are unable to perform the operation.
+            bool result = false;
+
+            // Ensure we are dealing with a valid user.
+            if (ValidateUser(username, password))
+            {
+                // Get the user from the data store.
+                Membership user = Membership.Fetch<Membership>(QryFetchMemberByName.Query(username, application.ID));
+                if (null != user)
+                {
+                    try
+                    {
+                        // Update the new password question and answer.
+                        user.PasswordQuestion = newPasswordQuestion;
+                        user.PasswordAnswer = EncodePassword(newPasswordAnswer, user.PasswordSalt);
+                        user.LastActivityDate = DateTime.Now;
+                        // Update user record with the new password.
+                        user.Save();
+                        // Indicate a successful operation.
+                        result = true;
+                    }
+                    catch
+                    {
+                        throw new SystemWeb.MembershipPasswordException("Unable to change account security question and answer.");
+                    }
+                }
+            }
+
+            // Return the result of the operation.
+            return result;
         }
 
         public override SystemWeb.MembershipUser CreateUser(string username, string password, string email, string passwordQuestion, string passwordAnswer, bool isApproved, object providerUserKey, out SystemWeb.MembershipCreateStatus status)
@@ -271,28 +337,21 @@ namespace System.BusinessObjects.Membership
                 return null;
             }
 
-            // Validate the e-mail address has not already been specified, if required.
             if (RequiresUniqueEmail && !string.IsNullOrEmpty(GetUserNameByEmail(email)))
             {
                 status = SystemWeb.MembershipCreateStatus.DuplicateEmail;
                 return null;
             }
 
-            // Attempt to get the user record associated to the given user name.
             if (QryFetchUserByName.QueryCount(username, application.ID).UniqueResult<int>() > 0)
             {
-                // Indicate we have found an existing user record.
                 status = SystemWeb.MembershipCreateStatus.DuplicateUserName;
             }
             else
             {
-                // NOTE: providerUserKey is ignored on purpose. In this implementation it represents the user identifier.
-                // Insert user record in the data store.
                 Membership user = new Membership();
-                //user.User = new User();
                 user.UserName = username;
                 user.IsAnonymous = false;
-                user.LoweredUserName = username.ToLower();
                 user.Application = application;
 
                 user.Password = EncodePassword(password, machineKey.ValidationKey);
@@ -302,11 +361,9 @@ namespace System.BusinessObjects.Membership
                 user.PasswordQuestion = passwordQuestion;
                 user.PasswordAnswer = EncodePassword(passwordAnswer, machineKey.ValidationKey);
                 user.IsApproved = isApproved;
-                //user.Application = application;
 
                 try
                 {
-                    //user.User.Save();
                     user.Save();
                     status = SystemWeb.MembershipCreateStatus.Success;
                 }
@@ -315,11 +372,9 @@ namespace System.BusinessObjects.Membership
                     throw new ProviderException("Failed to create user", ex);
                 }
 
-                // Return the newly created user record.
+
                 return GetUser(username, false);
             }
-
-            // Indicate we were unable to create the user record.
             return null;
         }
 
@@ -390,7 +445,32 @@ namespace System.BusinessObjects.Membership
 
         public override SystemWeb.MembershipUserCollection FindUsersByName(string usernameToMatch, int pageIndex, int pageSize, out int totalRecords)
         {
-            throw new NotImplementedException();
+            // Create a placeholder for all user accounts retrived, if any.
+            SystemWeb.MembershipUserCollection users = new SystemWeb.MembershipUserCollection();
+
+            // Get the user record from the data store.
+            try
+            {
+                // Replace all * and ? wildcards for % and _, respectively.
+                usernameToMatch = usernameToMatch.Replace('*', '%');
+                usernameToMatch = usernameToMatch.Replace('?', '_');
+
+                // Perform the search.
+                IList<Membership> page = Membership.Search<Membership>(QrySearchMemberByName.Query(usernameToMatch, application.ID, pageSize, pageIndex));
+                totalRecords = QrySearchMemberByName.QueryCount(usernameToMatch, application.ID).UniqueResult<int>();
+
+                foreach (Membership appUser in page)
+                {
+                    users.Add(appUser.ToMembershipUser(Name));
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new ProviderException("Unable to get users by name.", ex);
+            }
+
+            // Return the result of the operation.
+            return users;
         }
 
         public override SystemWeb.MembershipUserCollection GetAllUsers(int pageIndex, int pageSize, out int totalRecords)
@@ -525,7 +605,44 @@ namespace System.BusinessObjects.Membership
 
         public override SystemWeb.MembershipUser GetUser(object providerUserKey, bool userIsOnline)
         {
-            throw new NotImplementedException();
+            // Assume we were unable to find the user.
+            SystemWeb.MembershipUser user = null;
+            Membership member = null;
+
+            // Ensure the provider key is valid.
+            if (null == providerUserKey)
+            {
+                throw (new ArgumentNullException("providerUserKey"));
+            }
+
+            // Get the user record from the data store.
+            try
+            {
+                member = Membership.Load<Membership>((Guid)providerUserKey);
+                if (member != null)
+                {
+                    user = member.ToMembershipUser(Name);
+                }
+                else
+                {
+                    throw new ProviderException(STR_UnableToGetMembershipUser);
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new ProviderException(STR_UnableToGetMembershipUser);
+            }
+
+            // Determine if we need to update the activity information.
+            if (userIsOnline && (member != null))
+            {
+                // Update the last activity timestamp (LastActivityDate).
+                member.LastActivityDate = DateTime.Now;
+                member.Save();
+            }
+
+            // Return the resulting user.
+            return user;
         }
 
         public override string GetUserNameByEmail(string email)
@@ -564,7 +681,78 @@ namespace System.BusinessObjects.Membership
 
         public override string ResetPassword(string username, string answer)
         {
-            throw new NotImplementedException();
+            // Prepare a placeholder for the new passowrd.
+            string newPassword;
+
+            // Ensure password retrievals are allowed.
+            if (!EnablePasswordReset)
+            {
+                throw new SystemWeb.MembershipPasswordException("Password reset is not enabled.");
+            }
+
+            Membership user = Membership.Fetch<Membership>(QryFetchMemberByName.Query(username, application.ID));
+
+            // Determine if a valid answer has been given if question and answer is required.
+            if ((null == answer) && RequiresQuestionAndAnswer)
+            {
+                user.FailedPasswordAnswerAttemptCount++;
+                user.Save();
+
+                throw new SystemWeb.MembershipPasswordException("Password answer required for reset.");
+            }
+
+            // Generate a new random password of the specified length.
+            newPassword = SystemWeb.Membership.GeneratePassword(minRequiredPasswordLength, MinRequiredNonAlphanumericCharacters);
+
+            // Raise the ValidatingPassword event in case an event handler has been defined.
+            SystemWeb.ValidatePasswordEventArgs args = new SystemWeb.ValidatePasswordEventArgs(username, newPassword, true);
+            OnValidatingPassword(args);
+            if (args.Cancel)
+            {
+                // Check for a specific error message.
+                if (null != args.FailureInformation)
+                {
+                    throw (args.FailureInformation);
+                }
+                else
+                {
+                    throw new SystemWeb.MembershipPasswordException("Password reset cancelled due to new password validation.");
+                }
+            }
+
+            if (null != user)
+            {
+                // Determine if the user is locked out of the system.
+                if (user.IsLockedOut)
+                {
+                    throw new SystemWeb.MembershipPasswordException(STR_PasswordResetCancelledBecauseAccountItLocked);
+                }
+
+                // Determine if the user is required to answer a password question.
+                if (RequiresQuestionAndAnswer && !CheckPassword(answer, user.PasswordAnswer, user.PasswordSalt))
+                {
+                    user.FailedPasswordAnswerAttemptCount++;
+                    user.Save();
+
+                    throw new SystemWeb.MembershipPasswordException("Password reset cancelled because security answer was incorrect.");
+                }
+
+                // Update user record with the new password.
+                try
+                {
+                    user.Password = EncodePassword(newPassword, user.PasswordSalt);
+                    user.LastPasswordChangedDate = DateTime.Now;
+                    user.LastActivityDate = DateTime.Now;
+                    user.Save();
+                }
+                catch
+                {
+                    throw new SystemWeb.MembershipPasswordException(STR_PasswordResetCancelledBecauseAccountItLocked);
+                }
+            }
+
+            // Return the resulting new password.
+            return newPassword;
         }
 
         public override bool UnlockUser(string userName)
@@ -769,7 +957,6 @@ namespace System.BusinessObjects.Membership
             }
             return bytes;
         }
-
         public static string BytesToHexString(byte[] bytes)
         {
             StringBuilder hexString = new StringBuilder(64);

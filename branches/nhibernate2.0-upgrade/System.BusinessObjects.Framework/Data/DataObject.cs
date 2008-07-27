@@ -152,7 +152,7 @@ namespace System.BusinessObjects.Data
         }
 
         /// <summary>
-        /// Specifies if this object should automatically flush changes to the datastore as they are called
+        /// Specifies if this object should automatically flush an 'Update' changes to the datastore as they are called
         /// </summary>
         [XmlIgnore]
         public virtual bool AutoFlush

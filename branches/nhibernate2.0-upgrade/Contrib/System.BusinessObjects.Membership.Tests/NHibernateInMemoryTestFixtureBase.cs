@@ -7,9 +7,6 @@ using NHibernate.Cfg;
 using NHibernate.Tool.hbm2ddl;
 using System.Collections.Generic;
 
-//#if !NUNIT
-//    using Microsoft.VisualStudio.TestTools.UnitTesting;
-//#else
 using NUnit.Framework;
 using TestClass = NUnit.Framework.TestFixtureAttribute;
 using TestMethod = NUnit.Framework.TestAttribute;
@@ -18,7 +15,6 @@ using TestCleanup = NUnit.Framework.TearDownAttribute;
 using ClassInitialize = NUnit.Framework.TestFixtureSetUpAttribute;
 using ClassCleanup = NUnit.Framework.TestFixtureTearDownAttribute;
 
-//#endif
 
 namespace System.BusinessObjects.Membership.Tests
 {
@@ -33,42 +29,27 @@ namespace System.BusinessObjects.Membership.Tests
 
             protected ISession session;
 
-//#if !NUNIT
-//            private TestContext testContextInstance;
-//            /// <summary>
-//            ///Gets or sets the test context which provides
-//            ///information about and functionality for the current test run.
-//            ///</summary>
-//            public TestContext TestContext
-//            {
-//                get
-//                {
-//                    return testContextInstance;
-//                }
-//                set
-//                {
-//                    testContextInstance = value;
-//                }
-//            }
-//#endif
-
             [TestInitialize]
             public void Setup()
             {
                 OneTimeInitalize(typeof(System.BusinessObjects.Membership.Membership).Assembly, this.GetType().Assembly);
                 NHibernateSessionProvider.CurrentFactory = sessionFactory;
                 session = CreateSession();
-                NHibernateSessionProvider.Provider.CurrentSession = session;
                 session.BeginTransaction();
+                NHibernateSessionProvider.Provider.CurrentSession = session;
             }
 
             [TestCleanup]
             public void FixtureTearDown()
             {
+                if (session != null)
+                    session.Flush();
+
+                if (session.Transaction != null)
+                    session.Transaction.Rollback();
+
                 session.Dispose();
                 session = null;
-
-                //sessionFactory.Dispose();
             }
 
 

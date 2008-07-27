@@ -30,6 +30,7 @@ namespace System.BusinessObjects.Membership
             {
                 BeginEdit();
                 SetValue("ApplicationName", value);
+                SetValue("LoweredApplicationName", value.ToLower());
             }
         }
 
@@ -38,8 +39,6 @@ namespace System.BusinessObjects.Membership
             get { return GetValue<String>("LoweredApplicationName"); }
             set
             {
-                BeginEdit();
-                SetValue("LoweredApplicationName", value);
             }
         }
 

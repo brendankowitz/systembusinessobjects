@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using Iesi.Collections.Generic;
 using System.BusinessObjects.Data;
 using System.BusinessObjects.Validation;
+using System.BusinessObjects.Transactions;
 
 namespace System.BusinessObjects.Membership
 {
@@ -12,6 +13,16 @@ namespace System.BusinessObjects.Membership
     /// </summary>
     public class Role : DataObject<Role>
     {
+        public Role()
+        {
+            OnSaved += Role_OnSaved;
+        }
+
+        void Role_OnSaved(object sender, EventArgs e)
+        {
+            //Flush all saves from this object to the db.
+            UnitOfWork.CurrentSession.Flush();
+        }
 
         public virtual Guid ID
         {
@@ -30,6 +41,7 @@ namespace System.BusinessObjects.Membership
             {
                 BeginEdit();
                 SetValue("RoleName", value);
+                SetValue("LoweredRoleName", value.ToLower());
             }
         }
 
@@ -38,8 +50,6 @@ namespace System.BusinessObjects.Membership
             get { return GetValue<String>("LoweredRoleName"); }
             set
             {
-                BeginEdit();
-                SetValue("LoweredRoleName", value);
             }
         }
 
@@ -67,6 +77,18 @@ namespace System.BusinessObjects.Membership
             }
         }
 
+        private ISet<User> _Users = new HashedSet<User>();
+        public virtual ISet<User> Users
+        {
+            get
+            {
+                return _Users;
+            }
+            set
+            {
+                _Users = value;
+            }
+        }
 
     }
 }
