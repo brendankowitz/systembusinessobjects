@@ -28,7 +28,6 @@ namespace System.BusinessObjects.Membership.Tests
         }
 
         [Test]
-        [Ignore("Fails when run as part of a fixture...dont know why...maybe sqlite")]
         public void CanFetchApplication()
         {
             System.Web.Security.MembershipCreateStatus status;

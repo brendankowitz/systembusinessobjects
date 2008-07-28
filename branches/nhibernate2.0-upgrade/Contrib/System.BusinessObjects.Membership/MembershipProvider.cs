@@ -16,6 +16,18 @@ namespace System.BusinessObjects.Membership
         private const string STR_TooManyMatchingUsers = "Too many matching users";
         private const string STR_PasswordResetCancelledBecauseAccountItLocked = "Password reset cancelled because account it locked.";
 
+        public Application Application
+        {
+            get
+            {
+                return application;
+            }
+            set
+            {
+                application = value;
+            }
+        }
+
         #region Fields
         private Application application = new Application();
         private bool requiresQuestionAndAnswer;
@@ -40,8 +52,8 @@ namespace System.BusinessObjects.Membership
         /// </returns>
         public override string ApplicationName
         {
-            get { return application.ApplicationName; }
-            set { application.ApplicationName = value; }
+            get { return Application.ApplicationName; }
+            set { Application.ApplicationName = value; }
         }
         /// <summary>
         /// Gets a value indicating whether the membership provider is configured to require
@@ -189,54 +201,54 @@ namespace System.BusinessObjects.Membership
 
             // Load configuration data.
             string appName = GetConfigValue(config["applicationName"], HostingEnvironment.ApplicationVirtualPath);
-            application = Application.Fetch(QryFetchApplicationByName.Query(appName));
+            Application = Application.Fetch(QryFetchApplicationByName.Query(appName));
 
-            if(application == null)
+            if (Application == null)
             {
-                application = new Application()
+                Application = new Application()
                 {
                     ID = Guid.NewGuid(),
                     ApplicationName = appName,
                     Description = config["description"],
                     LoweredApplicationName = appName.ToLower()
                 };
-                application.Save();
+                Application.Save();
             }
 
-             requiresQuestionAndAnswer = Convert.ToBoolean(GetConfigValue(config["requiresQuestionAndAnswer"], "False"));
-             requiresUniqueEmail = Convert.ToBoolean(GetConfigValue(config["requiresUniqueEmail"], "True"));
-             enablePasswordRetrieval = Convert.ToBoolean(GetConfigValue(config["enablePasswordRetrieval"], "True"));
-             enablePasswordReset = Convert.ToBoolean(GetConfigValue(config["enablePasswordReset"], "True"));
-             maxInvalidPasswordAttempts = Convert.ToInt32(GetConfigValue(config["maxInvalidPasswordAttempts"], "5"));
-             passwordAttemptWindow = Convert.ToInt32(GetConfigValue(config["passwordAttemptWindow"], "10"));
-             minRequiredPasswordLength = Convert.ToInt32(GetConfigValue(config["minRequiredPasswordLength"], "7"));
-             minRequiredNonAlphanumericCharacters = Convert.ToInt32(GetConfigValue(config["minRequiredAlphaNumericCharacters"], "1"));
-             passwordStrengthRegularExpression = Convert.ToString(GetConfigValue(config["passwordStrengthRegularExpression"], string.Empty));
+            requiresQuestionAndAnswer = Convert.ToBoolean(GetConfigValue(config["requiresQuestionAndAnswer"], "False"));
+            requiresUniqueEmail = Convert.ToBoolean(GetConfigValue(config["requiresUniqueEmail"], "True"));
+            enablePasswordRetrieval = Convert.ToBoolean(GetConfigValue(config["enablePasswordRetrieval"], "True"));
+            enablePasswordReset = Convert.ToBoolean(GetConfigValue(config["enablePasswordReset"], "True"));
+            maxInvalidPasswordAttempts = Convert.ToInt32(GetConfigValue(config["maxInvalidPasswordAttempts"], "5"));
+            passwordAttemptWindow = Convert.ToInt32(GetConfigValue(config["passwordAttemptWindow"], "10"));
+            minRequiredPasswordLength = Convert.ToInt32(GetConfigValue(config["minRequiredPasswordLength"], "7"));
+            minRequiredNonAlphanumericCharacters = Convert.ToInt32(GetConfigValue(config["minRequiredAlphaNumericCharacters"], "1"));
+            passwordStrengthRegularExpression = Convert.ToString(GetConfigValue(config["passwordStrengthRegularExpression"], string.Empty));
 
-             // Initialize the password format.
-             switch (GetConfigValue(config["passwordFormat"], "Hashed"))
-             {
-                 case "Hashed":
-                     passwordFormat = SystemWeb.MembershipPasswordFormat.Hashed;
-                     break;
-                 case "Encrypted":
-                     passwordFormat = SystemWeb.MembershipPasswordFormat.Encrypted;
-                     break;
-                 case "Clear":
-                     passwordFormat = SystemWeb.MembershipPasswordFormat.Clear;
-                     break;
-                 default:
-                     throw new ProviderException("password format not supported");
-             }
+            // Initialize the password format.
+            switch (GetConfigValue(config["passwordFormat"], "Hashed"))
+            {
+                case "Hashed":
+                    passwordFormat = SystemWeb.MembershipPasswordFormat.Hashed;
+                    break;
+                case "Encrypted":
+                    passwordFormat = SystemWeb.MembershipPasswordFormat.Encrypted;
+                    break;
+                case "Clear":
+                    passwordFormat = SystemWeb.MembershipPasswordFormat.Clear;
+                    break;
+                default:
+                    throw new ProviderException("password format not supported");
+            }
 
-             Configuration.Configuration cfg = WebConfigurationManager.OpenWebConfiguration(HostingEnvironment.ApplicationVirtualPath);
-             machineKey = (MachineKeySection)cfg.GetSection("system.web/machineKey");
-             if ("Auto".Equals(machineKey.Decryption))
-             {
-                 // Create our own key if one has not been specified.
-                 machineKey.DecryptionKey = CreateKey(24);
-                 machineKey.ValidationKey = CreateKey(64);
-             }
+            Configuration.Configuration cfg = WebConfigurationManager.OpenWebConfiguration(HostingEnvironment.ApplicationVirtualPath);
+            machineKey = (MachineKeySection)cfg.GetSection("system.web/machineKey");
+            if ("Auto".Equals(machineKey.Decryption))
+            {
+                // Create our own key if one has not been specified.
+                machineKey.DecryptionKey = CreateKey(24);
+                machineKey.ValidationKey = CreateKey(64);
+            }
         }
         #endregion Initialization
 
@@ -265,7 +277,7 @@ namespace System.BusinessObjects.Membership
                 }
 
                 // Get the user from the data store.
-                Membership user = Membership.Fetch<Membership>(QryFetchMemberByName.Query(username, application.ID));
+                Membership user = Membership.Fetch<Membership>(QryFetchMemberByName.Query(username, Application.ID));
 
                 if (null != user)
                 {
@@ -300,7 +312,7 @@ namespace System.BusinessObjects.Membership
             if (ValidateUser(username, password))
             {
                 // Get the user from the data store.
-                Membership user = Membership.Fetch<Membership>(QryFetchMemberByName.Query(username, application.ID));
+                Membership user = Membership.Fetch<Membership>(QryFetchMemberByName.Query(username, Application.ID));
                 if (null != user)
                 {
                     try
@@ -328,9 +340,9 @@ namespace System.BusinessObjects.Membership
         public override SystemWeb.MembershipUser CreateUser(string username, string password, string email, string passwordQuestion, string passwordAnswer, bool isApproved, object providerUserKey, out SystemWeb.MembershipCreateStatus status)
         {
             SystemWeb.ValidatePasswordEventArgs args = new SystemWeb.ValidatePasswordEventArgs(username, password, true);
-            
+
             OnValidatingPassword(args);
-            
+
             if (args.Cancel)
             {
                 status = SystemWeb.MembershipCreateStatus.InvalidPassword;
@@ -343,7 +355,7 @@ namespace System.BusinessObjects.Membership
                 return null;
             }
 
-            if (QryFetchUserByName.QueryCount(username, application.ID).UniqueResult<int>() > 0)
+            if (QryFetchUserByName.QueryCount(username, Application.ID).UniqueResult<int>() > 0)
             {
                 status = SystemWeb.MembershipCreateStatus.DuplicateUserName;
             }
@@ -352,7 +364,7 @@ namespace System.BusinessObjects.Membership
                 Membership user = new Membership();
                 user.UserName = username;
                 user.IsAnonymous = false;
-                user.Application = application;
+                user.Application = Application;
 
                 user.Password = EncodePassword(password, machineKey.ValidationKey);
                 user.PasswordFormat = (int)PasswordFormat;
@@ -387,7 +399,7 @@ namespace System.BusinessObjects.Membership
             try
             {
                 // Get the user information.
-                IList<Membership> members = Membership.Search <Membership>(QryFetchMemberByName.Query(username, application.ID));
+                IList<Membership> members = Membership.Search<Membership>(QryFetchMemberByName.Query(username, Application.ID));
 
                 if (members != null && members.Count == 1)
                 {
@@ -426,9 +438,9 @@ namespace System.BusinessObjects.Membership
                 emailToMatch = emailToMatch.Replace('?', '_');
 
                 // Perform the search.
-                IList<Membership> page = Membership.Search<Membership>(QrySearchMemberByEmail.Query(emailToMatch, application.ID, pageSize, pageIndex));
-                totalRecords = QrySearchMemberByEmail.QueryCount(emailToMatch, application.ID).UniqueResult<int>();
-                
+                IList<Membership> page = Membership.Search<Membership>(QrySearchMemberByEmail.Query(emailToMatch, Application.ID, pageSize, pageIndex));
+                totalRecords = QrySearchMemberByEmail.QueryCount(emailToMatch, Application.ID).UniqueResult<int>();
+
                 foreach (Membership appUser in page)
                 {
                     users.Add(appUser.ToMembershipUser(Name));
@@ -456,8 +468,8 @@ namespace System.BusinessObjects.Membership
                 usernameToMatch = usernameToMatch.Replace('?', '_');
 
                 // Perform the search.
-                IList<Membership> page = Membership.Search<Membership>(QrySearchMemberByName.Query(usernameToMatch, application.ID, pageSize, pageIndex));
-                totalRecords = QrySearchMemberByName.QueryCount(usernameToMatch, application.ID).UniqueResult<int>();
+                IList<Membership> page = Membership.Search<Membership>(QrySearchMemberByName.Query(usernameToMatch, Application.ID, pageSize, pageIndex));
+                totalRecords = QrySearchMemberByName.QueryCount(usernameToMatch, Application.ID).UniqueResult<int>();
 
                 foreach (Membership appUser in page)
                 {
@@ -480,8 +492,8 @@ namespace System.BusinessObjects.Membership
 
             try
             {
-                IList<Membership> page = Membership.Search<Membership>(QrySearchAllMembers.Query(application.ID, pageIndex, pageSize));
-                totalRecords = QrySearchAllMembers.QueryCount(application.ID).UniqueResult<int>();
+                IList<Membership> page = Membership.Search<Membership>(QrySearchAllMembers.Query(Application.ID, pageIndex, pageSize));
+                totalRecords = QrySearchAllMembers.QueryCount(Application.ID).UniqueResult<int>();
 
                 foreach (Membership appUser in page)
                 {
@@ -509,7 +521,7 @@ namespace System.BusinessObjects.Membership
                 TimeSpan onlineSpan = new TimeSpan(0, SystemWeb.Membership.UserIsOnlineTimeWindow, 0);
                 DateTime compareTime = DateTime.Now.Subtract(onlineSpan);
 
-                numberOfUsersOnline = QrySearchRecentlyActiveUsers.QueryCount(compareTime, application.ID).UniqueResult<int>();
+                numberOfUsersOnline = QrySearchRecentlyActiveUsers.QueryCount(compareTime, Application.ID).UniqueResult<int>();
             }
             catch (Exception ex)
             {
@@ -537,7 +549,7 @@ namespace System.BusinessObjects.Membership
             }
 
             // Get the user from the data store.
-            Membership user = Membership.Fetch<Membership>(QryFetchMemberByName.Query(username, application.ID));
+            Membership user = Membership.Fetch<Membership>(QryFetchMemberByName.Query(username, Application.ID));
             if (null != user)
             {
                 // Determine if the user is required to answer a password question.
@@ -574,7 +586,7 @@ namespace System.BusinessObjects.Membership
             // Get the user record from the data store.
             try
             {
-                IList<Membership> members = Membership.Search <Membership>(QryFetchMemberByName.Query(username, application.ID));
+                IList<Membership> members = Membership.Search<Membership>(QryFetchMemberByName.Query(username, Application.ID));
 
                 if (members.Count == 1)
                 {
@@ -659,7 +671,7 @@ namespace System.BusinessObjects.Membership
             // Get the user record from the data store.
             try
             {
-                IList<Membership> list = Membership.Search<Membership>(QrySearchMemberByEmail.Query(email, application.ID));
+                IList<Membership> list = Membership.Search<Membership>(QrySearchMemberByEmail.Query(email, Application.ID));
 
                 if (1 == list.Count)
                 {
@@ -690,7 +702,7 @@ namespace System.BusinessObjects.Membership
                 throw new SystemWeb.MembershipPasswordException("Password reset is not enabled.");
             }
 
-            Membership user = Membership.Fetch<Membership>(QryFetchMemberByName.Query(username, application.ID));
+            Membership user = Membership.Fetch<Membership>(QryFetchMemberByName.Query(username, Application.ID));
 
             // Determine if a valid answer has been given if question and answer is required.
             if ((null == answer) && RequiresQuestionAndAnswer)
@@ -763,7 +775,7 @@ namespace System.BusinessObjects.Membership
             try
             {
                 // Get the user record form the data store.
-                Membership member = Membership.Fetch<Membership>(QryFetchMemberByName.Query(userName, application.ID));
+                Membership member = Membership.Fetch<Membership>(QryFetchMemberByName.Query(userName, Application.ID));
 
                 if (member != null)
                 {
@@ -788,7 +800,7 @@ namespace System.BusinessObjects.Membership
         {
             try
             {
-                Membership member = Membership.Fetch<Membership>(QryFetchMemberByName.Query(user.UserName, application.ID));
+                Membership member = Membership.Fetch<Membership>(QryFetchMemberByName.Query(user.UserName, Application.ID));
                 member.FromMembershipUser(user);
                 member.Save();
             }
@@ -804,7 +816,7 @@ namespace System.BusinessObjects.Membership
             bool isValid = false;
 
             // Get the password and the flag indicating the user is approved.
-            Membership member = Membership.Fetch<Membership>(QryFetchMemberByName.Query(username, application.ID));
+            Membership member = Membership.Fetch<Membership>(QryFetchMemberByName.Query(username, Application.ID));
 
             if (null != member)
             {

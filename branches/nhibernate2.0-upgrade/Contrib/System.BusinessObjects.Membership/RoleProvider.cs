@@ -14,10 +14,28 @@ namespace System.BusinessObjects.Membership
     {
         private Application application = new Application();
 
+        public Application Application
+        {
+            get
+            {
+                return application;
+            }
+            set
+            {
+                application = value;
+            }
+        }
+
         public override string ApplicationName
         {
-            get { return application.ApplicationName; }
-            set { application.ApplicationName = value; }
+            get
+            {
+                return Application.ApplicationName;
+            }
+            set
+            {
+                Application.ApplicationName = value;
+            }
         }
 
         public override void Initialize(string name, NameValueCollection config)
@@ -42,18 +60,18 @@ namespace System.BusinessObjects.Membership
 
             // Load configuration data.
             string appName = GetConfigValue(config["applicationName"], HostingEnvironment.ApplicationVirtualPath);
-            application = Application.Fetch(QryFetchApplicationByName.Query(appName));
+            Application = Application.Fetch(QryFetchApplicationByName.Query(appName));
 
-            if (application == null)
+            if (Application == null)
             {
-                application = new Application()
+                Application = new Application()
                 {
                     ID = Guid.NewGuid(),
                     ApplicationName = appName,
                     Description = config["description"],
                     LoweredApplicationName = appName.ToLower()
                 };
-                application.Save();
+                Application.Save();
             }
         }
 
@@ -65,10 +83,14 @@ namespace System.BusinessObjects.Membership
                 // For every user in the given list attempt to add to the given roles.
                 foreach (string userName in usernames)
                 {
-                    User user = User.Fetch<User>(QryFetchUserByName.Query(userName, application.ID));
+                    User user = User.Fetch<User>(QryFetchUserByName.Query(userName, Application.ID));
+                    if (user == null)
+                    {
+                        throw new ProviderException(string.Format("Unable find user {0} to add to role.", userName));
+                    }
                     foreach (string roleName in roleNames)
                     {
-                        Role role = Role.Fetch(QryFetchRoleByName.Query(roleName, application.ID));
+                        Role role = Role.Fetch(QryFetchRoleByName.Query(roleName, Application.ID));
                         int i = role.Users.Count;
 
                         role.Users.Add(user);
@@ -94,7 +116,7 @@ namespace System.BusinessObjects.Membership
             {
                 Role role = new Role();
                 role.RoleName = roleName;
-                role.Application = application;
+                role.Application = Application;
 
                 role.Save();
             }
@@ -118,7 +140,7 @@ namespace System.BusinessObjects.Membership
             try
             {
                 // Get the role information.
-                Role role = Role.Fetch(QryFetchRoleByName.Query(roleName, application.ID));
+                Role role = Role.Fetch(QryFetchRoleByName.Query(roleName, Application.ID));
 
                 if (role != null)
                 {
@@ -154,7 +176,7 @@ namespace System.BusinessObjects.Membership
                 usernameToMatch = usernameToMatch.Replace('?', '_');
 
                 // Perform the search.
-                IList<User> users = User.Search<User>(QrySearchUsersInRole.Query(roleName, application.ID, usernameToMatch));
+                IList<User> users = User.Search<User>(QrySearchUsersInRole.Query(roleName, Application.ID, usernameToMatch));
 
                 if (null != users)
                 {
@@ -182,7 +204,7 @@ namespace System.BusinessObjects.Membership
             // Load the list of roles for the configured application name.
             try
             {
-                IList<Role> list = Role.Search(QrySearchRoles.Query(application.ID));
+                IList<Role> list = Role.Search(QrySearchRoles.Query(Application.ID));
 
                 if (0 < list.Count)
                 {
@@ -211,8 +233,8 @@ namespace System.BusinessObjects.Membership
             // Load the list from the data store.
             try
             {
-                Membership user = Membership.Fetch<Membership>(QryFetchMemberByName.Query(username, application.ID));
-                IList<Role> roles = Role.Search(QrySearchRoles.Query(user.ID, application.ID));
+                Membership user = Membership.Fetch<Membership>(QryFetchMemberByName.Query(username, Application.ID));
+                IList<Role> roles = Role.Search(QrySearchRoles.Query(user.ID, Application.ID));
 
                 if (null != roles)
                 {
@@ -240,8 +262,8 @@ namespace System.BusinessObjects.Membership
             // Load the list from the data store.
             try
             {
-                Role role = Role.Fetch(QryFetchRoleByName.Query(roleName, application.ID));
-                IList<User> users = User.Search(QrySearchUsersInRole.Query(role.ID, application.ID));
+                Role role = Role.Fetch(QryFetchRoleByName.Query(roleName, Application.ID));
+                IList<User> users = User.Search(QrySearchUsersInRole.Query(role.ID, Application.ID));
 
                 if (null != users)
                 {
@@ -266,7 +288,7 @@ namespace System.BusinessObjects.Membership
             bool isInRole = false;
             try
             {
-                isInRole = QrySearchUsersInRole.QueryCount(roleName, application.ID, username).UniqueResult<long>() > 0;
+                isInRole = QrySearchUsersInRole.QueryCount(roleName, Application.ID, username).UniqueResult<long>() > 0;
             }
             catch (Exception ex)
             {
@@ -281,11 +303,11 @@ namespace System.BusinessObjects.Membership
             {
                 foreach (string userName in usernames)
                 {
-                    User user = User.Fetch<User>(QryFetchUserByName.Query(userName, application.ID));
+                    User user = User.Fetch<User>(QryFetchUserByName.Query(userName, Application.ID));
 
                     foreach (string roleName in roleNames)
                     {
-                        Role role = Role.Fetch(QryFetchRoleByName.Query(roleName, application.ID));
+                        Role role = Role.Fetch(QryFetchRoleByName.Query(roleName, Application.ID));
                         role.AutoFlush = false; //turn framework autoflushing off
 
                         role.Users.Remove(user);
@@ -310,7 +332,7 @@ namespace System.BusinessObjects.Membership
             // Check against the data store if the role exists.
             try
             {
-                exists = (QryFetchRoleByName.QueryCount(roleName, application.ID).UniqueResult<int>() > 0);
+                exists = (QryFetchRoleByName.QueryCount(roleName, Application.ID).UniqueResult<int>() > 0);
             }
             catch (Exception ex)
             {

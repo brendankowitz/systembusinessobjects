@@ -612,7 +612,7 @@ namespace System.BusinessObjects.Data
         /// <summary>
         /// Evicts an existing instance of this business object from NHibernate's session cache
         /// </summary>
-        public static void Evict<T>(int ID) where T : DataObject
+        public static void Evict<T>(object ID) where T : DataObject
         {
             T existingObj = UnitOfWork.CurrentSession.Get<T>(ID);
             if (existingObj != null)

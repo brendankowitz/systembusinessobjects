@@ -100,7 +100,7 @@ namespace System.BusinessObjects.Data
         /// <summary>
         /// Evicts an existing instance of this business object from NHibernate's session cache
         /// </summary>
-        public static void Evict(int ID)
+        public static void Evict(object ID)
         {
             Evict<T>(ID);
         }

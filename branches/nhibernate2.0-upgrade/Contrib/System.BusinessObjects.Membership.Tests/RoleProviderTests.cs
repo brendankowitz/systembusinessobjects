@@ -35,7 +35,9 @@ namespace System.BusinessObjects.Membership.Tests
         public void GetRolesForUser()
         {
             System.Web.Security.Roles.CreateRole("admin");
-            new MembershipProviderTests().CreateUser();
+            System.Web.Security.MembershipCreateStatus status;
+            System.Web.Security.MembershipUser user = System.Web.Security.Membership.CreateUser("user1", "password", "test@test.com",
+                                                       "question?", "yes", true, out status);
 
             System.Web.Security.Roles.AddUsersToRole(new string[] { "user1" }, "admin");
 
@@ -47,7 +49,9 @@ namespace System.BusinessObjects.Membership.Tests
         public void GetUsersInRole()
         {
             System.Web.Security.Roles.CreateRole("admin");
-            new MembershipProviderTests().CreateUser();
+            System.Web.Security.MembershipCreateStatus status;
+            System.Web.Security.MembershipUser user = System.Web.Security.Membership.CreateUser("user1", "password", "test@test.com",
+                                                       "question?", "yes", true, out status);
 
             System.Web.Security.Roles.AddUsersToRole(new string[] { "user1" }, "admin");
 
@@ -73,7 +77,6 @@ namespace System.BusinessObjects.Membership.Tests
             string[] list = System.Web.Security.Roles.FindUsersInRole("admin", "?ser%");
 
             Assert.AreEqual(2, list.Length);
-            Assert.AreEqual("user1", list[0]);
         }
 
         [Test]

@@ -13,17 +13,6 @@ namespace System.BusinessObjects.Membership
     /// </summary>
     public class User : DataObject<User>
     {
-        public User()
-        {
-            OnSaved += User_OnSaved;
-        }
-
-        void User_OnSaved(object sender, EventArgs e)
-        {
-            //Flush all saves from this object to the db.
-            UnitOfWork.CurrentSession.Flush();
-        }
-
         public virtual Guid ID
         {
             get { return GetValue<Guid>("ID"); }

@@ -26,6 +26,7 @@ namespace System.BusinessObjects.Membership.Tests
         {
             protected static ISessionFactory sessionFactory;
             protected static NHibernate.Cfg.Configuration configuration;
+            Application app = new Application();
 
             protected ISession session;
 
@@ -37,6 +38,13 @@ namespace System.BusinessObjects.Membership.Tests
                 session = CreateSession();
                 session.BeginTransaction();
                 NHibernateSessionProvider.Provider.CurrentSession = session;
+
+                app.ApplicationName = "Blazing.Membership";
+                app.Description = "NHibernateMembership";
+                app.Save();
+
+                ((MembershipProvider)System.Web.Security.Membership.Provider).Application = app;
+                ((RoleProvider)System.Web.Security.Roles.Provider).Application = app;
             }
 
             [TestCleanup]
