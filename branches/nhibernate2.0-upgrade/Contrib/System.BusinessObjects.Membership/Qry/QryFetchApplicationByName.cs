@@ -1,9 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using NHibernate;
 using System.BusinessObjects.Transactions;
+using NHibernate;
 using NHibernate.Criterion;
 
 namespace System.BusinessObjects.Membership.Qry

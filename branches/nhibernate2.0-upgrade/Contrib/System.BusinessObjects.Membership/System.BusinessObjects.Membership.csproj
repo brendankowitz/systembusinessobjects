@@ -10,7 +10,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>System.BusinessObjects.Membership</RootNamespace>
     <AssemblyName>System.BusinessObjects.Membership</AssemblyName>
-    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v2.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <SignAssembly>true</SignAssembly>
     <AssemblyOriginatorKeyFile>..\..\System.BusinessObjects.Framework\SystemBusinessObjectsPublic.snk</AssemblyOriginatorKeyFile>
@@ -47,9 +47,6 @@
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.configuration" />
-    <Reference Include="System.Core">
-      <RequiredTargetFramework>3.5</RequiredTargetFramework>
-    </Reference>
     <Reference Include="System.Data" />
     <Reference Include="System.Web" />
     <Reference Include="System.Xml" />
@@ -74,6 +71,7 @@
     <Compile Include="Qry\QrySearchMemberByEmail.cs" />
     <Compile Include="Qry\QryFetchUserByName.cs" />
     <Compile Include="Qry\QrySearchMemberByName.cs" />
+    <Compile Include="Qry\QrySearchProfiles.cs" />
     <Compile Include="Qry\QrySearchRecentlyActiveUsers.cs" />
     <Compile Include="Qry\QrySearchRoles.cs" />
     <Compile Include="Qry\QrySearchUsersInRole.cs" />

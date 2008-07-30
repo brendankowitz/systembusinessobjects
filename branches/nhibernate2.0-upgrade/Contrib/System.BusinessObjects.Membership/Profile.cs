@@ -52,5 +52,12 @@ namespace System.BusinessObjects.Membership
                 SetValue("LastUpdatedDate", value);
             }
         }
+
+        public virtual System.Web.Profile.ProfileInfo ToProfileInfo()
+        {
+            System.Web.Profile.ProfileInfo retval = new System.Web.Profile.ProfileInfo(
+                UserName, IsAnonymous, LastActivityDate, LastUpdatedDate, PropertyValuesBinary != null ? PropertyValuesBinary.Length : 0);
+            return retval;
+        }
     }
 }

@@ -1,12 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Collections.Specialized;
 using System.BusinessObjects.Membership.Qry;
-using System.Web.Hosting;
-using System.Configuration.Provider;
 using System.BusinessObjects.Transactions;
+using System.Collections.Generic;
+using System.Collections.Specialized;
+using System.Configuration.Provider;
+using System.Web.Hosting;
 
 namespace System.BusinessObjects.Membership
 {
