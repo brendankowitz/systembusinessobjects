@@ -11,6 +11,8 @@
     <property name="IsAnonymous" column="IsAnonymous" type="System.Boolean" not-null="true" />
     <property name="LastActivityDate" column="LastActivityDate" type="System.DateTime" not-null="true" />
     <many-to-one name="Application" column="ApplicationId" class="Application" />
+
+    <one-to-one name="Profile" class="Profile" property-ref="User" constrained="false" cascade="all" />
       
  </class>
 </hibernate-mapping>

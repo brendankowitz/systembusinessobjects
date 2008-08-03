@@ -10,8 +10,17 @@ namespace System.BusinessObjects.Membership
     /// <summary>
     /// Profile : BusinessObject
     /// </summary>
-    public class Profile : User
+    public class Profile : DataObject<Profile>
     {
+        public virtual Guid ID
+        {
+            get { return GetValue<Guid>("ID"); }
+            set
+            {
+                BeginEdit();
+                SetValue("ID", value);
+            }
+        }
 
         public virtual String PropertyNames
         {
@@ -53,11 +62,18 @@ namespace System.BusinessObjects.Membership
             }
         }
 
-        public virtual System.Web.Profile.ProfileInfo ToProfileInfo()
+        private User _user;
+        public virtual User User
         {
-            System.Web.Profile.ProfileInfo retval = new System.Web.Profile.ProfileInfo(
-                UserName, IsAnonymous, LastActivityDate, LastUpdatedDate, PropertyValuesBinary != null ? PropertyValuesBinary.Length : 0);
-            return retval;
+            get
+            {
+                return _user;
+            }
+            set
+            {
+                _user = value;
+            }
         }
+
     }
 }

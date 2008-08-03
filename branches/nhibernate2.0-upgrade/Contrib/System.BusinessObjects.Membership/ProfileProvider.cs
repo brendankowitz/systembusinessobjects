@@ -1,12 +1,9 @@
 ﻿using System;
-using System.Web;
 using System.Collections.Specialized;
 using System.BusinessObjects.Membership.Qry;
 using System.Web.Hosting;
 using System.Collections.Generic;
-using System.BusinessObjects.Transactions;
 using System.Configuration.Provider;
-using System.Reflection;
 using System.Globalization;
 using System.Text;
 using System.IO;
@@ -149,7 +146,7 @@ namespace System.BusinessObjects.Membership
 
                 foreach (Profile p in list)
                 {
-                    retval.Add(p.ToProfileInfo());
+                    retval.Add(p.User.ToProfileInfo());
                 }
             }
             catch (Exception ex)
@@ -201,16 +198,31 @@ namespace System.BusinessObjects.Membership
                 {
                     try
                     {
-                        Profile profile = Profile.Fetch<Profile>(QrySearchProfiles.Query(objValue, Application.ID));
-                        if (profile == null)
+                        User u = User.Fetch<User>(QryFetchUserByName.Query(objValue, Application.ID));
+                        if (u == null)
+                        {
+                            u = new User();
+                            u.UserName = (objValue == Guid.Empty.ToString() ? Guid.NewGuid().ToString() : objValue);
+                            u.Application = Application;
+                            u.IsAnonymous = !userIsAuthenticated;
+                            u.Save();
+                        }
+
+                        if (u.Profile == null)
+                        {
+                            u.Profile = new Profile();
+                        }
+                        else if(u == null)
                             throw new ApplicationException(string.Format("Unable to find user '{0}'", objValue));
-                        profile.PropertyNames = allNames;
-                        profile.PropertyValuesString = allValues;
-                        profile.PropertyValuesBinary = buf;
-                        profile.IsAnonymous = !userIsAuthenticated;
-                        profile.LastActivityDate = DateTime.UtcNow;
-                        profile.LastUpdatedDate = DateTime.UtcNow;
-                        profile.Save();
+
+                        u.Profile.PropertyNames = allNames;
+                        u.Profile.PropertyValuesString = allValues;
+                        u.Profile.PropertyValuesBinary = buf;
+                        u.IsAnonymous = !userIsAuthenticated;
+                        u.LastActivityDate = DateTime.UtcNow;
+                        u.Profile.LastUpdatedDate = DateTime.UtcNow;
+                        u.Save();
+                        
                     }
                     catch(Exception ex)
                     {

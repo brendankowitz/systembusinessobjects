@@ -59,8 +59,6 @@
     <Compile Include="Membership.cs" />
     <Compile Include="MembershipProvider.cs" />
     <Compile Include="Paths.cs" />
-    <Compile Include="PersonalizationAllUser.cs" />
-    <Compile Include="PersonalizationPerUser.cs" />
     <Compile Include="Profile.cs" />
     <Compile Include="ProfileProvider.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -88,8 +86,6 @@
     <EmbeddedResource Include="Application.hbm.xml" />
     <EmbeddedResource Include="Membership.hbm.xml" />
     <EmbeddedResource Include="Paths.hbm.xml" />
-    <EmbeddedResource Include="PersonalizationAllUser.hbm.xml" />
-    <EmbeddedResource Include="PersonalizationPerUser.hbm.xml" />
     <EmbeddedResource Include="Profile.hbm.xml" />
     <EmbeddedResource Include="Role.hbm.xml" />
     <EmbeddedResource Include="User.hbm.xml" />

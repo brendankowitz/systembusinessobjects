@@ -85,5 +85,31 @@ namespace System.BusinessObjects.Membership
                 _Application = value;
             }
         }
+
+        private Profile _profile;
+        public virtual Profile Profile
+        {
+            get
+            {
+                return _profile;
+            }
+            set
+            {
+                _profile = value;
+                if (value != null && value.RowState == DataRowState.Detached)
+                    value.User = this;
+            }
+        }
+
+        public virtual System.Web.Profile.ProfileInfo ToProfileInfo()
+        {
+            System.Web.Profile.ProfileInfo retval = new System.Web.Profile.ProfileInfo(
+                UserName,
+                IsAnonymous,
+                LastActivityDate,
+                Profile.LastUpdatedDate,
+                Profile.PropertyValuesBinary != null ? Profile.PropertyValuesBinary.Length : 0);
+            return retval;
+        }
     }
 }
