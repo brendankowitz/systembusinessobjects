@@ -12,26 +12,11 @@ using System.BusinessObjects.Helpers;
 
 using NHibernate.Impl;
 using NHibernate;
+using NHibernate.Engine;
 
-//////If .net 2.0 SP1 is not installed, PropertyChangingEventArgs is not defined...
-//////
-//namespace System.ComponentModel
-//{
-//    public class PropertyChangingEventArgs : EventArgs
-//    {
-//        private string _propname;
-//        public PropertyChangingEventArgs(string propertyName)
-//        {
-//            _propname = propertyName;
-//        }
-//        public virtual string PropertyName { get { return _propname; } }
-//    }
-//    public delegate void PropertyChangingEventHandler(object sender, PropertyChangingEventArgs e);
-//    public interface INotifyPropertyChanging
-//    {
-//        event PropertyChangingEventHandler PropertyChanging;
-//    }
-//}
+#if DOT_NET_35
+using System.Linq;
+#endif
 
 namespace System.BusinessObjects.Data
 {
@@ -46,10 +31,10 @@ namespace System.BusinessObjects.Data
     /// </remarks>
     [Serializable]
     public abstract class DataObject : ICloneable, IEditableObject,
-        IDataErrorInfo, INotifyPropertyChanged, /*INotifyPropertyChanging,*/ NHibernate.Classic.IValidatable
+        IDataErrorInfo, INotifyPropertyChanged, INotifyPropertyChanging, NHibernate.Classic.IValidatable
     {
         #region Events
-        /*public virtual event PropertyChangingEventHandler PropertyChanging;*/
+        public virtual event PropertyChangingEventHandler PropertyChanging;
         public virtual event PropertyChangedEventHandler PropertyChanged;
         public virtual event EventHandler OnDeleting;
         public virtual event EventHandler OnDeleted;
@@ -75,7 +60,7 @@ namespace System.BusinessObjects.Data
         {
             get
             {
-                return ((SessionImpl)entitySession).GetEntry(this);
+                return ((SessionImpl)entitySession).PersistenceContext.GetEntry(this);
             }
         }
         private ISession entitySession
@@ -107,7 +92,6 @@ namespace System.BusinessObjects.Data
                     {
                         case DataRowState.Added:
                         case DataRowState.Detached:
-                            e.ExistsInDatabase = false;
                             break;
                         case DataRowState.Deleted:
                             //e.Status = Status.Deleted;
@@ -116,10 +100,8 @@ namespace System.BusinessObjects.Data
                             _mrowstate = DataRowState.Deleted;
                             break;
                         case DataRowState.Modified:
-                            e.ExistsInDatabase = true;
                             break;
                         case DataRowState.Unchanged:
-                            e.ExistsInDatabase = true;
                             e.Status = Status.Loaded;
                             break;
                     }
@@ -143,7 +125,7 @@ namespace System.BusinessObjects.Data
                             try
                             {
                                 int[] changes =
-                                    e.Persister.FindDirty(e.LoadedState, e.Persister.GetPropertyValues(this), this,
+                                    e.Persister.FindDirty(e.LoadedState, e.Persister.GetPropertyValues(this, EntityMode.Map), this,
                                                           ((SessionImpl)entitySession).
                                                               GetSessionImplementation());
                                 if (changes == null)
@@ -170,7 +152,7 @@ namespace System.BusinessObjects.Data
         }
 
         /// <summary>
-        /// Specifies if this object should automatically flush changes to the datastore as they are called
+        /// Specifies if this object should automatically flush an 'Update' changes to the datastore as they are called
         /// </summary>
         [XmlIgnore]
         public virtual bool AutoFlush
@@ -279,7 +261,7 @@ namespace System.BusinessObjects.Data
             {
                 obj = GetValue<object>(keyName, null);
             }
-            return (T)obj;
+            return (T) (obj ?? default(T));
         }
 
         /// <summary>
@@ -304,7 +286,10 @@ namespace System.BusinessObjects.Data
         /// Sets a property value in the internal property store.
         /// If a null is passed the property will be reset and removed.
         /// Uses the method name from the parent property
+        /// If using this method remember to add: [MethodImpl( MethodImplOptions.NoInlining )] 
+        /// to the method.
         /// </summary>
+        [System.Runtime.CompilerServices.MethodImpl(System.Runtime.CompilerServices.MethodImplOptions.NoInlining)]
         protected void SetValue(object value)
         {
             string propertyName = new Diagnostics.StackTrace().GetFrame(1).GetMethod().Name;
@@ -325,12 +310,12 @@ namespace System.BusinessObjects.Data
         {
             //Fire property changing event
             string propertyName = string.Empty;
-            if(PropertyChanged != null /* || PropertyChanging != null*/)
-                propertyName = keyName; // new Diagnostics.StackTrace().GetFrame(1).GetMethod().Name;
-            /*if (PropertyChanging != null && !string.IsNullOrEmpty(propertyName) && propertyName.Length > 3)
+            if(PropertyChanged != null || PropertyChanging != null)
+                propertyName = new Diagnostics.StackTrace().GetFrame(1).GetMethod().Name;
+            if (PropertyChanging != null && !string.IsNullOrEmpty(propertyName) && propertyName.Length > 3)
             {
                 PropertyChanging(this, new PropertyChangingEventArgs(propertyName.Substring(4)));
-            }*/
+            }
 
             //Update property value
             if (value == null) //set the property to null, this will work with the IsNull() method.
@@ -347,9 +332,9 @@ namespace System.BusinessObjects.Data
             }
 
             //Fire property changed event
-            if (PropertyChanged != null && !string.IsNullOrEmpty(propertyName))
+            if (PropertyChanged != null && !string.IsNullOrEmpty(propertyName) && propertyName.Length > 3)
             {
-               OnPropertyChanged(new PropertyChangedEventArgs(propertyName));
+               OnPropertyChanged(new PropertyChangedEventArgs(propertyName.Substring(4)));
             }
         }
 
@@ -520,7 +505,7 @@ namespace System.BusinessObjects.Data
         /// <summary>
         /// Loads a business object with the given ID
         /// </summary>
-        public static DataObject Load(int Id)
+        public static DataObject Load(object Id)
         {
             throw new NotImplementedException("Load not implemented at abstract DataObject level");
         }
@@ -528,7 +513,7 @@ namespace System.BusinessObjects.Data
         /// <summary>
         /// Loads a business object with the given ID
         /// </summary>
-        public static T Load<T>(int Id) where T : DataObject
+        public static T Load<T>(object Id) where T : DataObject
         {
             T newObj = UnitOfWork.CurrentSession.Get<T>(Id);
             return newObj;
@@ -537,7 +522,7 @@ namespace System.BusinessObjects.Data
         /// <summary>
         /// Loads a business object with the given ID
         /// </summary>
-        public static T Load<T>(int Id, ISession session) where T : DataObject
+        public static T Load<T>(object Id, ISession session) where T : DataObject
         {
             T newObj = session.Get<T>(Id);
             newObj._entitySession = session;
@@ -558,7 +543,7 @@ namespace System.BusinessObjects.Data
         /// <summary>
         /// Returns a list of all business objects of this type
         /// </summary>
-        public static IList<T> Search<T>(NHibernate.Expression.Order orderBy) where T : DataObject
+        public static IList<T> Search<T>(NHibernate.Criterion.Order orderBy) where T : DataObject
         {
             NHibernate.ICriteria qry = UnitOfWork.CurrentSession.CreateCriteria(typeof(T));
             qry.AddOrder(orderBy);
@@ -574,6 +559,17 @@ namespace System.BusinessObjects.Data
             IList<T> list = criteria.List<T>();
             return list;
         }
+
+#if DOT_NET_35
+        /// <summary>
+        /// Gets a strongly typed list of business objects based on a linq expression
+        /// </summary>
+        public static IList<T> Search<T>(IEnumerable<T> linqExpression) where T : DataObject
+        {
+            IList<T> list = linqExpression.ToList();
+            return list;
+        }
+#endif
 
         /// <summary>
         /// Gets a strongly typed list of business objects based on an NHibernate Query
@@ -593,6 +589,17 @@ namespace System.BusinessObjects.Data
             return item;
         }
 
+#if DOT_NET_35
+        /// <summary>
+        /// Gets a strongly typed business object based on a linq expression
+        /// </summary>
+        public static T Fetch<T>(IEnumerable<T> linqExpression) where T : DataObject
+        {
+            T item = linqExpression.FirstOrDefault();
+            return item;
+        }
+#endif
+
         /// <summary>
         /// Gets a strongly typed business object based on an NHibernate Query
         /// </summary>
@@ -605,7 +612,7 @@ namespace System.BusinessObjects.Data
         /// <summary>
         /// Evicts an existing instance of this business object from NHibernate's session cache
         /// </summary>
-        public static void Evict<T>(int ID) where T : DataObject
+        public static void Evict<T>(object ID) where T : DataObject
         {
             T existingObj = UnitOfWork.CurrentSession.Get<T>(ID);
             if (existingObj != null)
@@ -681,40 +688,21 @@ namespace System.BusinessObjects.Data
 
                     if (validationRules is ValidationRuleCollection)
                     {
-                        ValidationLengthAttribute lengthAttrib;
-                        ValidationNotEmptyAttribute notEmptyAttrib;
-                        ValidationIsNotNullAttribute isNotNull;
+                        //automatically add rules that inherit from ValidationBaseAttribute
                         foreach (PropertyDescriptor prop in TypeDescriptor.GetProperties(this))
                         {
-                            lengthAttrib = (ValidationLengthAttribute)prop.Attributes[typeof(ValidationLengthAttribute)];
-                            notEmptyAttrib = (ValidationNotEmptyAttribute)prop.Attributes[typeof(ValidationNotEmptyAttribute)];
-                            isNotNull = (ValidationIsNotNullAttribute)prop.Attributes[typeof(ValidationIsNotNullAttribute)];
-                            if (lengthAttrib != null)
+                            foreach(Attribute customAtt in prop.Attributes)
                             {
-                                if (lengthAttrib._maxLengthSpecified)
+                                if(customAtt is ValidationBaseAttribute)
                                 {
-                                    ValidationRule rule =
-                                        new ValidationRule(
-                                            GeneralAssertionTemplate.LengthLess(this, prop.Name, lengthAttrib.MaxLength));
-                                    validationRules.Add(rule);
+                                    ValidationBaseAttribute attrib = (ValidationBaseAttribute)customAtt;
+                                    IList<ValidationRule> tRules = attrib.GetValidationRules(this, prop.Name);
+                                    if(tRules != null && tRules.Count > 0)
+                                    {
+                                        foreach(ValidationRule r in tRules)
+                                            validationRules.Add(r);
+                                    }
                                 }
-                                if (lengthAttrib._minLengthSpecified)
-                                {
-                                    ValidationRule rule =
-                                        new ValidationRule(
-                                            GeneralAssertionTemplate.LengthGreater(this, prop.Name, lengthAttrib.MinLength));
-                                    validationRules.Add(rule);
-                                }
-                            }
-                            if (notEmptyAttrib != null)
-                            {
-                                ValidationRule rule = new ValidationRule(GeneralAssertionTemplate.IsNotEmpty(this, prop.Name));
-                                validationRules.Add(rule);
-                            }
-                            if (isNotNull != null)
-                            {
-                                ValidationRule rule = new ValidationRule(GeneralAssertionTemplate.IsBusinessObjectNotNull(this, prop.Name));
-                                validationRules.Add(rule);
                             }
                         }
                     }
@@ -762,9 +750,8 @@ namespace System.BusinessObjects.Data
 
         void NHibernate.Classic.IValidatable.Validate()
         {
-            //when deleting return, validation is not required.
             if (GetPersistanceQueryAction() == QueryAction.Delete)
-                return; 
+                return;
 
             if (!ValidationRules.Validate())
             {

@@ -1,6 +1,7 @@
 using System.BusinessObjects.Data;
 using System.Collections;
 using System.Reflection;
+using System.BusinessObjects.Helpers;
 
 namespace System.BusinessObjects.Validation
 {
@@ -14,7 +15,7 @@ namespace System.BusinessObjects.Validation
         /// </summary>
         public static ValidatorTemplate Greater<R>(DataObject obj, string propertyName, R expected) where R : IComparable
         {
-            PropertyInfo info = ValidationHelper.getPropertyInfo(propertyName, obj);
+            PropertyInfo info = Property.GetPropertyInfo(propertyName, obj);
             ValidatorTemplate temp = delegate(out string propName, out string message) //PropertyInfo info, DataObject objObj, R expectedVal
             {
                 propName = propertyName;
@@ -40,7 +41,7 @@ namespace System.BusinessObjects.Validation
         /// </summary>
         public static ValidatorTemplate Less<R>(DataObject obj, string propertyName, R expected) where R : IComparable
         {
-            PropertyInfo info = ValidationHelper.getPropertyInfo(propertyName, obj);
+            PropertyInfo info = Property.GetPropertyInfo(propertyName, obj);
             ValidatorTemplate temp = delegate(out string propName, out string message)
             {
                 propName = propertyName;
@@ -66,7 +67,7 @@ namespace System.BusinessObjects.Validation
         /// </summary>
         public static ValidatorTemplate IsNotEmpty(DataObject obj, string propertyName)
         {
-            PropertyInfo info = ValidationHelper.getPropertyInfo(propertyName, obj);
+            PropertyInfo info = Property.GetPropertyInfo(propertyName, obj);
             ValidatorTemplate temp = delegate(out string propName, out string message)
             {
                 propName = propertyName;
@@ -114,7 +115,7 @@ namespace System.BusinessObjects.Validation
         /// </summary>
         public static ValidatorTemplate IsNotNull(DataObject obj, string propertyName)
         {
-            PropertyInfo info = ValidationHelper.getPropertyInfo(propertyName, obj);
+            PropertyInfo info = Property.GetPropertyInfo(propertyName, obj);
             ValidatorTemplate temp = delegate(out string propName, out string message)
             {
                 propName = propertyName;
@@ -140,7 +141,7 @@ namespace System.BusinessObjects.Validation
         /// </summary>
         public static ValidatorTemplate IsBusinessObjectNotNull(DataObject obj, string propertyName)
         {
-            PropertyInfo info = ValidationHelper.getPropertyInfo(propertyName, obj);
+            PropertyInfo info = Property.GetPropertyInfo(propertyName, obj);
             ValidatorTemplate temp = delegate(out string propName, out string message)
             {
                 propName = propertyName;
@@ -165,7 +166,7 @@ namespace System.BusinessObjects.Validation
         /// </summary>
         public static ValidatorTemplate LengthGreater(DataObject obj, string propertyName, int expected)
         {
-            PropertyInfo info = ValidationHelper.getPropertyInfo(propertyName, obj);
+            PropertyInfo info = Property.GetPropertyInfo(propertyName, obj);
             ValidatorTemplate temp = delegate(out string propName, out string message)
             {
                 propName = propertyName;
@@ -208,7 +209,7 @@ namespace System.BusinessObjects.Validation
         /// </summary>
         public static ValidatorTemplate LengthLess(DataObject obj, string propertyName, int expected)
         {
-            PropertyInfo info = ValidationHelper.getPropertyInfo(propertyName, obj);
+            PropertyInfo info = Property.GetPropertyInfo(propertyName, obj);
             ValidatorTemplate temp = delegate(out string propName, out string message)
             {
                 propName = propertyName;
@@ -255,7 +256,7 @@ namespace System.BusinessObjects.Validation
         /// </summary>
         public static ValidatorTemplate LengthFixed(DataObject obj, string propertyName, int expected)
         {
-            PropertyInfo info = ValidationHelper.getPropertyInfo(propertyName, obj);
+            PropertyInfo info = Property.GetPropertyInfo(propertyName, obj);
             ValidatorTemplate temp = delegate(out string propName, out string message)
             {
                 propName = propertyName;
@@ -302,7 +303,7 @@ namespace System.BusinessObjects.Validation
         /// </summary>
         public static ValidatorTemplate ValidCharacterRange(DataObject obj, string propertyName, string validCharaters, bool caseSensitive)
         {
-            PropertyInfo info = ValidationHelper.getPropertyInfo(propertyName, obj);
+            PropertyInfo info = Property.GetPropertyInfo(propertyName, obj);
             ValidatorTemplate temp = delegate(out string propName, out string message)
             {
                 propName = propertyName;

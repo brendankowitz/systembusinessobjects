@@ -3,10 +3,11 @@ using System.Collections.Generic;
 using System.Text;
 using Castle.Windsor;
 using Castle.Windsor.Configuration.Interpreters;
+using NHibernate;
 
 namespace System.BusinessObjects.Providers
 {
-    public partial class ServiceLocator
+    public static class ServiceLocator
     {
 #if USE_WINDSOR
         static IWindsorContainer container;
@@ -33,7 +34,7 @@ namespace System.BusinessObjects.Providers
             }
         }
 
-        public static NHibernateSessionProvider NHibernateSessionProvider
+        public static NHibernateSessionProvider SessionProvider
         {
             get
             {
@@ -41,7 +42,16 @@ namespace System.BusinessObjects.Providers
             }
         }
 #else
-
+        /// <summary>
+        /// Returns the current session provider
+        /// </summary>
+        public static NHibernateSessionProvider SessionProvider
+        {
+            get
+            {
+                return NHibernateSessionProvider.Provider;
+            }
+        }
 #endif
     }
 }
