@@ -1,7 +1,7 @@
 using NHibernate;
-using NHibernate.Expression;
 using Sample.BusinessObjects.Contacts;
 using System.BusinessObjects.Transactions;
+using NHibernate.Criterion;
 
 namespace Sample.BusinessObjects.Queries
 {

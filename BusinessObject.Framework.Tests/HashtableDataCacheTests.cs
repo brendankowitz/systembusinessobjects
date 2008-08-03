@@ -13,16 +13,6 @@ namespace BusinessObject.Framework.Tests
     {
         HashtableDataCache cache;
 
-        [Test]
-        public void CacheStringFromArray()
-        {
-            List<int> items = new List<int>();
-            items.AddRange(new int[]{ 1, 2, 3 });
-
-            string retval = HashtableDataCache.CreateCacheString("test", items.ToArray());
-
-            Assert.AreEqual("test_1_2_3", retval);
-        }
 
         [Test]
         public void AddItem_BusinessObject()
@@ -58,7 +48,7 @@ namespace BusinessObject.Framework.Tests
             cache.SetCache("person", p);
             Assert.AreEqual(1, cache.ItemCount);
 
-            Thread.Sleep(1001);
+            Thread.Sleep(1100);
             Assert.IsNull(cache.GetCache<Person>("person"));
             Assert.AreEqual(0, cache.ItemCount);
         }
@@ -73,7 +63,7 @@ namespace BusinessObject.Framework.Tests
             cache.SetCache("person", p);
             Assert.AreEqual(1, cache.ItemCount);
 
-            Thread.Sleep(1001);
+            Thread.Sleep(1100);
 
             cache.RemoveOldItems();
             Assert.AreEqual(0, cache.ItemCount);

@@ -62,9 +62,13 @@
     <ErrorReport>prompt</ErrorReport>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Castle.DynamicProxy, Version=1.1.5.0, Culture=neutral, PublicKeyToken=407dd0808d44fbdc, processorArchitecture=MSIL">
+    <Reference Include="Castle.Core, Version=1.0.3.0, Culture=neutral, PublicKeyToken=407dd0808d44fbdc, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\Lib\Castle.DynamicProxy.dll</HintPath>
+      <HintPath>..\Lib\Castle.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="Castle.DynamicProxy2, Version=2.0.3.0, Culture=neutral, PublicKeyToken=407dd0808d44fbdc, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\Lib\Castle.DynamicProxy2.dll</HintPath>
     </Reference>
     <Reference Include="Castle.MicroKernel, Version=1.0.0.2, Culture=neutral, PublicKeyToken=407dd0808d44fbdc, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -99,7 +103,10 @@
     <Compile Include="Data\NHibernateAspContextProvider.cs" />
     <Compile Include="Data\NHibernateThreadSlotProvider.cs" />
     <Compile Include="Data\SafeBindingLists.cs" />
+    <Compile Include="Properties\GlobalAssemblyInfo.cs" />
     <Compile Include="HashtableDataCache.cs" />
+    <Compile Include="Helpers\Property.cs" />
+    <Compile Include="Helpers\RestrictBy.cs" />
     <Compile Include="Helpers\WebHelper.cs" />
     <Compile Include="Helpers\XmlHelper.cs" />
     <Compile Include="NamespaceDocumentation.cs" />
@@ -116,7 +123,6 @@
     <Compile Include="Validation\GeneralAssertionRules.cs" />
     <Compile Include="Validation\IValidationRuleCollection.cs" />
     <Compile Include="Validation\ValidationAttributes.cs" />
-    <Compile Include="Validation\ValidationHelper.cs" />
     <Compile Include="Validation\ValidationRule.cs" />
     <Compile Include="Validation\ValidationRuleCollection.cs" />
     <Compile Include="Validation\WebValidationControl.cs" />

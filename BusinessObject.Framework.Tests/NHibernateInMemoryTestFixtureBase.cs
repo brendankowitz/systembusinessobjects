@@ -5,6 +5,8 @@ using System.Reflection;
 using NHibernate;
 using NHibernate.Cfg;
 using NHibernate.Tool.hbm2ddl;
+using Sample.BusinessObjects.Contacts;
+using System.Collections.Generic;
 
 //#if !NUNIT
 //    using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -16,7 +18,7 @@ using TestInitialize = NUnit.Framework.SetUpAttribute;
 using TestCleanup = NUnit.Framework.TearDownAttribute;
 using ClassInitialize = NUnit.Framework.TestFixtureSetUpAttribute;
 using ClassCleanup = NUnit.Framework.TestFixtureTearDownAttribute;
-using Sample.BusinessObjects.Contacts;
+
 //#endif
 
 namespace BusinessObject.Framework.Tests
@@ -58,6 +60,7 @@ namespace BusinessObject.Framework.Tests
                 NHibernateSessionProvider.CurrentFactory = sessionFactory;
                 session = CreateSession();
                 NHibernateSessionProvider.Provider.CurrentSession = session;
+                session.BeginTransaction();
             }
 
             [TestCleanup]
@@ -65,6 +68,7 @@ namespace BusinessObject.Framework.Tests
             {
                 session.Dispose();
                 session = null;
+
                 //sessionFactory.Dispose();
             }
 
@@ -78,12 +82,12 @@ namespace BusinessObject.Framework.Tests
             {
                 if (sessionFactory != null)
                     return;
-                Hashtable properties = new Hashtable();
-                properties.Add("hibernate.connection.driver_class", "NHibernate.Driver.SQLite20Driver");
-                properties.Add("hibernate.dialect", "NHibernate.Dialect.SQLiteDialect");
+                IDictionary<string,string> properties = new Dictionary<string,string>();
+                properties.Add("connection.driver_class", "NHibernate.Driver.SQLite20Driver");
+                properties.Add("dialect", "NHibernate.Dialect.SQLiteDialect");
                 properties.Add("show_sql", "true");
-                properties.Add("hibernate.connection.provider", "NHibernate.Connection.DriverConnectionProvider");
-                properties.Add("hibernate.connection.connection_string", "Data Source=:memory:;Version=3;New=True;");
+                properties.Add("connection.provider", "NHibernate.Connection.DriverConnectionProvider");
+                properties.Add("connection.connection_string", "Data Source=:memory:;Version=3;New=True;");
                 configuration = new Configuration();
                 configuration.Properties = properties;
 

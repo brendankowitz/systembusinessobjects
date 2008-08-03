@@ -109,6 +109,39 @@ namespace BusinessObject.Framework.Tests
 
             Assert.AreEqual("John Smith", outputlist[0]);
         }
+
+        [Test]
+        public void TestlambdaEachFunctionCollectionExtension()
+        {
+            List<Person> list = new List<Person>();
+            list.Add(BusinessObjectFactory.CreateAndFillPerson());
+
+            list.Each<Person>(x => x.FirstName = "Change");
+
+            Assert.AreEqual("Change", list[0].FirstName);
+        }
+
+        [Test]
+        public void TestlambdaEachFunctionCollectionConvertExtension()
+        {
+            List<Person> list = new List<Person>();
+            list.Add(BusinessObjectFactory.CreateAndFillPerson());
+
+            list.Each<Person>(x => x.FirstName = "Change");
+
+            Assert.AreEqual("Change", list[0].FirstName);
+
+        }
+
+        [Test]
+        public void TestlambdaEachFunctionCollectionConvertOutputExtension()
+        {
+            List<Person> list = new List<Person>();
+            list.Add(BusinessObjectFactory.CreateAndFillPerson());
+
+            IList<string> outputlist = list.Each().Item<Person, string>(p => p.FirstName + "." + p.LastName) as IList<string>;
+            Assert.AreEqual("John.Smith", outputlist[0]);
+        }
 #endif
 
     }

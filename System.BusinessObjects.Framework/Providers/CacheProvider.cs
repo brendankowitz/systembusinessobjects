@@ -116,7 +116,7 @@ namespace System.BusinessObjects.Providers
                         }
                     }
                     else
-                        retval = string.Format("{0}_{1}", retval, obj.ToString());
+                    retval = string.Format("{0}_{1}", retval, obj.ToString());
                 }
                 else
                 {

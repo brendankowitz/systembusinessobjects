@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using NHibernate.Criterion;
 
 namespace System.BusinessObjects.Data
 {
@@ -23,7 +24,7 @@ namespace System.BusinessObjects.Data
         /// <summary>
         /// Loads a business object with the given ID
         /// </summary>
-        public static new T Load(int Id)
+        public static new T Load(object Id)
         {
             return Load<T>(Id);
         }
@@ -39,7 +40,7 @@ namespace System.BusinessObjects.Data
         /// <summary>
         /// Gets a strongly typed list of all business objects of this type
         /// </summary>
-        public static IList<T> Search(NHibernate.Expression.Order orderBy)
+        public static IList<T> Search(NHibernate.Criterion.Order orderBy)
         {
             return Search<T>(orderBy);
         }
@@ -51,6 +52,16 @@ namespace System.BusinessObjects.Data
         {
             return Search<T>(criteria);
         }
+
+#if DOT_NET_35
+        /// <summary>
+        /// Gets a strongly typed list of business objects based on a linq expression
+        /// </summary>
+        public static IList<T> Search(IEnumerable<T> linqExpression)
+        {
+            return Search<T>(linqExpression);
+        }
+#endif
 
         /// <summary>
         /// Gets a strongly typed list of business objects based on an NHibernate Query
@@ -68,6 +79,16 @@ namespace System.BusinessObjects.Data
             return Fetch<T>(criteria);
         }
 
+#if DOT_NET_35
+        /// <summary>
+        /// Gets a strongly typed business object based on a linq expression
+        /// </summary>
+        public static T Fetch(IEnumerable<T> linqExpression)
+        {
+            return Fetch<T>(linqExpression);
+        }
+#endif
+
         /// <summary>
         /// Gets a strongly typed business object based on an NHibernate Query
         /// </summary>
@@ -79,7 +100,7 @@ namespace System.BusinessObjects.Data
         /// <summary>
         /// Evicts an existing instance of this business object from NHibernate's session cache
         /// </summary>
-        public static void Evict(int ID)
+        public static void Evict(object ID)
         {
             Evict<T>(ID);
         }
