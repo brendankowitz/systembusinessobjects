@@ -60,5 +60,12 @@ namespace System.BusinessObjects.Membership.Qry
                 .SetProjection(Projections.RowCount());
             return qry;
         }
+
+        public static ICriteria QueryCount(System.Web.Profile.ProfileAuthenticationOption profileOptions, Guid applicationId, DateTime inactiveSince)
+        {
+            ICriteria qry = Query(profileOptions, applicationId, inactiveSince)
+                .SetProjection(Projections.RowCount());
+            return qry;
+        }
     }
 }

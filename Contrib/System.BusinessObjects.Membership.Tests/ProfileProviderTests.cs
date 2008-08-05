@@ -71,5 +71,37 @@ namespace System.BusinessObjects.Membership.Tests
 
             ProfileManager.Provider.SetPropertyValues(sc, properties);
         }
+
+        [Test]
+        public void GetPropertyValues()
+        {
+            User p = new User()
+            {
+                Application = app,
+                IsAnonymous = false,
+                UserName = "user1"
+            };
+            p.Save();
+
+            System.Configuration.SettingsContext sc = new System.Configuration.SettingsContext();
+            sc.Add("UserName", "user1");
+            sc.Add("IsAuthenticated", true);
+
+            System.Configuration.SettingsPropertyValueCollection properties = new System.Configuration.SettingsPropertyValueCollection();
+
+            var propVal = new System.Configuration.SettingsPropertyValue(
+                new System.Configuration.SettingsProperty("Test") { DefaultValue = "", PropertyType = typeof(string) }
+                );
+            propVal.PropertyValue = "test string";
+            properties.Add(propVal);
+            ProfileManager.Provider.SetPropertyValues(sc, properties);
+            User.Evict(p.ID);
+
+            System.Configuration.SettingsPropertyCollection outCol = new System.Configuration.SettingsPropertyCollection();
+            outCol.Add(new System.Configuration.SettingsProperty("Test") { DefaultValue = "", PropertyType = typeof(string) });
+            System.Configuration.SettingsPropertyValueCollection collection = ProfileManager.Provider.GetPropertyValues(sc, outCol);
+
+            Assert.AreEqual("test string", collection["Test"].PropertyValue);
+        }
     }
 }

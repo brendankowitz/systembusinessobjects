@@ -174,12 +174,78 @@ namespace System.BusinessObjects.Membership
 
         public override int GetNumberOfInactiveProfiles(System.Web.Profile.ProfileAuthenticationOption authenticationOption, DateTime userInactiveSinceDate)
         {
-            throw new NotImplementedException();
+            int retval = 0;
+            try
+            {
+                retval = (int)QrySearchProfiles.QueryCount(authenticationOption, Application.ID, userInactiveSinceDate).UniqueResult<long>();
+            }
+            catch (Exception ex)
+            {
+                throw new ProviderException("Unable to get number of inactive profiles", ex);
+            }
+            return retval;
         }
 
-        public override System.Configuration.SettingsPropertyValueCollection GetPropertyValues(System.Configuration.SettingsContext context, System.Configuration.SettingsPropertyCollection collection)
+        public override System.Configuration.SettingsPropertyValueCollection GetPropertyValues(System.Configuration.SettingsContext sc, System.Configuration.SettingsPropertyCollection properties)
         {
-            throw new NotImplementedException();
+            SettingsPropertyValueCollection svc = new SettingsPropertyValueCollection();
+            if (properties.Count >= 1)
+            {
+                string str = (string)sc["UserName"];
+                foreach (SettingsProperty property in properties)
+                {
+                    if (property.SerializeAs == SettingsSerializeAs.ProviderSpecific)
+                    {
+                        if (property.PropertyType.IsPrimitive || (property.PropertyType == typeof(string)))
+                        {
+                            property.SerializeAs = SettingsSerializeAs.String;
+                        }
+                        else
+                        {
+                            property.SerializeAs = SettingsSerializeAs.Xml;
+                        }
+                    }
+                    svc.Add(new SettingsPropertyValue(property));
+                }
+                if (!string.IsNullOrEmpty(str))
+                {
+                    this.GetPropertyValuesFromDatabase(str, svc);
+                }
+            }
+            return svc;
+        }
+
+        private void GetPropertyValuesFromDatabase(string userName, SettingsPropertyValueCollection svc)
+        {
+            System.Web.HttpContext current = System.Web.HttpContext.Current;
+            string[] names = null;
+            string values = null;
+            byte[] buffer = null;
+            if (current != null)
+            {
+                if (!current.Request.IsAuthenticated)
+                {
+                    string anonymousID = current.Request.AnonymousID;
+                }
+                else
+                {
+                    string name = current.User.Identity.Name;
+                }
+            }
+            try
+            {
+                User user = User.Fetch(QryFetchUserByName.Query(userName, Application.ID));
+
+                names = user.Profile.PropertyNames.Split(':');
+                values = user.Profile.PropertyValuesString;
+                buffer = user.Profile.PropertyValuesBinary;
+
+                ParseDataFromDB(names, values, buffer, svc);
+            }
+            catch(Exception ex)
+            {
+                throw new ProviderException("Unable to get property values", ex);
+            }
         }
 
         public override void SetPropertyValues(System.Configuration.SettingsContext sc, System.Configuration.SettingsPropertyValueCollection properties)
@@ -236,6 +302,8 @@ namespace System.BusinessObjects.Membership
         {
             return (string.IsNullOrEmpty(configValue) ? defaultValue : configValue);
         }
+
+        #region Internal Methods From ProfileModule
 
         [SecurityPermission(SecurityAction.Assert, Flags = SecurityPermissionFlag.SerializationFormatter)]
         internal static void PrepareDataForSaving(ref string allNames, ref string allValues, ref byte[] buf, bool binarySupported, SettingsPropertyValueCollection properties, bool userIsAuthenticated)
@@ -329,5 +397,45 @@ namespace System.BusinessObjects.Membership
             allValues = builder2.ToString();
         }
 
+        [SecurityPermission(SecurityAction.Assert, Flags = SecurityPermissionFlag.SerializationFormatter)]
+        internal static void ParseDataFromDB(string[] names, string values, byte[] buf, SettingsPropertyValueCollection properties)
+        {
+            if (((names != null) && (values != null)) && ((buf != null) && (properties != null)))
+            {
+                try
+                {
+                    for (int i = 0; i < (names.Length / 4); i++)
+                    {
+                        string str = names[i * 4];
+                        SettingsPropertyValue value2 = properties[str];
+                        if (value2 != null)
+                        {
+                            int startIndex = int.Parse(names[(i * 4) + 2], CultureInfo.InvariantCulture);
+                            int length = int.Parse(names[(i * 4) + 3], CultureInfo.InvariantCulture);
+                            if ((length == -1) && !value2.Property.PropertyType.IsValueType)
+                            {
+                                value2.PropertyValue = null;
+                                value2.IsDirty = false;
+                                value2.Deserialized = true;
+                            }
+                            if (((names[(i * 4) + 1] == "S") && (startIndex >= 0)) && ((length > 0) && (values.Length >= (startIndex + length))))
+                            {
+                                value2.SerializedValue = values.Substring(startIndex, length);
+                            }
+                            if (((names[(i * 4) + 1] == "B") && (startIndex >= 0)) && ((length > 0) && (buf.Length >= (startIndex + length))))
+                            {
+                                byte[] dst = new byte[length];
+                                Buffer.BlockCopy(buf, startIndex, dst, 0, length);
+                                value2.SerializedValue = dst;
+                            }
+                        }
+                    }
+                }
+                catch
+                {
+                }
+            }
+        }
+        #endregion
     }
 }
