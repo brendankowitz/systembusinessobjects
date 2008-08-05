@@ -23,9 +23,10 @@ namespace System.BusinessObjects.Helpers
         /// </summary>
         /// <param name="propertyLambda">lambda function to evaluate: ()=> obj.A == 1</param>
         /// <returns>NHibernate SimpleExpression</returns>
-        public static SimpleExpression Eq(Expression<Func<object>> propertyLambda)
+        public static SimpleExpression Eq<T>(Expression<Func<T, object>> propertyLambda)
         {
-            ResolveLambda r = new ResolveLambda(propertyLambda);
+            ResolveLambda r = new ResolveLambda();
+            r.Resolve<T>(propertyLambda);
 
             switch (r.OperationType)
             {
@@ -44,9 +45,10 @@ namespace System.BusinessObjects.Helpers
             }
         }
 
-        public static AbstractEmptinessExpression IsEmpty(Expression<Func<object>> propertyLambda)
+        public static AbstractEmptinessExpression IsEmpty<T>(Expression<Func<T,object>> propertyLambda)
         {
-            ResolveLambda r = new ResolveLambda(propertyLambda);
+            ResolveLambda r = new ResolveLambda();
+            r.Resolve<T>(propertyLambda);
             if (r.OperationTypeSpecified)
             {
                 throw new NotSupportedException("Only a property name is required");
@@ -54,9 +56,10 @@ namespace System.BusinessObjects.Helpers
             return Restrictions.IsEmpty(r.PropertyName);
         }
 
-        public static AbstractEmptinessExpression IsNotEmpty(Expression<Func<object>> propertyLambda)
+        public static AbstractEmptinessExpression IsNotEmpty<T>(Expression<Func<T,object>> propertyLambda)
         {
-            ResolveLambda r = new ResolveLambda(propertyLambda);
+            ResolveLambda r = new ResolveLambda();
+            r.Resolve<T>(propertyLambda);
             if (r.OperationTypeSpecified)
             {
                 throw new NotSupportedException("Only a property name is required");
@@ -64,9 +67,10 @@ namespace System.BusinessObjects.Helpers
             return Restrictions.IsNotEmpty(r.PropertyName);
         }
 
-        public static AbstractCriterion IsNotNull(Expression<Func<object>> propertyLambda)
+        public static AbstractCriterion IsNotNull<T>(Expression<Func<T,object>> propertyLambda)
         {
-            ResolveLambda r = new ResolveLambda(propertyLambda);
+            ResolveLambda r = new ResolveLambda();
+            r.Resolve<T>(propertyLambda);
             if (r.OperationTypeSpecified)
             {
                 throw new NotSupportedException("Only a property name is required");
@@ -74,9 +78,10 @@ namespace System.BusinessObjects.Helpers
             return Restrictions.IsNotNull(r.PropertyName);
         }
 
-        public static AbstractCriterion IsNull(Expression<Func<object>> propertyLambda)
+        public static AbstractCriterion IsNull<T>(Expression<Func<T,object>> propertyLambda)
         {
-            ResolveLambda r = new ResolveLambda(propertyLambda);
+            ResolveLambda r = new ResolveLambda();
+            r.Resolve<T>(propertyLambda);
             if (r.OperationTypeSpecified)
             {
                 throw new NotSupportedException("Only a property name is required");
@@ -96,23 +101,23 @@ namespace System.BusinessObjects.Helpers
         /// <summary>
         /// Handles "Equals", "Greater Than", "Less Than", "Greater Than or Equal", "Less Than or Equal"
         /// </summary>
-        public static NHibernate.ICriteria AddEq(this NHibernate.ICriteria c, Expression<Func<object>> propertyLambda)
+        public static NHibernate.ICriteria AddEq<T>(this NHibernate.ICriteria c, Expression<Func<T,object>> propertyLambda)
         {
             return c.Add(RestrictBy.Eq(propertyLambda));
         }
-        public static NHibernate.ICriteria AddIsEmpty(this NHibernate.ICriteria c, Expression<Func<object>> propertyLambda)
+        public static NHibernate.ICriteria AddIsEmpty<T>(this NHibernate.ICriteria c, Expression<Func<T,object>> propertyLambda)
         {
             return c.Add(RestrictBy.IsEmpty(propertyLambda));
         }
-        public static NHibernate.ICriteria AddIsNotEmpty(this NHibernate.ICriteria c, Expression<Func<object>> propertyLambda)
+        public static NHibernate.ICriteria AddIsNotEmpty<T>(this NHibernate.ICriteria c, Expression<Func<T,object>> propertyLambda)
         {
             return c.Add(RestrictBy.IsNotEmpty(propertyLambda));
         }
-        public static NHibernate.ICriteria AddIsNotNull(this NHibernate.ICriteria c, Expression<Func<object>> propertyLambda)
+        public static NHibernate.ICriteria AddIsNotNull<T>(this NHibernate.ICriteria c, Expression<Func<T,object>> propertyLambda)
         {
             return c.Add(RestrictBy.IsNotNull(propertyLambda));
         }
-        public static NHibernate.ICriteria AddIsNull(this NHibernate.ICriteria c, Expression<Func<object>> propertyLambda)
+        public static NHibernate.ICriteria AddIsNull<T>(this NHibernate.ICriteria c, Expression<Func<T,object>> propertyLambda)
         {
             return c.Add(RestrictBy.IsNull(propertyLambda));
         }
@@ -145,6 +150,13 @@ namespace System.BusinessObjects.Helpers
         }
 
         internal ResolveLambda(Expression<Func<object>> expression)
+        {
+            Visit(expression);
+        }
+
+        internal ResolveLambda() { }
+
+        internal void Resolve<T>(Expression<Func<T, object>> expression)
         {
             Visit(expression);
         }
@@ -200,6 +212,9 @@ namespace System.BusinessObjects.Helpers
                 case ExpressionType.MemberAccess:
                     Visit((MemberExpression)expression);
                     break;
+                case ExpressionType.Lambda:
+                    Visit((LambdaExpression)expression);
+                    break;
                 default:
                     throw new NotSupportedException(string.Format("lambda expression with type {0} not supported", expression.NodeType));
 
@@ -208,6 +223,10 @@ namespace System.BusinessObjects.Helpers
         internal void Visit(System.Linq.Expressions.UnaryExpression expression)
         {
             Visit(expression.Operand);
+        }
+        internal void Visit(System.Linq.Expressions.LambdaExpression expression)
+        {
+            Visit(expression.Body);
         }
         internal void Visit(System.Linq.Expressions.BinaryExpression expression)
         {

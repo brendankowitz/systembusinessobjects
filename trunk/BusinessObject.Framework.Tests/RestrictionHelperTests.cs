@@ -18,10 +18,10 @@ namespace BusinessObject.Framework.Tests
         [Test]
         public void CanUseEqStrongProperty()
         {
-            Person p = BusinessObjectFactory.CreateAndFillPerson();
-            p.SetSession(session);
-            p.AutoFlush = false;
-            p.Save();
+            Person pers = BusinessObjectFactory.CreateAndFillPerson();
+            pers.SetSession(session);
+            pers.AutoFlush = false;
+            pers.Save();
 
             ICriteria c = session.CreateCriteria(typeof(Person));
             c.Add(Restrictions.Eq(System.BusinessObjects.Helpers.Property.GetFor(() => new Person().FirstName), "John"));
@@ -32,15 +32,31 @@ namespace BusinessObject.Framework.Tests
         }
 
         [Test]
-        public void CanUseEqLambda()
+        public void CanUseEqStrongProperty2()
         {
-            Person p = BusinessObjectFactory.CreateAndFillPerson();
-            p.SetSession(session);
-            p.AutoFlush = false;
-            p.Save();
+            Person pers = BusinessObjectFactory.CreateAndFillPerson();
+            pers.SetSession(session);
+            pers.AutoFlush = false;
+            pers.Save();
 
             ICriteria c = session.CreateCriteria(typeof(Person));
-            c.Add(RestrictBy.Eq(() => new Person().FirstName == "John" ));
+            c.Add(Restrictions.Eq(System.BusinessObjects.Helpers.Property.GetFor<Person>(p => p.FirstName), "John"));
+
+            Person result = c.UniqueResult<Person>();
+            Assert.AreEqual("John", result.FirstName);
+
+        }
+
+        [Test]
+        public void CanUseEqLambda()
+        {
+            Person pers = BusinessObjectFactory.CreateAndFillPerson();
+            pers.SetSession(session);
+            pers.AutoFlush = false;
+            pers.Save();
+
+            ICriteria c = session.CreateCriteria(typeof(Person));
+            c.Add(RestrictBy.Eq<Person>(p => p.FirstName == "John" ));
             Person result = c.UniqueResult<Person>();
             Assert.AreEqual("John", result.FirstName);
             
@@ -49,13 +65,13 @@ namespace BusinessObject.Framework.Tests
         [Test]
         public void CanUseEqLambda2()
         {
-            Person p = BusinessObjectFactory.CreateAndFillPerson();
-            p.SetSession(session);
-            p.AutoFlush = false;
-            p.Save();
+            Person pers = BusinessObjectFactory.CreateAndFillPerson();
+            pers.SetSession(session);
+            pers.AutoFlush = false;
+            pers.Save();
 
             ICriteria c = session.CreateCriteria(typeof(Person));
-            c.Add(RestrictBy.Eq(() => "John" == new Person().FirstName));
+            c.Add(RestrictBy.Eq<Person>(p => "John" == p.FirstName));
             Person result = c.UniqueResult<Person>();
             Assert.AreEqual("John", result.FirstName);
 
@@ -64,13 +80,13 @@ namespace BusinessObject.Framework.Tests
         [Test]
         public void CanUseGeLambda()
         {
-            Person p = BusinessObjectFactory.CreateAndFillPerson();
-            p.SetSession(session);
-            p.AutoFlush = false;
-            p.Save();
+            Person pers = BusinessObjectFactory.CreateAndFillPerson();
+            pers.SetSession(session);
+            pers.AutoFlush = false;
+            pers.Save();
 
             ICriteria c = session.CreateCriteria(typeof(Person));
-            c.Add(RestrictBy.Eq(() => new Person().ID >= 0));
+            c.Add(RestrictBy.Eq<Person>(p => p.ID >= 0));
 
             Person result = c.UniqueResult<Person>();
             Assert.AreEqual("John", result.FirstName);
@@ -80,13 +96,13 @@ namespace BusinessObject.Framework.Tests
         [Test]
         public void CanUseGtLambda()
         {
-            Person p = BusinessObjectFactory.CreateAndFillPerson();
-            p.SetSession(session);
-            p.AutoFlush = false;
-            p.Save();
+            Person pers = BusinessObjectFactory.CreateAndFillPerson();
+            pers.SetSession(session);
+            pers.AutoFlush = false;
+            pers.Save();
 
             ICriteria c = session.CreateCriteria(typeof(Person));
-            c.Add(RestrictBy.Eq(() => new Person().ID > 0));
+            c.Add(RestrictBy.Eq<Person>(p => p.ID > 0));
 
             Person result = c.UniqueResult<Person>();
             Assert.AreEqual("John", result.FirstName);
@@ -96,13 +112,13 @@ namespace BusinessObject.Framework.Tests
         [Test]
         public void CanUseLeLambda()
         {
-            Person p = BusinessObjectFactory.CreateAndFillPerson();
-            p.SetSession(session);
-            p.AutoFlush = false;
-            p.Save();
+            Person pers = BusinessObjectFactory.CreateAndFillPerson();
+            pers.SetSession(session);
+            pers.AutoFlush = false;
+            pers.Save();
 
             ICriteria c = session.CreateCriteria(typeof(Person));
-            c.Add(RestrictBy.Eq(() => new Person().ID <= 0));
+            c.Add(RestrictBy.Eq<Person>(p => p.ID <= 0));
 
             Person result = c.UniqueResult<Person>();
             Assert.IsNull(result);
@@ -112,13 +128,13 @@ namespace BusinessObject.Framework.Tests
         [Test]
         public void CanUseLtLambda()
         {
-            Person p = BusinessObjectFactory.CreateAndFillPerson();
-            p.SetSession(session);
-            p.AutoFlush = false;
-            p.Save();
+            Person pers = BusinessObjectFactory.CreateAndFillPerson();
+            pers.SetSession(session);
+            pers.AutoFlush = false;
+            pers.Save();
 
             ICriteria c = session.CreateCriteria(typeof(Person));
-            c.Add(RestrictBy.Eq(() => new Person().ID < 0));
+            c.Add(RestrictBy.Eq<Person>(p => p.ID < 0));
 
             Person result = c.UniqueResult<Person>();
             Assert.IsNull(result);
@@ -128,13 +144,13 @@ namespace BusinessObject.Framework.Tests
         [Test]
         public void CanUseIsNulllambda()
         {
-            Person p = BusinessObjectFactory.CreateAndFillPerson();
-            p.SetSession(session);
-            p.AutoFlush = false;
-            p.Save();
+            Person pers = BusinessObjectFactory.CreateAndFillPerson();
+            pers.SetSession(session);
+            pers.AutoFlush = false;
+            pers.Save();
 
             ICriteria c = UnitOfWork.CurrentSession.CreateCriteria(typeof(Person));
-            c.Add(RestrictBy.IsNull(() => new Person().FirstName));
+            c.Add(RestrictBy.IsNull<Person>(p => p.FirstName));
 
             Person result = c.UniqueResult<Person>();
             Assert.IsNull(result);
@@ -143,13 +159,13 @@ namespace BusinessObject.Framework.Tests
         [Test]
         public void CanUseIsNotNull()
         {
-            Person p = BusinessObjectFactory.CreateAndFillPerson();
-            p.SetSession(session);
-            p.AutoFlush = false;
-            p.Save();
+            Person pers = BusinessObjectFactory.CreateAndFillPerson();
+            pers.SetSession(session);
+            pers.AutoFlush = false;
+            pers.Save();
 
             ICriteria c = UnitOfWork.CurrentSession.CreateCriteria(typeof(Person));
-            c.Add(RestrictBy.IsNotNull(() => new Person().FirstName));
+            c.Add(RestrictBy.IsNotNull<Person>(p => p.FirstName));
 
             Person result = c.UniqueResult<Person>();
             Assert.AreEqual("John", result.FirstName);
@@ -158,25 +174,25 @@ namespace BusinessObject.Framework.Tests
         [Test]
         public void CanUseIsNotNullExtension()
         {
-            Person p = BusinessObjectFactory.CreateAndFillPerson();
-            p.SetSession(session);
-            p.AutoFlush = false;
-            p.Save();
+            Person pers = BusinessObjectFactory.CreateAndFillPerson();
+            pers.SetSession(session);
+            pers.AutoFlush = false;
+            pers.Save();
 
             ICriteria c = UnitOfWork.CurrentSession.CreateCriteria(typeof(Person));
-            c.AddIsNotNull(() => new Person().FirstName);
+            c.AddIsNotNull<Person>(p => p.FirstName);
 
             c.UniqueResult();
         }
         public void CanUseEqlambdaExtension()
         {
-            Person p = BusinessObjectFactory.CreateAndFillPerson();
-            p.SetSession(session);
-            p.AutoFlush = false;
-            p.Save();
+            Person pers = BusinessObjectFactory.CreateAndFillPerson();
+            pers.SetSession(session);
+            pers.AutoFlush = false;
+            pers.Save();
 
             ICriteria c = session.CreateCriteria(typeof(Person));
-            c.AddEq(() => new Person().FirstName == "John");
+            c.AddEq<Person>(p => p.FirstName == "John");
 
             Person result = c.UniqueResult<Person>();
             Assert.AreEqual("John", result.FirstName);

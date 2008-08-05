@@ -35,6 +35,16 @@ namespace System.BusinessObjects.Helpers
             }
             return string.Empty;
         }
+
+        public static string GetFor<T>(System.Linq.Expressions.Expression<Func<T,object>> propertyNameLambda)
+        {
+            System.Linq.Expressions.MemberExpression member = propertyNameLambda.Body as System.Linq.Expressions.MemberExpression;
+            if (member != null)
+            {
+                return member.Member.Name;
+            }
+            return string.Empty;
+        }
 #endif
     }
 }
