@@ -41,10 +41,37 @@ namespace System.BusinessObjects.Membership.Qry
             return qry;
         }
 
+        public static ICriteria Query(System.Web.Profile.ProfileAuthenticationOption profileOptions, Guid applicationId, int pageIndex, int pageSize)
+        {
+            ICriteria qry = Query(profileOptions, applicationId)
+                .SetMaxResults(pageSize)
+                .SetFirstResult(pageIndex * pageSize);
+
+            return qry;
+        }
+
+        public static ICriteria Query(System.Web.Profile.ProfileAuthenticationOption profileOptions, Guid applicationId, DateTime inactiveSince, int pageIndex, int pageSize)
+        {
+            ICriteria qry = Query(profileOptions, applicationId, inactiveSince)
+                .SetMaxResults(pageSize)
+                .SetFirstResult(pageIndex * pageSize);
+
+            return qry;
+        }
+
         public static ICriteria Query(System.Web.Profile.ProfileAuthenticationOption profileOptions, string usernameToMatch, Guid applicationId, DateTime inactiveSince, int pageIndex, int pageSize)
         {
             ICriteria qry = Query(profileOptions, applicationId, inactiveSince)
-                .CreateAlias("User", "u")
+                .Add(Restrictions.Like("u.LoweredUserName", usernameToMatch.ToLower()))
+                .SetMaxResults(pageSize)
+                .SetFirstResult(pageIndex * pageSize);
+
+            return qry;
+        }
+
+        public static ICriteria Query(System.Web.Profile.ProfileAuthenticationOption profileOptions, string usernameToMatch, Guid applicationId, int pageIndex, int pageSize)
+        {
+            ICriteria qry = Query(profileOptions, applicationId)
                 .Add(Restrictions.Like("u.LoweredUserName", usernameToMatch.ToLower()))
                 .SetMaxResults(pageSize)
                 .SetFirstResult(pageIndex * pageSize);
@@ -55,8 +82,22 @@ namespace System.BusinessObjects.Membership.Qry
         public static ICriteria QueryCount(System.Web.Profile.ProfileAuthenticationOption profileOptions, string usernameToMatch, Guid applicationId, DateTime inactiveSince)
         {
             ICriteria qry = Query(profileOptions, applicationId, inactiveSince)
-                .CreateAlias("User", "u")
                 .Add(Restrictions.Like("u.LoweredUserName", usernameToMatch.ToLower()))
+                .SetProjection(Projections.RowCount());
+            return qry;
+        }
+
+        public static ICriteria QueryCount(System.Web.Profile.ProfileAuthenticationOption profileOptions, string usernameToMatch, Guid applicationId)
+        {
+            ICriteria qry = Query(profileOptions, applicationId)
+                .Add(Restrictions.Like("u.LoweredUserName", usernameToMatch.ToLower()))
+                .SetProjection(Projections.RowCount());
+            return qry;
+        }
+
+        public static ICriteria QueryCount(System.Web.Profile.ProfileAuthenticationOption profileOptions, Guid applicationId)
+        {
+            ICriteria qry = Query(profileOptions, applicationId)
                 .SetProjection(Projections.RowCount());
             return qry;
         }

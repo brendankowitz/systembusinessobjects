@@ -12,6 +12,11 @@ namespace System.BusinessObjects.Membership
     /// </summary>
     public class Profile : DataObject<Profile>
     {
+        public Profile()
+        {
+            AutoFlush = false;
+        }
+
         public virtual Guid ID
         {
             get { return GetValue<Guid>("ID"); }

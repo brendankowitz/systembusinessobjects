@@ -93,7 +93,6 @@ namespace System.BusinessObjects.Membership
                 throw new ArgumentException("No user profiles to delete.", "usernames");
 
             int num = 0;
-            bool flag = false;
             try
             {
                 foreach (string username in usernames)
@@ -101,8 +100,12 @@ namespace System.BusinessObjects.Membership
                     Profile profile = Profile.Fetch<Profile>(QrySearchProfiles.Query(username, Application.ID));
                     if (profile != null)
                     {
-                        profile.Delete();
+                        User u = profile.User;
+                        u.Profile.Delete();
+                        u.Profile = null;
+                        u.Save();
                         profile.Save();
+                        num++;
                     }
                 }
             }
@@ -142,7 +145,7 @@ namespace System.BusinessObjects.Membership
             {
                 string matchOn = usernameToMatch.Replace("?", "_").Replace("*", "%");
                 IList<Profile> list = Profile.Search<Profile>(QrySearchProfiles.Query(authenticationOption, matchOn, Application.ID, userInactiveSinceDate, pageIndex, pageSize));
-                totalRecords = (int)QrySearchProfiles.QueryCount(authenticationOption, matchOn, Application.ID, userInactiveSinceDate).UniqueResult<long>();
+                totalRecords = (int)QrySearchProfiles.QueryCount(authenticationOption, matchOn, Application.ID, userInactiveSinceDate).UniqueResult<int>();
 
                 foreach (Profile p in list)
                 {
@@ -159,17 +162,69 @@ namespace System.BusinessObjects.Membership
 
         public override System.Web.Profile.ProfileInfoCollection FindProfilesByUserName(System.Web.Profile.ProfileAuthenticationOption authenticationOption, string usernameToMatch, int pageIndex, int pageSize, out int totalRecords)
         {
-            throw new NotImplementedException();
+            if (string.IsNullOrEmpty(usernameToMatch))
+                throw new ArgumentException("Username to match by cannot be empty", "usernameToMatch");
+
+            System.Web.Profile.ProfileInfoCollection retval = new System.Web.Profile.ProfileInfoCollection();
+            try
+            {
+                string matchOn = usernameToMatch.Replace("?", "_").Replace("*", "%");
+                IList<Profile> list = Profile.Search<Profile>(QrySearchProfiles.Query(authenticationOption, matchOn, Application.ID, pageIndex, pageSize));
+                totalRecords = (int)QrySearchProfiles.QueryCount(authenticationOption, matchOn, Application.ID).UniqueResult<int>();
+
+                foreach (Profile p in list)
+                {
+                    retval.Add(p.User.ToProfileInfo());
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new ProviderException("Unable to find inactive profiles", ex);
+            }
+
+            return retval;
         }
 
         public override System.Web.Profile.ProfileInfoCollection GetAllInactiveProfiles(System.Web.Profile.ProfileAuthenticationOption authenticationOption, DateTime userInactiveSinceDate, int pageIndex, int pageSize, out int totalRecords)
         {
-            throw new NotImplementedException();
+            System.Web.Profile.ProfileInfoCollection retval = new System.Web.Profile.ProfileInfoCollection();
+            try
+            {
+                IList<Profile> list = Profile.Search<Profile>(QrySearchProfiles.Query(authenticationOption, Application.ID, userInactiveSinceDate, pageIndex, pageSize));
+                totalRecords = (int)QrySearchProfiles.QueryCount(authenticationOption, Application.ID, userInactiveSinceDate).UniqueResult<int>();
+
+                foreach (Profile p in list)
+                {
+                    retval.Add(p.User.ToProfileInfo());
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new ProviderException("Unable to find inactive profiles", ex);
+            }
+
+            return retval;
         }
 
         public override System.Web.Profile.ProfileInfoCollection GetAllProfiles(System.Web.Profile.ProfileAuthenticationOption authenticationOption, int pageIndex, int pageSize, out int totalRecords)
         {
-            throw new NotImplementedException();
+            System.Web.Profile.ProfileInfoCollection retval = new System.Web.Profile.ProfileInfoCollection();
+            try
+            {
+                IList<Profile> list = Profile.Search<Profile>(QrySearchProfiles.Query(authenticationOption, Application.ID, pageIndex, pageSize));
+                totalRecords = (int)QrySearchProfiles.QueryCount(authenticationOption, Application.ID).UniqueResult<int>();
+
+                foreach (Profile p in list)
+                {
+                    retval.Add(p.User.ToProfileInfo());
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new ProviderException("Unable to find inactive profiles", ex);
+            }
+
+            return retval;
         }
 
         public override int GetNumberOfInactiveProfiles(System.Web.Profile.ProfileAuthenticationOption authenticationOption, DateTime userInactiveSinceDate)
@@ -177,7 +232,7 @@ namespace System.BusinessObjects.Membership
             int retval = 0;
             try
             {
-                retval = (int)QrySearchProfiles.QueryCount(authenticationOption, Application.ID, userInactiveSinceDate).UniqueResult<long>();
+                retval = (int)QrySearchProfiles.QueryCount(authenticationOption, Application.ID, userInactiveSinceDate).UniqueResult<int>();
             }
             catch (Exception ex)
             {
