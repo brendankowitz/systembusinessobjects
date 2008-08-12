@@ -5,6 +5,7 @@ using System.Text;
 using NUnit.Framework;
 using System.Web.Security;
 using System.BusinessObjects.Membership.Qry;
+using System.Web.Profile;
 
 namespace System.BusinessObjects.Membership.Tests
 {
@@ -227,6 +228,33 @@ namespace System.BusinessObjects.Membership.Tests
 
             user.IsApproved = true;
             System.Web.Security.Membership.UpdateUser(user);
+        }
+
+        [Test]
+        public void DeleteUser()
+        {
+            System.Web.Security.MembershipCreateStatus status;
+            MembershipUser user = System.Web.Security.Membership.CreateUser("user1", "password", "test@test.com",
+                                                       "question?", "yes", true, out status);
+
+            System.Configuration.SettingsContext sc = new System.Configuration.SettingsContext();
+            sc.Add("UserName", "user1");
+            sc.Add("IsAuthenticated", true);
+
+            System.Configuration.SettingsPropertyValueCollection properties = new System.Configuration.SettingsPropertyValueCollection();
+
+            var propVal = new System.Configuration.SettingsPropertyValue(
+                new System.Configuration.SettingsProperty("Test") { DefaultValue = "", PropertyType = typeof(string) }
+                );
+            propVal.PropertyValue = "test string";
+            properties.Add(propVal);
+
+            ProfileManager.Provider.SetPropertyValues(sc, properties);
+
+            if (status != System.Web.Security.MembershipCreateStatus.Success)
+                Assert.Fail();
+
+            System.Web.Security.Membership.DeleteUser("user1");
         }
     }
 }

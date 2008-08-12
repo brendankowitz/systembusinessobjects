@@ -406,7 +406,12 @@ namespace System.BusinessObjects.Membership
                     // Process commands to delete all data for the user in the database.
                     if (deleteAllRelatedData)
                     {
-                        throw new NotImplementedException();
+                        if (members[0].Profile != null)
+                        {
+                            members[0].Profile.Delete();
+                            members[0].Profile.Save();
+                            members[0].Profile = null;
+                        }
                     }
 
                     // Delete the user record.
