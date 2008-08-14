@@ -179,11 +179,15 @@ namespace BusinessObject.Framework.Tests
             pers.AutoFlush = false;
             pers.Save();
 
-            ICriteria c = UnitOfWork.CurrentSession.CreateCriteria(typeof(Person));
-            c.AddIsNotNull<Person>(p => p.FirstName);
+            ICriteria c = UnitOfWork.CurrentSession.CreateCriteria(typeof(Person))
+                .Expression<Person>()
+                .IsNotNull(p => p.FirstName)
+                .Criteria;
 
             c.UniqueResult();
         }
+
+        [Test]
         public void CanUseEqlambdaExtension()
         {
             Person pers = BusinessObjectFactory.CreateAndFillPerson();
@@ -191,8 +195,179 @@ namespace BusinessObject.Framework.Tests
             pers.AutoFlush = false;
             pers.Save();
 
-            ICriteria c = session.CreateCriteria(typeof(Person));
-            c.AddEq<Person>(p => p.FirstName == "John");
+            ICriteria c = session.CreateCriteria(typeof(Person))
+                .Expression<Person>()
+                .Eq(p => p.FirstName == "John")
+                .Criteria;
+
+            Person result = c.UniqueResult<Person>();
+            Assert.AreEqual("John", result.FirstName);
+        }
+
+        [Test]
+        public void CanUseEqlambdaExtensionExpression()
+        {
+            Person pers = BusinessObjectFactory.CreateAndFillPerson();
+            pers.SetSession(session);
+            pers.AutoFlush = false;
+            pers.Save();
+
+            ICriteria c = session.CreateExpression<Person>()
+                .Eq(p => p.FirstName == "John")
+                .Criteria;
+
+            Person result = c.UniqueResult<Person>();
+            Assert.AreEqual("John", result.FirstName);
+        }
+
+        [Test]
+        public void CanUseEqlambdaExtensionExpression2()
+        {
+            Person pers = BusinessObjectFactory.CreateAndFillPerson();
+            pers.SetSession(session);
+            pers.AutoFlush = false;
+            pers.Save();
+
+            ICriteria c = session.CreateExpression<Person>()
+                .Eq(p => p.FirstName == "John")
+                .IsNotNull(p => p.LastName)
+                .Add(p => p.ID > 0 && p.ID < 1000)
+                .Criteria;
+
+            Person result = c.UniqueResult<Person>();
+            Assert.AreEqual("John", result.FirstName);
+        }
+
+        [Test]
+        public void CanUseEqlambdaExtensionExpressionWhere()
+        {
+            Person pers = BusinessObjectFactory.CreateAndFillPerson();
+            pers.SetSession(session);
+            pers.AutoFlush = false;
+            pers.Save();
+
+            ICriteria c = session.CreateExpression<Person>()
+                .Add(p => p.ID > 0 && p.ID < 1000)
+                .Criteria;
+
+            Person result = c.UniqueResult<Person>();
+            Assert.AreEqual("John", result.FirstName);
+        }
+
+        [Test]
+        public void CanUseEqlambdaExtensionExpressionWhere2()
+        {
+            Person pers = BusinessObjectFactory.CreateAndFillPerson();
+            pers.SetSession(session);
+            pers.AutoFlush = false;
+            pers.Save();
+
+            ICriteria c = session.CreateExpression<Person>()
+                .Add(p => p.ID < 1000 && p.ID > 0)
+                .Criteria;
+
+            Person result = c.UniqueResult<Person>();
+            Assert.AreEqual("John", result.FirstName);
+        }
+
+        [Test]
+        [ExpectedException(typeof(NotSupportedException))]
+        public void CanUseEqlambdaExtensionExpressionWhere3()
+        {
+            Person pers = BusinessObjectFactory.CreateAndFillPerson();
+            pers.SetSession(session);
+            pers.AutoFlush = false;
+            pers.Save();
+
+            ICriteria c = session.CreateExpression<Person>()
+                .Add(p => p.ID < 1000 && p.FirstName == "John")
+                .Criteria;
+
+            Person result = c.UniqueResult<Person>();
+            Assert.AreEqual("John", result.FirstName);
+        }
+
+        [Test]
+        public void CanUseEqlambdaExtensionExpressionWhere4()
+        {
+            Person pers = BusinessObjectFactory.CreateAndFillPerson();
+            pers.SetSession(session);
+            pers.AutoFlush = false;
+            pers.Save();
+
+            ICriteria c = session.CreateExpression<Person>()
+                .Add(p => p.ID != null)
+                .Criteria;
+
+            Person result = c.UniqueResult<Person>();
+            Assert.AreEqual("John", result.FirstName);
+        }
+
+        [Test]
+        public void CanUseEqlambdaExtensionExpressionWhere5()
+        {
+            Person pers = BusinessObjectFactory.CreateAndFillPerson();
+            pers.SetSession(session);
+            pers.AutoFlush = false;
+            pers.Save();
+
+            ICriteria c = session.CreateExpression<Person>()
+                .Add(p => p.ID != 0)
+                .Criteria;
+
+            Person result = c.UniqueResult<Person>();
+            Assert.AreEqual("John", result.FirstName);
+        }
+
+        [Test]
+        public void CanUseEqlambdaExtensionExpressionWhere6()
+        {
+            Person pers = BusinessObjectFactory.CreateAndFillPerson();
+            pers.SetSession(session);
+            pers.AutoFlush = false;
+            pers.Save();
+
+            string john = "John";
+
+            ICriteria c = session.CreateExpression<Person>()
+                .Add(p => p.FirstName == john)
+                .Criteria;
+
+            Person result = c.UniqueResult<Person>();
+            Assert.AreEqual("John", result.FirstName);
+        }
+
+        [Test]
+        public void CanUseEqlambdaExtensionExpressionWhere7()
+        {
+            Person pers = BusinessObjectFactory.CreateAndFillPerson();
+            pers.SetSession(session);
+            pers.AutoFlush = false;
+            pers.Save();
+
+            string john = "Jo%";
+
+            ICriteria c = session.CreateExpression<Person>()
+                .Like(p => p.FirstName == john)
+                .Criteria;
+
+            Person result = c.UniqueResult<Person>();
+            Assert.AreEqual("John", result.FirstName);
+        }
+
+        [Test]
+        public void CanUseEqlambdaExtensionExpressionWhere8()
+        {
+            Person pers = BusinessObjectFactory.CreateAndFillPerson();
+            pers.SetSession(session);
+            pers.AutoFlush = false;
+            pers.Save();
+
+            string john = "ab%";
+
+            ICriteria c = session.CreateExpression<Person>()
+                .Like(p => p.FirstName != john)
+                .Criteria;
 
             Person result = c.UniqueResult<Person>();
             Assert.AreEqual("John", result.FirstName);
