@@ -9,6 +9,7 @@ using System.Text;
 using System.IO;
 using System.Configuration;
 using System.Security.Permissions;
+using System.BusinessObjects.Transactions;
 
 namespace System.BusinessObjects.Membership
 {
@@ -64,6 +65,7 @@ namespace System.BusinessObjects.Membership
                     LoweredApplicationName = appName.ToLower()
                 };
                 Application.Save();
+                UnitOfWork.CurrentSession.Flush();
             }
         }
 
@@ -79,6 +81,7 @@ namespace System.BusinessObjects.Membership
                     p.Delete();
                     p.Save();
                 }
+                UnitOfWork.CurrentSession.Flush();
             }
             catch(Exception ex)
             {
@@ -108,6 +111,7 @@ namespace System.BusinessObjects.Membership
                         num++;
                     }
                 }
+                UnitOfWork.CurrentSession.Flush();
             }
             catch
             {
@@ -343,6 +347,7 @@ namespace System.BusinessObjects.Membership
                         u.LastActivityDate = DateTime.UtcNow;
                         u.Profile.LastUpdatedDate = DateTime.UtcNow;
                         u.Save();
+                        UnitOfWork.CurrentSession.Flush();
                         
                     }
                     catch(Exception ex)

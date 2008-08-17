@@ -6,6 +6,7 @@ using System.BusinessObjects.Data;
 
 #if DOT_NET_35
 using System.Linq;
+using System.Linq.Expressions;
 #endif
 
 namespace System.BusinessObjects.Helpers
@@ -26,9 +27,9 @@ namespace System.BusinessObjects.Helpers
         /// <remarks>
         /// From: http://www.paulstovell.com/blog/strongly-typed-property-names
         /// </remarks>
-        public static string GetFor(System.Linq.Expressions.Expression<Func<object>> propertyNameLambda)
+        public static string GetFor(Expression<Func<object>> propertyNameLambda)
         {
-            System.Linq.Expressions.MemberExpression member = propertyNameLambda.Body as System.Linq.Expressions.MemberExpression;
+            MemberExpression member = propertyNameLambda.Body as MemberExpression;
             if (member != null)
             {
                 return member.Member.Name;
@@ -36,14 +37,21 @@ namespace System.BusinessObjects.Helpers
             return string.Empty;
         }
 
-        public static string GetFor<T>(System.Linq.Expressions.Expression<Func<T,object>> propertyNameLambda)
+        public static string For<T>(Expression<Func<T, object>> propertyNameLambda)
         {
-            System.Linq.Expressions.MemberExpression member = propertyNameLambda.Body as System.Linq.Expressions.MemberExpression;
+            MemberExpression member;
+            if (propertyNameLambda.Body is UnaryExpression)
+                member = ((UnaryExpression)propertyNameLambda.Body).Operand as MemberExpression;
+            else
+                member = propertyNameLambda.Body as MemberExpression;
             if (member != null)
             {
                 return member.Member.Name;
             }
-            return string.Empty;
+            else
+            {
+                throw new ArgumentException("Could not determine property name.", "propertyNameLambda");
+            }
         }
 #endif
     }

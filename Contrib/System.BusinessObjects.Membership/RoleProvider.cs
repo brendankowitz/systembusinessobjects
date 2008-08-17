@@ -70,6 +70,7 @@ namespace System.BusinessObjects.Membership
                     LoweredApplicationName = appName.ToLower()
                 };
                 Application.Save();
+                UnitOfWork.CurrentSession.Flush();
             }
         }
 
@@ -94,6 +95,7 @@ namespace System.BusinessObjects.Membership
                         role.Users.Add(user);
                         role.Save();
                     }
+                    UnitOfWork.CurrentSession.Flush();
                 }
             }
             catch (Exception ex)
@@ -117,6 +119,7 @@ namespace System.BusinessObjects.Membership
                 role.Application = Application;
 
                 role.Save();
+                UnitOfWork.CurrentSession.Flush();
             }
             catch (Exception ex)
             {
@@ -147,6 +150,7 @@ namespace System.BusinessObjects.Membership
 
                     role.Delete();
                     role.Save();
+                    UnitOfWork.CurrentSession.Flush();
 
                     // Indicate no errors occured.
                     result = true;
@@ -311,6 +315,7 @@ namespace System.BusinessObjects.Membership
                         role.Users.Remove(user);
                         role.Save();
                     }
+                    UnitOfWork.CurrentSession.Flush();
                 }
 
                 //flush all changes

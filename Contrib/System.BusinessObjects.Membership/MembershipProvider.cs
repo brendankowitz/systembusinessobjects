@@ -7,6 +7,7 @@ using System.Web.Hosting;
 using System.BusinessObjects.Membership.Qry;
 using System.Configuration.Provider;
 using SystemWeb = System.Web.Security;
+using System.BusinessObjects.Transactions;
 
 namespace System.BusinessObjects.Membership
 {
@@ -213,6 +214,7 @@ namespace System.BusinessObjects.Membership
                     LoweredApplicationName = appName.ToLower()
                 };
                 Application.Save();
+                UnitOfWork.CurrentSession.Flush();
             }
 
             requiresQuestionAndAnswer = Convert.ToBoolean(GetConfigValue(config["requiresQuestionAndAnswer"], "False"));
@@ -290,6 +292,7 @@ namespace System.BusinessObjects.Membership
 
                         // Update user record with the new password.
                         user.Save();
+                        UnitOfWork.CurrentSession.Flush();
                         result = true;
                     }
                     catch
@@ -323,6 +326,7 @@ namespace System.BusinessObjects.Membership
                         user.LastActivityDate = DateTime.Now;
                         // Update user record with the new password.
                         user.Save();
+                        UnitOfWork.CurrentSession.Flush();
                         // Indicate a successful operation.
                         result = true;
                     }
@@ -373,10 +377,12 @@ namespace System.BusinessObjects.Membership
                 user.PasswordQuestion = passwordQuestion;
                 user.PasswordAnswer = EncodePassword(passwordAnswer, machineKey.ValidationKey);
                 user.IsApproved = isApproved;
+                user.CreateDate = DateTime.Now;
 
                 try
                 {
                     user.Save();
+                    UnitOfWork.CurrentSession.Flush();
                     status = SystemWeb.MembershipCreateStatus.Success;
                 }
                 catch (Exception ex)
@@ -417,6 +423,7 @@ namespace System.BusinessObjects.Membership
                     // Delete the user record.
                     members[0].Delete();
                     members[0].Save();
+                    UnitOfWork.CurrentSession.Flush();
                 }
 
                 result = true;
@@ -562,6 +569,7 @@ namespace System.BusinessObjects.Membership
                 {
                     user.FailedPasswordAnswerAttemptCount++;
                     user.Save();
+                    UnitOfWork.CurrentSession.Flush();
 
                     throw new System.Web.Security.MembershipPasswordException("Security answer was not correct.");
                 }
@@ -614,6 +622,7 @@ namespace System.BusinessObjects.Membership
                 // Update the last activity timestamp (LastActivityDate).
                 loadedUser.LastActivityDate = DateTime.Now;
                 loadedUser.Save();
+                UnitOfWork.CurrentSession.Flush();
             }
 
             // Return the resulting user.
@@ -656,6 +665,7 @@ namespace System.BusinessObjects.Membership
                 // Update the last activity timestamp (LastActivityDate).
                 member.LastActivityDate = DateTime.Now;
                 member.Save();
+                UnitOfWork.CurrentSession.Flush();
             }
 
             // Return the resulting user.
@@ -714,6 +724,7 @@ namespace System.BusinessObjects.Membership
             {
                 user.FailedPasswordAnswerAttemptCount++;
                 user.Save();
+                UnitOfWork.CurrentSession.Flush();
 
                 throw new SystemWeb.MembershipPasswordException("Password answer required for reset.");
             }
@@ -761,6 +772,7 @@ namespace System.BusinessObjects.Membership
                     user.LastPasswordChangedDate = DateTime.Now;
                     user.LastActivityDate = DateTime.Now;
                     user.Save();
+                    UnitOfWork.CurrentSession.Flush();
                 }
                 catch
                 {
@@ -788,6 +800,7 @@ namespace System.BusinessObjects.Membership
                     member.LastLockoutDate = DateTime.Now;
                     member.LastActivityDate = DateTime.Now;
                     member.Save();
+                    UnitOfWork.CurrentSession.Flush();
 
                     result = true;
                 }
@@ -808,6 +821,7 @@ namespace System.BusinessObjects.Membership
                 Membership member = Membership.Fetch<Membership>(QryFetchMemberByName.Query(user.UserName, Application.ID));
                 member.FromMembershipUser(user);
                 member.Save();
+                UnitOfWork.CurrentSession.Flush();
             }
             catch (Exception ex)
             {
@@ -845,6 +859,7 @@ namespace System.BusinessObjects.Membership
                     member.Save();
                 }
             }
+            UnitOfWork.CurrentSession.Flush();
 
             // Return the result of the operation.
             return isValid;
