@@ -6,8 +6,8 @@ using NUnit.Framework;
 using Sample.BusinessObjects.Contacts;
 using NHibernate;
 using System.BusinessObjects.Transactions;
-using System.BusinessObjects.Helpers;
 using NHibernate.Criterion;
+using System.BusinessObjects.Expressions;
 
 namespace BusinessObject.Framework.Tests
 {
@@ -40,7 +40,7 @@ namespace BusinessObject.Framework.Tests
             pers.Save();
 
             ICriteria c = session.CreateCriteria(typeof(Person));
-            c.Add(Restrictions.Eq(System.BusinessObjects.Helpers.Property.GetFor<Person>(p => p.FirstName), "John"));
+            c.Add(Restrictions.Eq(System.BusinessObjects.Helpers.Property.For<Person>(p => p.FirstName), "John"));
 
             Person result = c.UniqueResult<Person>();
             Assert.AreEqual("John", result.FirstName);
@@ -56,7 +56,7 @@ namespace BusinessObject.Framework.Tests
             pers.Save();
 
             ICriteria c = session.CreateCriteria(typeof(Person));
-            c.Add(RestrictBy.Eq<Person>(p => p.FirstName == "John" ));
+            c.Add(RestrictBy.Add<Person>(p => p.FirstName == "John" ));
             Person result = c.UniqueResult<Person>();
             Assert.AreEqual("John", result.FirstName);
             
@@ -71,7 +71,7 @@ namespace BusinessObject.Framework.Tests
             pers.Save();
 
             ICriteria c = session.CreateCriteria(typeof(Person));
-            c.Add(RestrictBy.Eq<Person>(p => "John" == p.FirstName));
+            c.Add(RestrictBy.Add<Person>(p => "John" == p.FirstName));
             Person result = c.UniqueResult<Person>();
             Assert.AreEqual("John", result.FirstName);
 
@@ -86,7 +86,7 @@ namespace BusinessObject.Framework.Tests
             pers.Save();
 
             ICriteria c = session.CreateCriteria(typeof(Person));
-            c.Add(RestrictBy.Eq<Person>(p => p.ID >= 0));
+            c.Add(RestrictBy.Add<Person>(p => p.ID >= 0));
 
             Person result = c.UniqueResult<Person>();
             Assert.AreEqual("John", result.FirstName);
@@ -102,7 +102,7 @@ namespace BusinessObject.Framework.Tests
             pers.Save();
 
             ICriteria c = session.CreateCriteria(typeof(Person));
-            c.Add(RestrictBy.Eq<Person>(p => p.ID > 0));
+            c.Add(RestrictBy.Add<Person>(p => p.ID > 0));
 
             Person result = c.UniqueResult<Person>();
             Assert.AreEqual("John", result.FirstName);
@@ -118,7 +118,7 @@ namespace BusinessObject.Framework.Tests
             pers.Save();
 
             ICriteria c = session.CreateCriteria(typeof(Person));
-            c.Add(RestrictBy.Eq<Person>(p => p.ID <= 0));
+            c.Add(RestrictBy.Add<Person>(p => p.ID <= 0));
 
             Person result = c.UniqueResult<Person>();
             Assert.IsNull(result);
@@ -134,7 +134,7 @@ namespace BusinessObject.Framework.Tests
             pers.Save();
 
             ICriteria c = session.CreateCriteria(typeof(Person));
-            c.Add(RestrictBy.Eq<Person>(p => p.ID < 0));
+            c.Add(RestrictBy.Add<Person>(p => p.ID < 0));
 
             Person result = c.UniqueResult<Person>();
             Assert.IsNull(result);
@@ -150,7 +150,7 @@ namespace BusinessObject.Framework.Tests
             pers.Save();
 
             ICriteria c = UnitOfWork.CurrentSession.CreateCriteria(typeof(Person));
-            c.Add(RestrictBy.IsNull<Person>(p => p.FirstName));
+            c.Add(RestrictBy.Add<Person>(p => p.FirstName == null));
 
             Person result = c.UniqueResult<Person>();
             Assert.IsNull(result);
@@ -165,7 +165,7 @@ namespace BusinessObject.Framework.Tests
             pers.Save();
 
             ICriteria c = UnitOfWork.CurrentSession.CreateCriteria(typeof(Person));
-            c.Add(RestrictBy.IsNotNull<Person>(p => p.FirstName));
+            c.Add(RestrictBy.Add<Person>(p => p.FirstName != null));
 
             Person result = c.UniqueResult<Person>();
             Assert.AreEqual("John", result.FirstName);
@@ -181,7 +181,7 @@ namespace BusinessObject.Framework.Tests
 
             ICriteria c = UnitOfWork.CurrentSession.CreateCriteria(typeof(Person))
                 .Expression<Person>()
-                .IsNotNull(p => p.FirstName)
+                .Add(p => p.FirstName != null)
                 .Criteria;
 
             c.UniqueResult();
@@ -197,7 +197,7 @@ namespace BusinessObject.Framework.Tests
 
             ICriteria c = session.CreateCriteria(typeof(Person))
                 .Expression<Person>()
-                .Eq(p => p.FirstName == "John")
+                .Add(p => p.FirstName == "John")
                 .Criteria;
 
             Person result = c.UniqueResult<Person>();
@@ -213,7 +213,7 @@ namespace BusinessObject.Framework.Tests
             pers.Save();
 
             ICriteria c = session.CreateExpression<Person>()
-                .Eq(p => p.FirstName == "John")
+                .Add(p => p.FirstName == "John")
                 .Criteria;
 
             Person result = c.UniqueResult<Person>();
@@ -221,7 +221,7 @@ namespace BusinessObject.Framework.Tests
         }
 
         [Test]
-        public void CanUseEqlambdaExtensionExpression2()
+        public void CanUseEqlambdaExtensionExpression_Multiple_Adds()
         {
             Person pers = BusinessObjectFactory.CreateAndFillPerson();
             pers.SetSession(session);
@@ -229,8 +229,8 @@ namespace BusinessObject.Framework.Tests
             pers.Save();
 
             ICriteria c = session.CreateExpression<Person>()
-                .Eq(p => p.FirstName == "John")
-                .IsNotNull(p => p.LastName)
+                .Add(p => p.FirstName == "John")
+                .Add(p => p.LastName != null)
                 .Add(p => p.ID > 0 && p.ID < 1000)
                 .Criteria;
 
@@ -371,6 +371,88 @@ namespace BusinessObject.Framework.Tests
 
             Person result = c.UniqueResult<Person>();
             Assert.AreEqual("John", result.FirstName);
+        }
+
+        [Test]
+        public void CanUseIsNotNull2()
+        {
+            Person pers = BusinessObjectFactory.CreateAndFillPerson();
+            pers.SetSession(session);
+            pers.AutoFlush = false;
+            pers.Save();
+
+            ICriteria c = UnitOfWork.CurrentSession.CreateCriteria(typeof(Person))
+                .Expression<Person>(p => p.FirstName != null);
+
+            Person result = c.UniqueResult<Person>();
+            Assert.AreEqual("John", result.FirstName);
+        }
+
+        [Test]
+        public void CanUseIsNotNull_WithOrder()
+        {
+            Person pers = BusinessObjectFactory.CreateAndFillPerson();
+            pers.SetSession(session);
+            pers.AutoFlush = false;
+            pers.Save();
+
+            ICriteria c = UnitOfWork.CurrentSession.CreateExpression<Person>()
+                .Add(p => p.FirstName != null)
+                .OrderDesc(p => p.LastName)
+                .Criteria;
+
+            Assert.AreEqual("FirstName is not null\r\nLastName desc", c.ToString());
+
+            Person result = c.UniqueResult<Person>();
+            Assert.AreEqual("John", result.FirstName);
+        }
+
+        [Test]
+        public void CanUseAlias()
+        {
+            Person pers = BusinessObjectFactory.CreateAndFillPerson();
+            pers.SetSession(session);
+            pers.AutoFlush = false;
+            pers.Save();
+
+            //Using expression interface
+            ICriteria c = UnitOfWork.CurrentSession.CreateExpression<Person>()
+                .Add(p => p.FirstName == "John")
+                .Alias<Address>(p => p.Addresses, "addr")
+                    .Add(a => a.Postcode != null)
+                    .AddAndReturn(a => a.Address1 == null)
+                .OrderAsc(p => p.ID)
+                .Criteria;
+
+            //Normal interface
+            ICriteria o = UnitOfWork.CurrentSession.CreateCriteria(typeof(Person))
+                .Add(Restrictions.Eq("FirstName", "John"))
+                .CreateAlias("Addresses", "addr")
+                    .Add(Restrictions.IsNotNull("addr.Postcode"))
+                    .Add(Restrictions.IsNull("addr.Address1"))
+                .AddOrder(Order.Asc("ID"));
+
+            Console.WriteLine(c.ToString());
+            Assert.AreEqual(c.ToString(), o.ToString());
+        }
+
+        [Test]
+        public void CanUseProjection()
+        {
+            Person pers = BusinessObjectFactory.CreateAndFillPerson();
+            pers.SetSession(session);
+            pers.AutoFlush = false;
+            pers.Save();
+
+            //Using expression interface
+            ICriteria c = UnitOfWork.CurrentSession.CreateExpression<Person>()
+                .SetProjection(Projections.Min, p => p.ID)
+                .Criteria;
+
+            ICriteria o = UnitOfWork.CurrentSession.CreateCriteria(typeof(Person))
+                .SetProjection(Projections.Min("ID"));
+
+            Assert.AreEqual(o.Projection.ToString(), c.Projection.ToString());
         }
 #endif
     }
