@@ -5,6 +5,7 @@ using Iesi.Collections.Generic;
 using System.BusinessObjects.Validation;
 using System.Xml;
 using System.Xml.Serialization;
+using System.Text.RegularExpressions;
 
 namespace Sample.BusinessObjects.Contacts
 {
@@ -31,6 +32,7 @@ namespace Sample.BusinessObjects.Contacts
             }
         }
 
+        Regex exp = new Regex("");
         [ValidationNotEmpty]
         public virtual string LastName
         {
@@ -39,6 +41,17 @@ namespace Sample.BusinessObjects.Contacts
             {
                 BeginEdit();
                 SetValue("LastName", value);
+            }
+        }
+
+        [ValidationRegex(@"[\w-]+@([\w-]+\.)+[\w-]+", ErrorMessage="{0} does not contain a valid email address")]
+        public virtual string Email
+        {
+            get { return GetValue<string>("Email"); }
+            set
+            {
+                BeginEdit();
+                SetValue("Email", value);
             }
         }
 

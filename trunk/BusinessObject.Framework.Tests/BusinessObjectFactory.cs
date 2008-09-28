@@ -21,6 +21,7 @@ namespace BusinessObject.Framework.Tests
             Person p = new Person();
             p.FirstName = "John";
             p.LastName = "Smith";
+            p.Email = "john@smith.com";
             return p;
         }
     }

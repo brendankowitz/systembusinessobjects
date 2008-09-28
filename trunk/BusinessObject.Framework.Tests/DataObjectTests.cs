@@ -215,6 +215,21 @@ namespace BusinessObject.Framework.Tests
             a.Save();
 
         }
+
+        [Test]
+        public void TestNHibernateValidationRegex()
+        {
+            Person p = BusinessObjectFactory.CreateAndFillPerson();
+            IDataErrorInfo error = p;
+
+            Assert.IsEmpty(error["Email"]);
+
+            p.Email = "invalid.email";
+
+            Trace.WriteLine(error["Email"]);
+            Assert.IsNotEmpty(error["Email"]);
+        }
+
         #endregion
 
         #region Property Changed Events
