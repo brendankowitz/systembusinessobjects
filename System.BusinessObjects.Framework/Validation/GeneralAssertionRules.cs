@@ -2,6 +2,7 @@ using System.BusinessObjects.Data;
 using System.Collections;
 using System.Reflection;
 using System.BusinessObjects.Helpers;
+using System.Text.RegularExpressions;
 
 namespace System.BusinessObjects.Validation
 {
@@ -337,6 +338,26 @@ namespace System.BusinessObjects.Validation
                     throw new ApplicationException(string.Format("Unspecified validation type {0} on property {1}", info.PropertyType.Name, propertyName));
                 }
 
+                return retval;
+            };
+            return temp;
+        }
+
+        /// <summary>
+        /// Performs a regex validation against a property
+        /// </summary>
+        public static ValidatorTemplate Regex(DataObject obj, string propertyName, Regex expression, string errorMessage)
+        {
+            PropertyInfo info = Property.GetPropertyInfo(propertyName, obj);
+            ValidatorTemplate temp = delegate(out string propName, out string message) //PropertyInfo info, DataObject objObj, R expectedVal
+            {
+                propName = propertyName;
+                bool retval;
+                message = string.Empty;
+                object curVal = info.GetValue(obj, null);
+                retval = expression.IsMatch(curVal.ToString());
+                if (!retval)
+                    message = string.Format(errorMessage, propertyName);
                 return retval;
             };
             return temp;
