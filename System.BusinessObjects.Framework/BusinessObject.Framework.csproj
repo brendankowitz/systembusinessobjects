@@ -103,15 +103,9 @@
     <Compile Include="Data\NHibernateAspContextProvider.cs" />
     <Compile Include="Data\NHibernateThreadSlotProvider.cs" />
     <Compile Include="Data\SafeBindingLists.cs" />
-    <Compile Include="Expressions\CriteriaExpression.cs" />
-    <Compile Include="Expressions\ProjectionExpression.cs" />
-    <Compile Include="Expressions\ResolveLambda.cs" />
-    <Compile Include="Expressions\RestrictByExtensions.cs" />
-    <Compile Include="Expressions\WithAliasCriteriaExpression.cs" />
     <Compile Include="Properties\GlobalAssemblyInfo.cs" />
     <Compile Include="HashtableDataCache.cs" />
     <Compile Include="Helpers\Property.cs" />
-    <Compile Include="Expressions\RestrictBy.cs" />
     <Compile Include="Helpers\WebHelper.cs" />
     <Compile Include="Helpers\XmlHelper.cs" />
     <Compile Include="NamespaceDocumentation.cs" />

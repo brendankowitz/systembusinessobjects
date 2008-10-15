@@ -1,15 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
-
-#if DOT_NET_35
 using System.Linq;
 using System.Linq.Expressions;
-#endif
 
 namespace System.BusinessObjects.Expressions
 {
-#if DOT_NET_35
     public class WithAliasCriteriaExpression<T, R>
     {
         CriteriaExpression<T> inner = null;
@@ -58,5 +54,4 @@ namespace System.BusinessObjects.Expressions
             return inner;
         }
     }
-#endif
 }

@@ -2,7 +2,7 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProductVersion>9.0.21022</ProductVersion>
+    <ProductVersion>9.0.30729</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{02162254-F621-4A0C-B165-4CD33B1E5052}</ProjectGuid>
     <OutputType>Library</OutputType>
@@ -91,6 +91,10 @@
     <ProjectReference Include="..\Examples\Sample.BusinessObjects\Sample.BusinessObjects.csproj">
       <Project>{0B8E754A-1587-4031-ABDB-43324DC917EA}</Project>
       <Name>Sample.BusinessObjects</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\System.BusinessObjects.Expressions\System.BusinessObjects.Expressions.csproj">
+      <Project>{7373763E-0410-4C11-B231-C190ECA67C49}</Project>
+      <Name>System.BusinessObjects.Expressions</Name>
     </ProjectReference>
     <ProjectReference Include="..\System.BusinessObjects.Framework\BusinessObject.Framework.csproj">
       <Project>{419FB51B-44D5-4611-B6D4-3154CC8EDCCA}</Project>

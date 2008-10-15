@@ -5,5 +5,5 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyCompany("http://code.google.com/p/systembusinessobjects/")]
 
 //NHibernate 2.0 Versions of System.BusinessObjects are now prefixed 1.1.x.x
-[assembly: AssemblyVersion("1.1.0.1")]
-[assembly: AssemblyFileVersion("1.1.0.1")]
+[assembly: AssemblyVersion("1.1.0.2")]
+[assembly: AssemblyFileVersion("1.1.0.2")]

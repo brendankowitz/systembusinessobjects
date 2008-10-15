@@ -1,16 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
-
-#if DOT_NET_35
 using System.Linq;
 using System.Linq.Expressions;
-#endif
 
 namespace System.BusinessObjects.Expressions
 {
     #region Resolve Lambda Helper
-#if DOT_NET_35
     /// <summary>
     /// Helper class to break down and resolve lambda values
     /// </summary>
@@ -170,6 +166,5 @@ namespace System.BusinessObjects.Expressions
         }
     }
 
-#endif
     #endregion
 }
