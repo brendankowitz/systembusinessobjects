@@ -9,7 +9,7 @@ This library is independent of the main System.!BusinessObject.Framework, so it 
 
 = Examples =
 
-Added a simple EQ expression:
+Adding a simple EQ expression:
 {{{
 ICriteria c = session.CreateExpression<Person>()  
       .Add(p => p.FirstName == "John")  
