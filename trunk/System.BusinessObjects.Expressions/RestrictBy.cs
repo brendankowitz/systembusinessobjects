@@ -2,11 +2,8 @@
 using System.Collections.Generic;
 using System.Text;
 using NHibernate.Criterion;
-
-#if DOT_NET_35
 using System.Linq;
 using System.Linq.Expressions;
-#endif
 
 namespace System.BusinessObjects.Expressions
 {
@@ -16,8 +13,6 @@ namespace System.BusinessObjects.Expressions
     public class RestrictBy
     {
         private RestrictBy() { }
-
-#if DOT_NET_35
         /// <summary>
         /// Adds an IsEmpty criteria for a collection
         /// </summary>
@@ -185,6 +180,5 @@ namespace System.BusinessObjects.Expressions
             }
             return Order.Desc(r.PropertyName);
         }
-#endif
     }
 }

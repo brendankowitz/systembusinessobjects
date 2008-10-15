@@ -1,15 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
-
-#if DOT_NET_35
 using System.Linq;
 using System.Linq.Expressions;
-#endif
 
 namespace System.BusinessObjects.Expressions
 {
-#if DOT_NET_35
     /// <summary>
     /// A set of extensions methods for ICriteria to remove the need for .Add()
     /// </summary>
@@ -39,5 +35,4 @@ namespace System.BusinessObjects.Expressions
             return new CriteriaExpression<T>(c).Criteria;
         }
     }
-#endif
 }

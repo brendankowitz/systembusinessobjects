@@ -1,17 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
-using System.BusinessObjects.Helpers;
-
-#if DOT_NET_35
 using System.Linq;
 using System.Linq.Expressions;
 using NHibernate.Criterion;
-#endif
 
 namespace System.BusinessObjects.Expressions
 {
-#if DOT_NET_35
     /// <summary>
     /// A wrapper class for NHibernate's ICriteria
     /// </summary>
@@ -81,7 +76,7 @@ namespace System.BusinessObjects.Expressions
         /// </summary>
         public CriteriaExpression<T> SetProjection(ProjectionFunction target, Expression<Func<T, object>> propertyLambda)
         {
-            string prop = System.BusinessObjects.Helpers.Property.For<T>(propertyLambda);
+            string prop = Property.For<T>(propertyLambda);
             Criteria.SetProjection(target(prop));
             return this;
         }
@@ -118,7 +113,7 @@ namespace System.BusinessObjects.Expressions
         /// </summary>
         public CriteriaExpression<T> Alias(Expression<Func<T, object>> propertyLambda, string alias)
         {
-            Criteria.CreateAlias(System.BusinessObjects.Helpers.Property.For<T>(propertyLambda), alias);
+            Criteria.CreateAlias(Property.For<T>(propertyLambda), alias);
             return this;
         }
 
@@ -128,7 +123,7 @@ namespace System.BusinessObjects.Expressions
         /// </summary>
         public WithAliasCriteriaExpression<T, R> Alias<R>(Expression<Func<T, object>> propertyLambda, string alias)
         {
-            Criteria.CreateAlias(System.BusinessObjects.Helpers.Property.For<T>(propertyLambda), alias);
+            Criteria.CreateAlias(Property.For<T>(propertyLambda), alias);
             return new WithAliasCriteriaExpression<T, R>(this, alias);
         }
 
@@ -140,5 +135,4 @@ namespace System.BusinessObjects.Expressions
             return new WithAliasCriteriaExpression<T, R>(this, alias);
         }
     }
-#endif
 }
