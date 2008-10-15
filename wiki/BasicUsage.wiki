@@ -1,4 +1,5 @@
 #summary Shows basic examples of usage
+#labels Featured
 
 = Basic example of usage =
 
