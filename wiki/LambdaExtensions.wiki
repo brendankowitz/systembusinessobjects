@@ -1,4 +1,5 @@
 #summary Shows basic examples of usage for NHibernate ICriteria Lambda Extensions
+#labels Featured
 
 = Introduction =
 
