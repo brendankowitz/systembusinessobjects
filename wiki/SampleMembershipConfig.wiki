@@ -1,4 +1,4 @@
-#summary Shows a sample config for System.!BusinessObjects.Membership
+#summary Shows a sample config for System.BusinessObjects.Membership
 
 = Introduction =
 
