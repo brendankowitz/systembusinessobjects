@@ -1,4 +1,4 @@
-#summary Sample Config file for System.!BusinessObjects.Framework
+#summary Sample Config file for System.BusinessObjects.Framework
 
 = Introduction =
 
