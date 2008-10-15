@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<hibernate-mapping xmlns="urn:nhibernate-mapping-2.2" assembly="System.BusinessObjects.Membership" namespace="System.BusinessObjects.Membership">
+
+  <class name="User" table="aspnet_Users" >
+    <id name="ID" type="System.Guid" column="UserId">
+      <generator class="guid"></generator>
+    </id>
+    <property name="UserName" column="UserName" type="System.String" not-null="true" length="256"/>
+    <property name="LoweredUserName" column="LoweredUserName" type="System.String" not-null="true" length="256"/>
+    <property name="MobileAlias" column="MobileAlias" type="System.String" not-null="false" length="16"/>
+    <property name="IsAnonymous" column="IsAnonymous" type="System.Boolean" not-null="true" />
+    <property name="LastActivityDate" column="LastActivityDate" type="System.DateTime" not-null="true" />
+    <many-to-one name="Application" column="ApplicationId" class="Application" />
+
+    <one-to-one name="Profile" class="Profile" property-ref="User" constrained="false" cascade="all" />
+      
+ </class>
+</hibernate-mapping>
