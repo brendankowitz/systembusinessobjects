@@ -355,7 +355,7 @@ namespace System.BusinessObjects.Validation
                 bool retval;
                 message = string.Empty;
                 object curVal = info.GetValue(obj, null);
-                retval = expression.IsMatch(curVal.ToString());
+                retval = expression.IsMatch(curVal + "");
                 if (!retval)
                     message = string.Format(errorMessage, propertyName);
                 return retval;

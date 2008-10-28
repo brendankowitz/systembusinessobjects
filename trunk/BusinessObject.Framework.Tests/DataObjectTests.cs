@@ -230,6 +230,20 @@ namespace BusinessObject.Framework.Tests
             Assert.IsNotEmpty(error["Email"]);
         }
 
+        [Test]
+        public void TestNHibernateValidationRegexNullProperty()
+        {
+            Person p = BusinessObjectFactory.CreateAndFillPerson();
+            IDataErrorInfo error = p;
+
+            Assert.IsEmpty(error["Email"]);
+
+            p.Email = null;
+
+            Trace.WriteLine(error["Email"]);
+            Assert.IsNotEmpty(error["Email"]);
+        }
+
         #endregion
 
         #region Property Changed Events
