@@ -193,7 +193,8 @@ namespace System.BusinessObjects.Data
         /// </summary>
         public DataObject()
         {
-            validationRules = new ValidationRuleCollection(this);
+            Type ruleCollection = ConfigSectionHelper.GetValidationCollectionType();
+            validationRules = Activator.CreateInstance(ruleCollection, this) as IValidationRuleCollection;
         }
 
         /// <summary>
@@ -750,12 +751,10 @@ namespace System.BusinessObjects.Data
 
         void NHibernate.Classic.IValidatable.Validate()
         {
-            if (GetPersistanceQueryAction() == QueryAction.Delete)
-                return;
-
-            if (!ValidationRules.Validate())
+            if (ValidationRules.Count > 0 && GetPersistanceQueryAction() != QueryAction.Delete)
             {
-                throw new NHibernate.Classic.ValidationFailure(ValidationRules.Error);
+                if(!ValidationRules.Validate())
+                    throw new NHibernate.Classic.ValidationFailure(ValidationRules.Error);
             }
         }
 

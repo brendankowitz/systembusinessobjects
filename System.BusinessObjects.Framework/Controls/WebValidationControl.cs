@@ -4,7 +4,7 @@ using System.ComponentModel;
 using System.Web.UI;
 using System.Web.UI.WebControls;
 
-namespace System.BusinessObjects.Validation
+namespace System.BusinessObjects.Controls
 {
     [NonVisualControl]
     public class WebValidationControlExtender : WebControl

@@ -1,6 +1,6 @@
 <%@ Page Language="C#" AutoEventWireup="true" CodeBehind="Default.aspx.cs" Inherits="Sample.UI.AddressBook._Default" %>
 
-<%@ Register Assembly="System.BusinessObjects.Framework" Namespace="System.BusinessObjects.Validation"
+<%@ Register Assembly="System.BusinessObjects.Framework" Namespace="System.BusinessObjects.Controls"
     TagPrefix="cc1" %>
 
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
