@@ -70,8 +70,10 @@ namespace System.BusinessObjects.Controls
 
         void WebValidationControlExtender_Updating(object sender, ObjectDataSourceMethodEventArgs e)
         {
-            if(!ValidateObjectCollection(e.InputParameters.Values))
+            if (!ValidateObjectCollection(e.InputParameters.Values))
+            {
                 e.Cancel = true;
+            }
         }
 
         void WebValidationControlExtender_Inserting(object sender, ObjectDataSourceMethodEventArgs e)
