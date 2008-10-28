@@ -2,6 +2,7 @@ using System.BusinessObjects.Data;
 
 namespace System.BusinessObjects
 {
+    [Obsolete("Obsolete in favour of built-in class KeyValuePair<T,R>")]
     public class NameValuePair : DataObject
     {
         public NameValuePair()
