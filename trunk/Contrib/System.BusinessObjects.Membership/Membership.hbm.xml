@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <hibernate-mapping xmlns="urn:nhibernate-mapping-2.2" assembly="System.BusinessObjects.Membership" namespace="System.BusinessObjects.Membership">
 
-  <joined-subclass name="Membership" table="aspnet_Membership" extends="User">
+  <joined-subclass name="Membership" table="aspnet_Membership" extends="User" dynamic-insert="true" dynamic-update="true">
     <key column="UserId" property-ref="ID" />
 
     <property name="Password" column="Password" type="System.String" not-null="true" length="128"/>
