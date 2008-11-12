@@ -14,6 +14,8 @@ namespace BusinessObject.Framework.Tests
     [TestFixture]
     public class RestrictionHelperTests : NHibernateInMemoryTestFixtureBase
     {
+        public string QueryFirstNameProperty{ get{ return "John"; } }
+
 #if DOT_NET_35
         [Test]
         public void CanUseEqStrongProperty()
@@ -453,6 +455,43 @@ namespace BusinessObject.Framework.Tests
                 .SetProjection(Projections.Min("ID"));
 
             Assert.AreEqual(o.Projection.ToString(), c.Projection.ToString());
+        }
+
+        [Test]
+        public void CanUseParameter()
+        {
+            Person pers = BusinessObjectFactory.CreateAndFillPerson();
+            pers.SetSession(session);
+            pers.AutoFlush = false;
+            pers.Save();
+
+            ICriteria c = null;
+            Action<string> del = (name) =>
+            {
+                c = UnitOfWork.CurrentSession.CreateCriteria(typeof(Person))
+                    .Expression<Person>(p => p.FirstName == name);
+            };
+
+            del("John");
+
+            Person result = c.UniqueResult<Person>();
+            Assert.AreEqual("John", result.FirstName);
+        }
+
+        [Test]
+        public void CanUseProperty()
+        {
+            Person pers = BusinessObjectFactory.CreateAndFillPerson();
+            pers.SetSession(session);
+            pers.AutoFlush = false;
+            pers.Save();
+
+            ICriteria c = UnitOfWork.CurrentSession.CreateExpression<Person>()
+                .Add(p => p.FirstName == QueryFirstNameProperty)
+                .Criteria;
+
+            Person result = c.UniqueResult<Person>();
+            Assert.AreEqual("John", result.FirstName);
         }
 #endif
     }

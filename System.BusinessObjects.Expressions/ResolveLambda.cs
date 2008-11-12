@@ -147,14 +147,16 @@ namespace System.BusinessObjects.Expressions
         }
         internal void Visit(System.Linq.Expressions.MemberExpression expression)
         {
-            if (evaluatedType != null && expression.Member.DeclaringType == evaluatedType)
-            { //this is the property name we are evaluating
+            if (evaluatedType != null && expression.Member.DeclaringType == evaluatedType && expression.Expression.NodeType == ExpressionType.Parameter)
+            { //this is the property name from a parameter that we are evaluating
                 PropertyName = expression.Member.Name;
                 PropertyType = ((System.Reflection.PropertyInfo)expression.Member).PropertyType;
             }
             else if (expression.Expression is ConstantExpression)
             { //treat this as a variable to compare against
-                if (((ConstantExpression)expression.Expression).Value.GetType().IsNested)
+                if (expression.Member.MemberType == System.Reflection.MemberTypes.Property)
+                    Value = ((ConstantExpression)expression.Expression).Value.GetType().GetProperty(expression.Member.Name).GetValue(((ConstantExpression)expression.Expression).Value, null);
+                if (expression.Member.MemberType == System.Reflection.MemberTypes.Field)
                     Value = ((ConstantExpression)expression.Expression).Value.GetType().GetField(expression.Member.Name).GetValue(((ConstantExpression)expression.Expression).Value);
                 else
                     Value = ((ConstantExpression)expression.Expression).Value;
