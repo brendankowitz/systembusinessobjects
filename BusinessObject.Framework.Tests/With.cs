@@ -142,6 +142,18 @@ namespace BusinessObject.Framework.Tests
             IList<string> outputlist = list.Each().Item<Person, string>(p => p.FirstName + "." + p.LastName) as IList<string>;
             Assert.AreEqual("John.Smith", outputlist[0]);
         }
+
+        [Test]
+        public void TestlambdaEachFunctionCollectionPredicateSelect()
+        {
+            List<Person> list = new List<Person>();
+            list.Add(BusinessObjectFactory.CreateAndFillPerson());
+
+            Person selected = list.SelectBy(x => x.FirstName == "John");
+
+            Assert.AreEqual("John", selected.FirstName);
+
+        }
 #endif
 
     }
