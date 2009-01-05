@@ -46,6 +46,20 @@ namespace System.BusinessObjects.With
         }
 
         /// <summary>
+        /// Selects an item matching a predicate
+        /// *Replace with Built-in extension method in 3.5
+        /// </summary>
+        public T Select<T>(Predicate<T> predicate)
+        {
+            foreach (T item in internalCollection)
+            {
+                if (predicate(item))
+                    return item;
+            }
+            return default(T);
+        }
+
+        /// <summary>
         /// Splits an IList into an array of smaller ILists
         /// </summary>
         public IList<T>[] Split<T>(int segmentSize)
@@ -139,8 +153,21 @@ namespace System.BusinessObjects.With
         /// A more efficient method is to use the 'foreach' statement, however
         /// under some circumstances this may be cleaner. ie. A function that matches the
         /// delegate signature is able to be passed in.
+        /// 
+        /// Note: Many of these methods are obselete under .net3.5.
         /// </summary>
         public static EachIterator Each(IEnumerable collection)
+        {
+            return new EachIterator(collection);
+        }
+
+        /// <summary>
+        /// Performs a Ruby-style Collection.Each operation
+        /// A more efficient method is to use the 'foreach' statement, however
+        /// under some circumstances this may be cleaner. ie. A function that matches the
+        /// delegate signature is able to be passed in.
+        /// </summary>
+        public static EachIterator Each<T>(IEnumerable<T> collection)
         {
             return new EachIterator(collection);
         }
@@ -170,9 +197,30 @@ namespace System.BusinessObjects.With
         /// under some circumstances this may be cleaner. ie. A function that matches the
         /// delegate signature is able to be passed in.
         /// </summary>
-        public static void Each<T>(this IEnumerable collection, Action<T> action)
+        public static EachIterator Each<T>(IEnumerable<T> collection)
+        {
+            return new EachIterator(collection);
+        }
+
+        /// <summary>
+        /// Performs a Ruby-style Collection.Each operation
+        /// A more efficient method is to use the 'foreach' statement, however
+        /// under some circumstances this may be cleaner. ie. A function that matches the
+        /// delegate signature is able to be passed in.
+        /// </summary>
+        public static void Each<T>(this IEnumerable<T> collection, Action<T> action)
         {
             new EachIterator(collection).Item<T>(action);
+        }
+
+        /// <summary>
+        /// Selects an item matching a predicate
+        /// *Replace with Built-in extension method in 3.5
+        /// </summary>
+        public static T SelectBy<T>(this IEnumerable<T> collection, Predicate<T> predicate)
+        {
+            
+            return new EachIterator(collection).Select<T>(predicate);
         }
     }
 #endif
