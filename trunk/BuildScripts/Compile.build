@@ -1,10 +1,9 @@
 <?xml version="1.0"?>
 <project name="code.compile" default="build">
 
-  <loadtasks assembly="${nant::get-base-directory()}/../nant-contrib/bin/NAnt.Contrib.Tasks.dll" />
+  <loadtasks assembly="${nant::get-base-directory()}/nant-contrib/bin/NAnt.Contrib.Tasks.dll" />
  	
   <target name="build">
-	 <property name="nant.settings.currentframework" value="net-2.0"/>
      <!--msbuild project="${build.path}/${solution.file}" target="Rebuild">
        <property name="Configuration" value="${solution.config}" />
      </msbuild-->
