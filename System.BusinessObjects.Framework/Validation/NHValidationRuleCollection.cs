@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.BusinessObjects.Data;
+
+#if NH_VALIDATOR
 using NHibernate.Validator.Engine;
 
 namespace System.BusinessObjects.Validation
@@ -113,3 +115,4 @@ namespace System.BusinessObjects.Validation
         #endregion
     }
 }
+#endif
