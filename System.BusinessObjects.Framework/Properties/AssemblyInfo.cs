@@ -6,11 +6,10 @@ using System.Security;
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("Compact Lite BusinessObject Framework for NHibernate")]
-[assembly: AssemblyDescription("Compact Lite BusinessObject Framework for NHibernate")]
+[assembly: AssemblyTitle("A compact BusinessObject Framework for NHibernate")]
+[assembly: AssemblyDescription("A compact BusinessObject Framework for NHibernate")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyProduct("BusinessObject Framework")]
-[assembly: AssemblyCopyright("Copyright under BSD License 2007-2008")]
+[assembly: AssemblyProduct("System.BusinessObjects Framework")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 

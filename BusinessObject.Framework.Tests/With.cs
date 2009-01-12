@@ -149,7 +149,7 @@ namespace BusinessObject.Framework.Tests
             List<Person> list = new List<Person>();
             list.Add(BusinessObjectFactory.CreateAndFillPerson());
 
-            Person selected = list.SelectBy(x => x.FirstName == "John");
+            Person selected = list.FirstMatch(x => x.FirstName == "John");
 
             Assert.AreEqual("John", selected.FirstName);
 
