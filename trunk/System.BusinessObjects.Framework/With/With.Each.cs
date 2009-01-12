@@ -49,7 +49,7 @@ namespace System.BusinessObjects.With
         /// Selects an item matching a predicate
         /// *Replace with Built-in extension method in 3.5
         /// </summary>
-        public T Select<T>(Predicate<T> predicate)
+        public T First<T>(Predicate<T> predicate)
         {
             foreach (T item in internalCollection)
             {
@@ -57,6 +57,22 @@ namespace System.BusinessObjects.With
                     return item;
             }
             return default(T);
+        }
+
+
+        /// <summary>
+        /// Selects an item matching a predicate
+        /// *Replace with Built-in extension method in 3.5
+        /// </summary>
+        public IEnumerable<T> Select<T>(Predicate<T> predicate)
+        {
+            List<T> newList = new List<T>();
+            foreach (T item in internalCollection)
+            {
+                if (predicate(item))
+                    newList.Add(item);
+            }
+            return newList;
         }
 
         /// <summary>
@@ -217,9 +233,19 @@ namespace System.BusinessObjects.With
         /// Selects an item matching a predicate
         /// *Replace with Built-in extension method in 3.5
         /// </summary>
-        public static T SelectBy<T>(this IEnumerable<T> collection, Predicate<T> predicate)
+        public static T FirstMatch<T>(this IEnumerable<T> collection, Predicate<T> predicate)
         {
             
+            return new EachIterator(collection).First<T>(predicate);
+        }
+
+        /// <summary>
+        /// Selects an item matching a predicate
+        /// *Replace with Built-in extension method in 3.5
+        /// </summary>
+        public static IEnumerable<T> Match<T>(this IEnumerable<T> collection, Predicate<T> predicate)
+        {
+
             return new EachIterator(collection).Select<T>(predicate);
         }
     }

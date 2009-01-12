@@ -8,11 +8,7 @@ using System.Security;
 // associated with an assembly.
 [assembly: AssemblyTitle("Lambda Expression Extensions for NHibernate")]
 [assembly: AssemblyDescription("Lambda Expression Extensions for NHibernate")]
-[assembly: AssemblyConfiguration("")]
 [assembly: AssemblyProduct("NHibernate Lambda Extensions")]
-[assembly: AssemblyCopyright("Copyright under BSD License 2008")]
-[assembly: AssemblyTrademark("")]
-[assembly: AssemblyCulture("")]
 
 [assembly: SecurityPermission(SecurityAction.RequestMinimum, Execution = true)]
 [assembly: AllowPartiallyTrustedCallersAttribute]

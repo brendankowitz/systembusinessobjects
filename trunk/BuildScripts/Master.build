@@ -8,6 +8,7 @@
   <!-- Project Properties -->
   <property name="build.mode" value="Release"/>
   <property name="solution.file" value="System.BusinessObjects.sln" />
+  <property name="assemblyinfo.location" value="System.BusinessObjects.Framework/Properties/GlobalAssemblyInfo.cs" />
   <property name="build.path" value="${project.base.dir}/" />
   <property name="nant.settings.currentframework" value="net-2.0"/>
   <property name="msbuild.settings.currentframework" value="v3.5"/>
@@ -34,9 +35,12 @@
 	<call target="code.compile" />
 	<call target="code.ncover" />
     </target>
-
   
   <target name="code.compile">
+	<nant buildfile="Extensions.build" failonerror="true" inheritall="true" target="GetAssemblyVersion" />
+	<call target="GetRevisionNumber" />
+	<nant buildfile="Extensions.build" failonerror="true" inheritall="true" target="SetAssemblyVersion" />
+	
     <nant buildfile="Compile.build" failonerror="true" inheritall="true" />
   </target>
 
@@ -44,5 +48,19 @@
     <nant buildfile="NCover.build" failonerror="true" inheritall="true" />
   </target>
 
+  <target name="GetRevisionNumber">
+	<exec
+       program="${svn.executable}"
+       commandline='log "${project.base.dir}" --xml --limit 1'
+       output="${project.base.dir}\_revision.xml"
+       failonerror="false"/>
+     <xmlpeek
+       file="${project.base.dir}\_revision.xml"
+       xpath="/log/logentry/@revision"
+       property="svn.revision"
+       failonerror="false"/>
+     <echo message="Using Subversion revision number: ${svn.revision}"/>
+  </target>
+  
 </project>
 

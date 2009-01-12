@@ -6,11 +6,7 @@ using System.Security;
 
 [assembly: AssemblyTitle("System.BusinessObjects.Membership")]
 [assembly: AssemblyDescription("")]
-[assembly: AssemblyConfiguration("")]
 [assembly: AssemblyProduct("BusinessObject Framework Membership")]
-[assembly: AssemblyCopyright("Copyright under BSD License 2008")]
-[assembly: AssemblyTrademark("")]
-[assembly: AssemblyCulture("")]
 
 [assembly: SecurityPermission(SecurityAction.RequestMinimum, Execution = true)]
 [assembly: AllowPartiallyTrustedCallersAttribute]

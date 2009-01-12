@@ -13,7 +13,7 @@
     <TargetFrameworkVersion>v2.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <SignAssembly>true</SignAssembly>
-    <AssemblyOriginatorKeyFile>..\..\System.BusinessObjects.Framework\SystemBusinessObjectsPublic.snk</AssemblyOriginatorKeyFile>
+    <AssemblyOriginatorKeyFile>..\System.BusinessObjects.Framework\SystemBusinessObjectsPublic.snk</AssemblyOriginatorKeyFile>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -52,7 +52,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="..\..\System.BusinessObjects.Framework\Properties\GlobalAssemblyInfo.cs">
+    <Compile Include="..\System.BusinessObjects.Framework\Properties\GlobalAssemblyInfo.cs">
       <Link>Properties\GlobalAssemblyInfo.cs</Link>
     </Compile>
     <Compile Include="Application.cs" />
@@ -77,11 +77,6 @@
     <Compile Include="User.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="..\..\System.BusinessObjects.Framework\SystemBusinessObjectsPublic.snk">
-      <Link>SystemBusinessObjectsPublic.snk</Link>
-    </None>
-  </ItemGroup>
-  <ItemGroup>
     <EmbeddedResource Include="Application.hbm.xml" />
     <EmbeddedResource Include="Membership.hbm.xml" />
     <EmbeddedResource Include="Profile.hbm.xml" />
@@ -89,10 +84,18 @@
     <EmbeddedResource Include="User.hbm.xml" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\System.BusinessObjects.Framework\BusinessObject.Framework.csproj">
+    <ProjectReference Include="..\System.BusinessObjects.Framework\BusinessObject.Framework.csproj">
       <Project>{419FB51B-44D5-4611-B6D4-3154CC8EDCCA}</Project>
       <Name>BusinessObject.Framework</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\System.BusinessObjects.Framework\SystemBusinessObjectsPublic.snk">
+      <Link>..\System.BusinessObjects.Framework\SystemBusinessObjectsPublic.snk</Link>
+    </None>
+    <None Include="..\System.BusinessObjects.Framework\SystemBusinessObjectsPublic.snk">
+      <Link>SystemBusinessObjectsPublic.snk</Link>
+    </None>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
