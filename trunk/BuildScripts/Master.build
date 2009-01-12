@@ -24,7 +24,7 @@
   <property name="svn.executable" value="svn.exe" />
   <property name="fxcop.executable" value="C:\Program Files\Microsoft FxCop 1.35\FxCopCmd.exe" />
   <property name="tortoise.executable" value="C:\Program Files\TortoiseSVN\bin\tortoiseproc.exe" />
-  <property name="nunit.path" value="C:\Program Files\NUnit-Net-2.0 2.2.8" />
+  <property name="nunit.path" value="C:\Program Files\NUnit 2.4.8" />
 
   <!-- Primary Entry Point -->
   <target name="auto">
