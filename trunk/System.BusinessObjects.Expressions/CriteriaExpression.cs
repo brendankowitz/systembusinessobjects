@@ -14,18 +14,56 @@ namespace System.BusinessObjects.Expressions
     public class CriteriaExpression<T>
     {
         internal NHibernate.ICriteria inner = null;
-        internal CriteriaExpression(NHibernate.ICriteria wrap)
+        internal NHibernate.Criterion.DetachedCriteria innerDetached = null;
+
+        internal CriteriaExpression()
         {
-            Criteria = wrap;
         }
+        internal CriteriaExpression(NHibernate.ICriteria wrap) 
+        {
+            inner = wrap;
+        }
+
+        #region internal add methods
+        internal void AddCriterion(ICriterion c)
+        {
+            if (inner != null)
+                inner.Add(c);
+            else if (innerDetached != null)
+                innerDetached.Add(c);
+        }
+        internal void AddOrder(Order c)
+        {
+            if (inner != null)
+                inner.AddOrder(c);
+            else if (innerDetached != null)
+                innerDetached.AddOrder(c);
+        }
+        internal void AddAlias(string property, string alias)
+        {
+            if (inner != null)
+                inner.CreateAlias(property, alias);
+            else if (innerDetached != null)
+                innerDetached.CreateAlias(property, alias);
+        }
+        internal void AddProjection(IProjection c)
+        {
+            if (inner != null)
+                inner.SetProjection(c);
+            else if (innerDetached != null)
+                innerDetached.SetProjection(c);
+        }
+        #endregion
 
         /// <summary>
         /// Returns the NHibernate Criteria that has been built using this wrapper
         /// </summary>
-        public NHibernate.ICriteria Criteria
+        public virtual NHibernate.ICriteria Criteria
         {
             get
             {
+                if (inner == null && innerDetached != null)
+                    throw new ApplicationException("Call Generate() to create an ICriteria.");
                 return inner;
             }
             set
@@ -39,7 +77,7 @@ namespace System.BusinessObjects.Expressions
         /// </summary>
         public CriteriaExpression<T> IsEmpty(Expression<Func<T, object>> propertyLambda)
         {
-            Criteria.Add(RestrictBy.IsEmpty(propertyLambda));
+            AddCriterion(RestrictBy.IsEmpty(propertyLambda));
             return this;
         }
 
@@ -48,7 +86,7 @@ namespace System.BusinessObjects.Expressions
         /// </summary>
         public CriteriaExpression<T> Like(Expression<Func<T, object>> propertyLambda)
         {
-            Criteria.Add(RestrictBy.Like(propertyLambda));
+            AddCriterion(RestrictBy.Like(propertyLambda));
             return this;
         }
 
@@ -58,7 +96,7 @@ namespace System.BusinessObjects.Expressions
         /// </summary>
         public CriteriaExpression<T> Add(Expression<Func<T, object>> propertyLambda)
         {
-            Criteria.Add(RestrictBy.Add(propertyLambda));
+            AddCriterion(RestrictBy.Add(propertyLambda));
             return this;
         }
 
@@ -67,7 +105,7 @@ namespace System.BusinessObjects.Expressions
         /// </summary>
         public CriteriaExpression<T> Add(ICriterion c)
         {
-            Criteria.Add(c);
+            AddCriterion(c);
             return this;
         }
 
@@ -77,7 +115,7 @@ namespace System.BusinessObjects.Expressions
         public CriteriaExpression<T> SetProjection(ProjectionFunction target, Expression<Func<T, object>> propertyLambda)
         {
             string prop = Property.For<T>(propertyLambda);
-            Criteria.SetProjection(target(prop));
+            AddProjection(target(prop));
             return this;
         }
 
@@ -86,7 +124,7 @@ namespace System.BusinessObjects.Expressions
         /// </summary>
         public CriteriaExpression<T> SetProjection(IProjection projection)
         {
-            Criteria.SetProjection(projection);
+            AddProjection(projection);
             return this;
         }
 
@@ -95,7 +133,7 @@ namespace System.BusinessObjects.Expressions
         /// </summary>
         public CriteriaExpression<T> OrderAsc(Expression<Func<T, object>> propertyLambda)
         {
-            Criteria.AddOrder(RestrictBy.OrderAsc(propertyLambda));
+            AddOrder(RestrictBy.OrderAsc(propertyLambda));
             return this;
         }
 
@@ -104,7 +142,7 @@ namespace System.BusinessObjects.Expressions
         /// </summary>
         public CriteriaExpression<T> OrderDesc(Expression<Func<T, object>> propertyLambda)
         {
-            Criteria.AddOrder(RestrictBy.OrderDesc(propertyLambda));
+            AddOrder(RestrictBy.OrderDesc(propertyLambda));
             return this;
         }
 
@@ -113,7 +151,7 @@ namespace System.BusinessObjects.Expressions
         /// </summary>
         public CriteriaExpression<T> Alias(Expression<Func<T, object>> propertyLambda, string alias)
         {
-            Criteria.CreateAlias(Property.For<T>(propertyLambda), alias);
+            AddAlias(Property.For<T>(propertyLambda), alias);
             return this;
         }
 
@@ -121,18 +159,18 @@ namespace System.BusinessObjects.Expressions
         /// Join an association, adding an alias to the joined entity and returning a wrapper to add
         /// criteria to the joined entity.
         /// </summary>
-        public WithAliasCriteriaExpression<T, R> Alias<R>(Expression<Func<T, object>> propertyLambda, string alias)
+        public WithAliasCriteriaExpression<T, R, CriteriaExpression<T>> Alias<R>(Expression<Func<T, object>> propertyLambda, string alias)
         {
-            Criteria.CreateAlias(Property.For<T>(propertyLambda), alias);
-            return new WithAliasCriteriaExpression<T, R>(this, alias);
+            AddAlias(Property.For<T>(propertyLambda), alias);
+            return new WithAliasCriteriaExpression<T, R, CriteriaExpression<T>>(this, alias);
         }
 
         /// <summary>
         /// Uses an existing Query alias
         /// </summary>
-        public WithAliasCriteriaExpression<T, R> WithAlias<R>(string alias)
+        public WithAliasCriteriaExpression<T, R, CriteriaExpression<T>> WithAlias<R>(string alias)
         {
-            return new WithAliasCriteriaExpression<T, R>(this, alias);
+            return new WithAliasCriteriaExpression<T, R, CriteriaExpression<T>>(this, alias);
         }
     }
 }
