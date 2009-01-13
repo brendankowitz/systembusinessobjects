@@ -34,5 +34,10 @@ namespace System.BusinessObjects.Expressions
         {
             return new CriteriaExpression<T>(c).Criteria;
         }
+
+        public static DetachedCriteriaExpression<T> Expression<T>(this NHibernate.Criterion.DetachedCriteria criteria)
+        {
+            return new DetachedCriteriaExpression<T>(criteria);
+        }
     }
 }

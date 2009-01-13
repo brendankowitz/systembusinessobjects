@@ -6,11 +6,11 @@ using System.Linq.Expressions;
 
 namespace System.BusinessObjects.Expressions
 {
-    public class WithAliasCriteriaExpression<T, R>
+    public class WithAliasCriteriaExpression<T, R, CR> where CR : CriteriaExpression<T>
     {
-        CriteriaExpression<T> inner = null;
+        CR inner = null;
         string _alias;
-        internal WithAliasCriteriaExpression(CriteriaExpression<T> wrap, string alias)
+        internal WithAliasCriteriaExpression(CR wrap, string alias)
         {
             inner = wrap;
             _alias = alias;
@@ -19,38 +19,38 @@ namespace System.BusinessObjects.Expressions
         /// <summary>
         /// Return to the original expression
         /// </summary>
-        public CriteriaExpression<T> Expression { get { return inner; } }
+        public CR Expression { get { return inner; } }
         /// <summary>
         /// Adds a Restrction based on a lambda evaluation of: "Equals", "Greater Than", "Less Than", "Greater Than or Equal", "Less Than or Equal",
         /// "NotEqual", "NotNull" and "Between"
         /// </summary>
-        public WithAliasCriteriaExpression<T, R> Add(Expression<Func<R, object>> propertyLambda)
+        public WithAliasCriteriaExpression<T, R, CR> Add(Expression<Func<R, object>> propertyLambda)
         {
-            inner.Criteria.Add(RestrictBy.Add(propertyLambda, _alias));
+            inner.AddCriterion(RestrictBy.Add(propertyLambda, _alias));
             return this;
         }
         /// <summary>
         /// Performs the same as Add() but returns to the original expression wrapper
         /// </summary>
-        public CriteriaExpression<T> AddAndReturn(Expression<Func<R, object>> propertyLambda)
+        public CR AddAndReturn(Expression<Func<R, object>> propertyLambda)
         {
-            inner.Criteria.Add(RestrictBy.Add(propertyLambda, _alias));
+            inner.AddCriterion(RestrictBy.Add(propertyLambda, _alias));
             return inner;
         }
         /// <summary>
         /// Handles ==, != as a 'like'
         /// </summary>
-        public WithAliasCriteriaExpression<T, R> Like(Expression<Func<R, object>> propertyLambda)
+        public WithAliasCriteriaExpression<T, R, CR> Like(Expression<Func<R, object>> propertyLambda)
         {
-            inner.Criteria.Add(RestrictBy.Like(propertyLambda, _alias));
+            inner.AddCriterion(RestrictBy.Like(propertyLambda, _alias));
             return this;
         }
         /// <summary>
         /// Performs the same as Like() but returns to the original expression wrapper
         /// </summary>
-        public CriteriaExpression<T> LikeAndReturn(Expression<Func<R, object>> propertyLambda)
+        public CR LikeAndReturn(Expression<Func<R, object>> propertyLambda)
         {
-            inner.Criteria.Add(RestrictBy.Like(propertyLambda, _alias));
+            inner.AddCriterion(RestrictBy.Like(propertyLambda, _alias));
             return inner;
         }
     }

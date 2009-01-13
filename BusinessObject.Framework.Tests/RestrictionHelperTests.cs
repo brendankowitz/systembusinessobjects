@@ -493,6 +493,37 @@ namespace BusinessObject.Framework.Tests
             Person result = c.UniqueResult<Person>();
             Assert.AreEqual("John", result.FirstName);
         }
+
+        [Test]
+        public void DetachedCriteria()
+        {
+            Person pers = BusinessObjectFactory.CreateAndFillPerson();
+            pers.SetSession(session);
+            pers.AutoFlush = false;
+            pers.Save();
+
+            DetachedCriteria d = DetachedCriteriaExpression<Person>.Create()
+                .Add(p => p.FirstName == "John")
+                .Alias<Address>(p => p.Addresses, "addr")
+                    .Add(a => a.Postcode != null)
+                    .AddAndReturn(a => a.Address1 == null)
+                .OrderAsc(p => p.ID)
+                .Criteria;
+
+            //convert to criteria
+            ICriteria c = d.GetExecutableCriteria(session);
+
+            //Normal interface
+            ICriteria o = UnitOfWork.CurrentSession.CreateCriteria(typeof(Person))
+                .Add(Restrictions.Eq("FirstName", "John"))
+                .CreateAlias("Addresses", "addr")
+                    .Add(Restrictions.IsNotNull("addr.Postcode"))
+                    .Add(Restrictions.IsNull("addr.Address1"))
+                .AddOrder(Order.Asc("ID"));
+
+            Console.WriteLine(c.ToString());
+            Assert.AreEqual(c.ToString(), o.ToString());
+        }
 #endif
     }
 }
