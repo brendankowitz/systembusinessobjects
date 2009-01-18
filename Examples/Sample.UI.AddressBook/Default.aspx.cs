@@ -22,10 +22,11 @@ namespace Sample.UI.AddressBook
         {
             if (e.ReturnValue != null)
             {
-                With.Transaction.Execute(delegate
+                Person person = Person.Load(Convert.ToInt32(GridViewPeople.SelectedDataKey[0]));
+                person.Addresses.Add((Address)e.ReturnValue);
+
+                Transaction.Execute(() =>
                  {
-                     Person person = Person.Load(Convert.ToInt32(GridViewPeople.SelectedDataKey[0]));
-                     person.Addresses.Add((Address)e.ReturnValue);
                      person.Save();
                  });
 

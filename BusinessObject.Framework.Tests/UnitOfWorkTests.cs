@@ -16,7 +16,7 @@ namespace BusinessObject.Framework.Tests
         {
             Person p = BusinessObjectFactory.CreateAndFillPerson();
 
-            With.Transaction.Execute(delegate
+            Transaction.Execute(() =>
             {
                 p.Save();
             });
