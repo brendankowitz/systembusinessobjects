@@ -78,11 +78,9 @@ namespace BusinessObject.Framework.Tests
         public void CheckRowStateSetModifiedSaved()
         {
             Person p = BusinessObjectFactory.CreateAndFillPerson();
-            p.AutoFlush = false;
             p.Save();
 
             Person p2 = BusinessObjectFactory.CreateAndFillPerson();
-            p2.AutoFlush = false;
             p2.ID = p.ID;
             p2.RowState = DataRowState.Modified;
 
@@ -121,6 +119,18 @@ namespace BusinessObject.Framework.Tests
             p.FirstName = null;
 
             Assert.IsTrue(p.IsNull("FirstName"));
+
+            IDataErrorInfo error = p;
+            Assert.IsNotEmpty(error["FirstName"]);
+        }
+
+        [Test]
+        public void TestStringEmptyValidation_NullString_LambdaIsNull()
+        {
+            Person p = BusinessObjectFactory.CreateAndFillPerson();
+            p.FirstName = null;
+
+            Assert.IsTrue(p.IsNull(pr => pr.FirstName));
 
             IDataErrorInfo error = p;
             Assert.IsNotEmpty(error["FirstName"]);
@@ -195,8 +205,7 @@ namespace BusinessObject.Framework.Tests
             a.Save();
 
             a.Postcode = null;
-            a.Save();
-
+            a.Save(SaveMode.Flush);
         }
 
         [Test]

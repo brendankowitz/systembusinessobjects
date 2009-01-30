@@ -310,7 +310,6 @@ namespace System.BusinessObjects.Membership
                     foreach (string roleName in roleNames)
                     {
                         Role role = Role.Fetch(QryFetchRoleByName.Query(roleName, Application.ID));
-                        role.AutoFlush = false; //turn framework autoflushing off
 
                         role.Users.Remove(user);
                         role.Save();

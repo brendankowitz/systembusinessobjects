@@ -13,45 +13,44 @@ namespace Sample.BusinessObjects.Contacts
     {
         public virtual int ID
         {
-            get { return GetValue<int>("ID"); }
+            get { return GetValue(p => p.ID); }
             set
             {
                 BeginEdit();
-                SetValue("ID", value);
+                SetValue(p => p.ID, value);
             }
         }
 
         [ValidationNotEmpty]
         public virtual string FirstName
         {
-            get { return GetValue<string>("FirstName"); }
+            get { return GetValue(p => p.FirstName); }
             set
             {
                 BeginEdit();
-                SetValue("FirstName", value);
+                SetValue(p => p.FirstName, value);
             }
         }
 
-        Regex exp = new Regex("");
         [ValidationNotEmpty]
         public virtual string LastName
         {
-            get { return GetValue<string>("LastName"); }
+            get { return GetValue(p => p.LastName); }
             set
             {
                 BeginEdit();
-                SetValue("LastName", value);
+                SetValue(p => p.LastName, value);
             }
         }
 
         [ValidationRegex(@"[\w-]+@([\w-]+\.)+[\w-]+", ErrorMessage="{0} does not contain a valid email address")]
         public virtual string Email
         {
-            get { return GetValue<string>("Email"); }
+            get { return GetValue(p => p.Email); }
             set
             {
                 BeginEdit();
-                SetValue("Email", value);
+                SetValue(p => p.Email, value);
             }
         }
 

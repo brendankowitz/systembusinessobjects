@@ -22,7 +22,6 @@ namespace BusinessObject.Framework.Tests
         {
             Person pers = BusinessObjectFactory.CreateAndFillPerson();
             pers.SetSession(session);
-            pers.AutoFlush = false;
             pers.Save();
 
             ICriteria c = session.CreateCriteria(typeof(Person));
@@ -38,7 +37,6 @@ namespace BusinessObject.Framework.Tests
         {
             Person pers = BusinessObjectFactory.CreateAndFillPerson();
             pers.SetSession(session);
-            pers.AutoFlush = false;
             pers.Save();
 
             ICriteria c = session.CreateCriteria(typeof(Person));
@@ -54,7 +52,6 @@ namespace BusinessObject.Framework.Tests
         {
             Person pers = BusinessObjectFactory.CreateAndFillPerson();
             pers.SetSession(session);
-            pers.AutoFlush = false;
             pers.Save();
 
             ICriteria c = session.CreateCriteria(typeof(Person));
@@ -69,7 +66,6 @@ namespace BusinessObject.Framework.Tests
         {
             Person pers = BusinessObjectFactory.CreateAndFillPerson();
             pers.SetSession(session);
-            pers.AutoFlush = false;
             pers.Save();
 
             ICriteria c = session.CreateCriteria(typeof(Person));
@@ -84,7 +80,6 @@ namespace BusinessObject.Framework.Tests
         {
             Person pers = BusinessObjectFactory.CreateAndFillPerson();
             pers.SetSession(session);
-            pers.AutoFlush = false;
             pers.Save();
 
             ICriteria c = session.CreateCriteria(typeof(Person));
@@ -100,7 +95,6 @@ namespace BusinessObject.Framework.Tests
         {
             Person pers = BusinessObjectFactory.CreateAndFillPerson();
             pers.SetSession(session);
-            pers.AutoFlush = false;
             pers.Save();
 
             ICriteria c = session.CreateCriteria(typeof(Person));
@@ -116,7 +110,6 @@ namespace BusinessObject.Framework.Tests
         {
             Person pers = BusinessObjectFactory.CreateAndFillPerson();
             pers.SetSession(session);
-            pers.AutoFlush = false;
             pers.Save();
 
             ICriteria c = session.CreateCriteria(typeof(Person));
@@ -132,7 +125,6 @@ namespace BusinessObject.Framework.Tests
         {
             Person pers = BusinessObjectFactory.CreateAndFillPerson();
             pers.SetSession(session);
-            pers.AutoFlush = false;
             pers.Save();
 
             ICriteria c = session.CreateCriteria(typeof(Person));
@@ -148,7 +140,6 @@ namespace BusinessObject.Framework.Tests
         {
             Person pers = BusinessObjectFactory.CreateAndFillPerson();
             pers.SetSession(session);
-            pers.AutoFlush = false;
             pers.Save();
 
             ICriteria c = UnitOfWork.CurrentSession.CreateCriteria(typeof(Person));
@@ -163,7 +154,6 @@ namespace BusinessObject.Framework.Tests
         {
             Person pers = BusinessObjectFactory.CreateAndFillPerson();
             pers.SetSession(session);
-            pers.AutoFlush = false;
             pers.Save();
 
             ICriteria c = UnitOfWork.CurrentSession.CreateCriteria(typeof(Person));
@@ -178,7 +168,6 @@ namespace BusinessObject.Framework.Tests
         {
             Person pers = BusinessObjectFactory.CreateAndFillPerson();
             pers.SetSession(session);
-            pers.AutoFlush = false;
             pers.Save();
 
             ICriteria c = UnitOfWork.CurrentSession.CreateCriteria(typeof(Person))
@@ -194,7 +183,6 @@ namespace BusinessObject.Framework.Tests
         {
             Person pers = BusinessObjectFactory.CreateAndFillPerson();
             pers.SetSession(session);
-            pers.AutoFlush = false;
             pers.Save();
 
             ICriteria c = session.CreateCriteria(typeof(Person))
@@ -211,7 +199,6 @@ namespace BusinessObject.Framework.Tests
         {
             Person pers = BusinessObjectFactory.CreateAndFillPerson();
             pers.SetSession(session);
-            pers.AutoFlush = false;
             pers.Save();
 
             ICriteria c = session.CreateExpression<Person>()
@@ -227,7 +214,6 @@ namespace BusinessObject.Framework.Tests
         {
             Person pers = BusinessObjectFactory.CreateAndFillPerson();
             pers.SetSession(session);
-            pers.AutoFlush = false;
             pers.Save();
 
             ICriteria c = session.CreateExpression<Person>()
@@ -245,7 +231,6 @@ namespace BusinessObject.Framework.Tests
         {
             Person pers = BusinessObjectFactory.CreateAndFillPerson();
             pers.SetSession(session);
-            pers.AutoFlush = false;
             pers.Save();
 
             ICriteria c = session.CreateExpression<Person>()
@@ -261,7 +246,6 @@ namespace BusinessObject.Framework.Tests
         {
             Person pers = BusinessObjectFactory.CreateAndFillPerson();
             pers.SetSession(session);
-            pers.AutoFlush = false;
             pers.Save();
 
             ICriteria c = session.CreateExpression<Person>()
@@ -278,7 +262,6 @@ namespace BusinessObject.Framework.Tests
         {
             Person pers = BusinessObjectFactory.CreateAndFillPerson();
             pers.SetSession(session);
-            pers.AutoFlush = false;
             pers.Save();
 
             ICriteria c = session.CreateExpression<Person>()
@@ -294,7 +277,6 @@ namespace BusinessObject.Framework.Tests
         {
             Person pers = BusinessObjectFactory.CreateAndFillPerson();
             pers.SetSession(session);
-            pers.AutoFlush = false;
             pers.Save();
 
             ICriteria c = session.CreateExpression<Person>()
@@ -310,7 +292,6 @@ namespace BusinessObject.Framework.Tests
         {
             Person pers = BusinessObjectFactory.CreateAndFillPerson();
             pers.SetSession(session);
-            pers.AutoFlush = false;
             pers.Save();
 
             ICriteria c = session.CreateExpression<Person>()
@@ -326,7 +307,6 @@ namespace BusinessObject.Framework.Tests
         {
             Person pers = BusinessObjectFactory.CreateAndFillPerson();
             pers.SetSession(session);
-            pers.AutoFlush = false;
             pers.Save();
 
             string john = "John";
@@ -344,7 +324,6 @@ namespace BusinessObject.Framework.Tests
         {
             Person pers = BusinessObjectFactory.CreateAndFillPerson();
             pers.SetSession(session);
-            pers.AutoFlush = false;
             pers.Save();
 
             string john = "Jo%";
@@ -362,7 +341,6 @@ namespace BusinessObject.Framework.Tests
         {
             Person pers = BusinessObjectFactory.CreateAndFillPerson();
             pers.SetSession(session);
-            pers.AutoFlush = false;
             pers.Save();
 
             string john = "ab%";
@@ -380,7 +358,6 @@ namespace BusinessObject.Framework.Tests
         {
             Person pers = BusinessObjectFactory.CreateAndFillPerson();
             pers.SetSession(session);
-            pers.AutoFlush = false;
             pers.Save();
 
             ICriteria c = UnitOfWork.CurrentSession.CreateCriteria(typeof(Person))
@@ -395,7 +372,6 @@ namespace BusinessObject.Framework.Tests
         {
             Person pers = BusinessObjectFactory.CreateAndFillPerson();
             pers.SetSession(session);
-            pers.AutoFlush = false;
             pers.Save();
 
             ICriteria c = UnitOfWork.CurrentSession.CreateExpression<Person>()
@@ -414,7 +390,6 @@ namespace BusinessObject.Framework.Tests
         {
             Person pers = BusinessObjectFactory.CreateAndFillPerson();
             pers.SetSession(session);
-            pers.AutoFlush = false;
             pers.Save();
 
             //Using expression interface
@@ -443,7 +418,6 @@ namespace BusinessObject.Framework.Tests
         {
             Person pers = BusinessObjectFactory.CreateAndFillPerson();
             pers.SetSession(session);
-            pers.AutoFlush = false;
             pers.Save();
 
             //Using expression interface
@@ -462,7 +436,6 @@ namespace BusinessObject.Framework.Tests
         {
             Person pers = BusinessObjectFactory.CreateAndFillPerson();
             pers.SetSession(session);
-            pers.AutoFlush = false;
             pers.Save();
 
             ICriteria c = null;
@@ -483,7 +456,6 @@ namespace BusinessObject.Framework.Tests
         {
             Person pers = BusinessObjectFactory.CreateAndFillPerson();
             pers.SetSession(session);
-            pers.AutoFlush = false;
             pers.Save();
 
             ICriteria c = UnitOfWork.CurrentSession.CreateExpression<Person>()
@@ -499,7 +471,6 @@ namespace BusinessObject.Framework.Tests
         {
             Person pers = BusinessObjectFactory.CreateAndFillPerson();
             pers.SetSession(session);
-            pers.AutoFlush = false;
             pers.Save();
 
             DetachedCriteria d = DetachedCriteriaExpression<Person>.Create()

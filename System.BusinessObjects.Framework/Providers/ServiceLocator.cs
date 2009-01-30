@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
-using Castle.Windsor;
-using Castle.Windsor.Configuration.Interpreters;
 using NHibernate;
 
 namespace System.BusinessObjects.Providers
