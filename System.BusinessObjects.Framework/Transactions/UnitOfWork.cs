@@ -21,6 +21,16 @@ namespace System.BusinessObjects.Transactions
         }
 
         /// <summary>
+        /// Creates a new instance of Unit Of Work and begins a new transaction
+        /// </summary>
+        public static IUnitOfWork Begin()
+        {
+            IUnitOfWork work = new UnitOfWork();
+            work.BeginTransaction();
+            return work;
+        }
+
+        /// <summary>
         /// Returns the current session
         /// </summary>
         public static ISession CurrentSession

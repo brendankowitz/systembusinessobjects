@@ -2,32 +2,60 @@ using System.BusinessObjects.Transactions;
 using System.BusinessObjects.Data;
 using System;
 
-/// <summary>
-/// Creates and executes work within a transaction in the current database session
-/// </summary>
-public static class Transaction
+namespace System.BusinessObjects.With
 {
     /// <summary>
-    /// Saves any number of business object within a transaction in the current session.
-    /// When the work is complete it is flushed to the database
+    /// A collection of classes that can perform an action with a delegate
     /// </summary>
-    public static void Save(params DataObject[] objectsToSave)
+    public partial class With
     {
-        IUnitOfWork work = UnitOfWork.Create();
-        foreach (DataObject o in objectsToSave)
+        /// <summary>
+        /// With.Transaction creates and executes a transaction
+        /// </summary>
+        [Obsolete("Moved to System.BusinessObjects.Transactions.Transaction")]
+        public class Transaction
         {
-            work.Add(o.Save);
+            /// <summary>
+            /// Execute work within a transaction in the current session.
+            /// </summary>
+            public static void Execute(Action func)
+            {
+                Transaction.Execute(func);
+            }
         }
-        work.Execute();
-    }
 
+    }
+}
+
+namespace System.BusinessObjects.Transactions
+{
     /// <summary>
-    /// Execute work within a transaction in the current session.
+    /// Creates and executes work within a transaction in the current database session
     /// </summary>
-    public static void Execute(Action func)
+    public static class Transaction
     {
-        IUnitOfWork work = UnitOfWork.Create();
-        work.Add(func);
-        work.Execute();
+        /// <summary>
+        /// Saves any number of business object within a transaction in the current session.
+        /// When the work is complete it is flushed to the database
+        /// </summary>
+        public static void Save(params DataObject[] objectsToSave)
+        {
+            IUnitOfWork work = UnitOfWork.Create();
+            foreach (DataObject o in objectsToSave)
+            {
+                work.Add(o.Save);
+            }
+            work.Execute();
+        }
+
+        /// <summary>
+        /// Execute work within a transaction in the current session.
+        /// </summary>
+        public static void Execute(Action func)
+        {
+            IUnitOfWork work = UnitOfWork.Create();
+            work.Add(func);
+            work.Execute();
+        }
     }
 }
