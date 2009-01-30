@@ -1,5 +1,6 @@
 using System.BusinessObjects.Transactions;
 using System.BusinessObjects.Data;
+using System;
 
 /// <summary>
 /// Creates and executes work within a transaction in the current database session
@@ -15,7 +16,7 @@ public static class Transaction
         IUnitOfWork work = UnitOfWork.Create();
         foreach (DataObject o in objectsToSave)
         {
-            work.Add(() => o.Save());
+            work.Add(o.Save);
         }
         work.Execute();
     }
@@ -23,7 +24,7 @@ public static class Transaction
     /// <summary>
     /// Execute work within a transaction in the current session.
     /// </summary>
-    public static void Execute(WorkUnitDelegate func)
+    public static void Execute(Action func)
     {
         IUnitOfWork work = UnitOfWork.Create();
         work.Add(func);

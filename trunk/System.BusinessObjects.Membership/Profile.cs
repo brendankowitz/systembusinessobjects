@@ -14,7 +14,7 @@ namespace System.BusinessObjects.Membership
     {
         public Profile()
         {
-            AutoFlush = false;
+
         }
 
         public virtual Guid ID

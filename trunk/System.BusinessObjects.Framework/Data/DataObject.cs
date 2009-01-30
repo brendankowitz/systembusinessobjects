@@ -50,8 +50,6 @@ namespace System.BusinessObjects.Data
         [NonSerialized, XmlIgnore]
         protected IValidationRuleCollection validationRules;
         [NonSerialized, XmlIgnore]
-        private bool _autoFlush = true;
-        [NonSerialized, XmlIgnore]
         ISession _entitySession = null;
         #endregion
 
@@ -149,16 +147,6 @@ namespace System.BusinessObjects.Data
                     return DataRowState.Detached;
                 }
             }
-        }
-
-        /// <summary>
-        /// Specifies if this object should automatically flush an 'Update' changes to the datastore as they are called
-        /// </summary>
-        [XmlIgnore]
-        public virtual bool AutoFlush
-        {
-            get { return _autoFlush; }
-            set{ _autoFlush = value; }
         }
         #endregion
 
@@ -310,12 +298,10 @@ namespace System.BusinessObjects.Data
         protected void SetValue(string keyName, object value)
         {
             //Fire property changing event
-            string propertyName = string.Empty;
-            if(PropertyChanged != null || PropertyChanging != null)
-                propertyName = new Diagnostics.StackTrace().GetFrame(1).GetMethod().Name;
-            if (PropertyChanging != null && !string.IsNullOrEmpty(propertyName) && propertyName.Length > 3)
+            string propertyName = keyName;
+            if (PropertyChanging != null && !string.IsNullOrEmpty(propertyName))
             {
-                PropertyChanging(this, new PropertyChangingEventArgs(propertyName.Substring(4)));
+                PropertyChanging(this, new PropertyChangingEventArgs(propertyName));
             }
 
             //Update property value
@@ -333,9 +319,9 @@ namespace System.BusinessObjects.Data
             }
 
             //Fire property changed event
-            if (PropertyChanged != null && !string.IsNullOrEmpty(propertyName) && propertyName.Length > 3)
+            if (PropertyChanged != null && !string.IsNullOrEmpty(propertyName))
             {
-               OnPropertyChanged(new PropertyChangedEventArgs(propertyName.Substring(4)));
+               OnPropertyChanged(new PropertyChangedEventArgs(propertyName));
             }
         }
 
@@ -406,7 +392,7 @@ namespace System.BusinessObjects.Data
         /// <summary>
         /// Saves this business object to the datastore.
         /// </summary>
-        public virtual void Save()
+        public virtual void Save(SaveMode saveMode)
         {
             QueryAction action = GetPersistanceQueryAction();
             _mrowstate = DataRowState.Detached;
@@ -416,6 +402,8 @@ namespace System.BusinessObjects.Data
                 if(OnDeleting != null)
                     OnDeleting(this, new EventArgs());
                 entitySession.Delete(this);
+                if (saveMode == SaveMode.Flush)
+                    entitySession.Flush();
                 if(OnDeleted != null)
                     OnDeleted(this, new EventArgs());
             }
@@ -424,6 +412,8 @@ namespace System.BusinessObjects.Data
                 if(OnSaving != null)
                     OnSaving(this, new EventArgs());
                 entitySession.Save(this);
+                if (saveMode == SaveMode.Flush)
+                    entitySession.Flush();
                 if(OnSaved != null)
                     OnSaved(this, new EventArgs());
             }
@@ -432,13 +422,21 @@ namespace System.BusinessObjects.Data
                 if (OnSaving != null)
                     OnSaving(this, new EventArgs());
                 entitySession.Update(this);
-                if (AutoFlush)
+                if (saveMode == SaveMode.Flush)
                     entitySession.Flush();
                 if (OnSaved != null)
                     OnSaved(this, new EventArgs());
             }
 
             SetSaveRowState();
+        }
+
+        /// <summary>
+        /// Saves this business object to the datastore.
+        /// </summary>
+        public virtual void Save()
+        {
+            Save(SaveMode.Auto);
         }
 
         /// <summary>

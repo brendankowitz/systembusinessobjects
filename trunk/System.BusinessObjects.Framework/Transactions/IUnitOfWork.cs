@@ -32,8 +32,6 @@ using NHibernate;
 
 namespace System.BusinessObjects.Transactions
 {
-    public delegate void WorkUnitDelegate();
-
     public interface IUnitOfWork : IDisposable
     {
         void Flush();
@@ -44,7 +42,7 @@ namespace System.BusinessObjects.Transactions
         void Commit();
         void Rollback();
 
-        void Add(WorkUnitDelegate work);
+        void Add(Action work);
         void Execute();
     }
 }
