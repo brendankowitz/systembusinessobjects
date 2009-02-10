@@ -2,8 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Text.RegularExpressions;
-using SmartCode.Model;
-
+using Kontac.Net.SmartCode.Model;
 namespace SystemBusinessObjectTemplates
 {
     public class Helper
@@ -77,7 +76,7 @@ namespace SystemBusinessObjectTemplates
 
         public static bool IsManyToManyTable(TableSchema table)
         {
-            return (table.Columns().Count == 2 && 
+            return (table.Columns.Count == 2 && 
                 table.HasPrimaryKey() && 
                 table.PrimaryKeyColumns().Count == 2 && 
                 table.InReferences.Count == 2);

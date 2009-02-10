@@ -2,7 +2,7 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProductVersion>9.0.21022</ProductVersion>
+    <ProductVersion>9.0.30729</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{51DC1CA1-7436-477F-AAD9-CC0EF6782C90}</ProjectGuid>
     <OutputType>Library</OutputType>
@@ -48,13 +48,13 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="SmartCode.Engine, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\..\..\..\Program Files\SmartCode\SmartCode.Engine.dll</HintPath>
+    </Reference>
     <Reference Include="SmartCode.Model, Version=2.0.0.0, Culture=neutral, PublicKeyToken=834abd3b1f97f59b, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>C:\Program Files\Kontac\Smart Code\SmartCode.Model.dll</HintPath>
-    </Reference>
-    <Reference Include="SmartCode.Template, Version=2.0.0.0, Culture=neutral, PublicKeyToken=834abd3b1f97f59b, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>C:\Program Files\Kontac\Smart Code\SmartCode.Template.dll</HintPath>
+      <HintPath>..\..\..\..\..\..\..\Program Files\SmartCode\SmartCode.Model.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
