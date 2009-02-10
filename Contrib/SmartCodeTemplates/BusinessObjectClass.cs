@@ -1,12 +1,12 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
-using SmartCode.Template;
-using SmartCode.Model;
+using Kontac.Net.SmartCode.Model.Templates;
+using Kontac.Net.SmartCode.Model;
 
 namespace SystemBusinessObjectTemplates
 {
-    public class BusinessObjectClass : TemplateBase
+    public class BusinessObjectClass : ProjectTemplate
     {
         string code_namespace = "";
         string code_summary_comment = "";
@@ -35,7 +35,7 @@ namespace SystemBusinessObjectTemplates
                 return;
             }
 
-            code_namespace = Domain.Code;
+            code_namespace = Project.Code;
             code_summary_comment = string.Format("{0} : BusinessObject", Helper.ClassName(Entity.Code));
             code_class_name = Helper.ClassName(Entity.Code);
             code_business_object_properties = "";

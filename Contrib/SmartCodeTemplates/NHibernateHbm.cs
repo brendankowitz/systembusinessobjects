@@ -1,9 +1,9 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
-using SmartCode.Template;
-using SmartCode.Model;
 using SystemBusinessObjectTemplates;
+using Kontac.Net.SmartCode.Model.Templates;
+using Kontac.Net.SmartCode.Model;
 
 namespace SystemBusinessObjectTemplates
 {
@@ -11,7 +11,7 @@ namespace SystemBusinessObjectTemplates
     /// This file is based off the original template that comes with smartcode,
     /// Needs cleaning up, like the BusinessObjectsClass generator.
     /// </summary>
-    public class NHibernateHbm : TemplateBase
+    public class NHibernateHbm : ProjectTemplate
     {
         public NHibernateHbm()
         {
@@ -37,7 +37,7 @@ namespace SystemBusinessObjectTemplates
                 WriteLine(@"<?xml version=""1.0"" encoding=""utf-8"" ?>");
                 WriteLine(
                     @"<hibernate-mapping xmlns=""urn:nhibernate-mapping-2.2"" assembly=""{1}"" namespace=""{0}"">",
-                    Helper.PascalCase(Domain.Code), Domain.Caption);
+                    Helper.PascalCase(Project.Code), Project.Caption);
                 WriteLine(@"    <class name=""{0}"" table=""{1}"" >", Helper.ClassName(Entity.Code), Table.Name);
 
                 // Set ID information
