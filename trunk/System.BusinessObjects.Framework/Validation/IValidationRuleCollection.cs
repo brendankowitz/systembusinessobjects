@@ -35,5 +35,10 @@ namespace System.BusinessObjects.Validation
         /// Adds a new Validation Rule
         /// </summary>
         void Add(object validationRule);
+        /// <summary>
+        /// Adds validation rules based on attributes
+        /// </summary>
+        /// <param name="collection">Attributes collection that may contain validation rules</param>
+        void AddRulesFromAttributes(PropertyDescriptor property, AttributeCollection collection);
     }
 }
