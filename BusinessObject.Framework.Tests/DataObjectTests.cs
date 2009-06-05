@@ -8,6 +8,7 @@ using System.Diagnostics;
 using NHibernate;
 using System.ComponentModel;
 using System.BusinessObjects.Data;
+using System.ComponentModel.DataAnnotations;
 
 namespace BusinessObject.Framework.Tests
 {
@@ -253,6 +254,17 @@ namespace BusinessObject.Framework.Tests
             Assert.IsNotEmpty(error["Email"]);
         }
 
+        [Test]
+        public void ValidationFromDotNet35DataAnnotationAttribute()
+        {
+            DataAnnotationsTestClass obj = new DataAnnotationsTestClass();
+            obj.IntRange = 0;
+            Assert.IsEmpty(((IDataErrorInfo)obj)["IntRange"]);
+
+            obj.IntRange = 10;
+            Assert.AreEqual("The field IntRange must be between 0 and 5.", ((IDataErrorInfo)obj)["IntRange"]);
+        }
+
         #endregion
 
         #region Property Changed Events
@@ -301,7 +313,21 @@ namespace BusinessObject.Framework.Tests
 
         #endregion
 
-        #region PrimitiveTestClass
+        #region TestClass
+        public class DataAnnotationsTestClass : DataObject
+        {
+            [Range(0,5)]
+            public virtual int IntRange
+            {
+                get { return GetValue<int>("IntRange"); }
+                set
+                {
+                    BeginEdit();
+                    SetValue("IntRange", value);
+                }
+            }
+        }
+
         public class PrimitiveTestClass : DataObject
         {
             public virtual ulong unsignedLong

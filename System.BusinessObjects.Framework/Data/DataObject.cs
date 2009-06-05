@@ -215,7 +215,7 @@ namespace System.BusinessObjects.Data
             string propertyName = new Diagnostics.StackTrace().GetFrame(1).GetMethod().Name;
             if (string.IsNullOrEmpty(propertyName))
             {
-                throw new ArgumentNullException();
+                throw new ArgumentNullException("PropertyName", "GetValue() failed because the property name could not be resolved.");
             }
             return GetValue<T>(propertyName.Substring(4));
         }
@@ -684,26 +684,10 @@ namespace System.BusinessObjects.Data
                 if (validationRules.Count == 0)
                 {
                     AddValidationRules();
-
-                    if (validationRules is ValidationRuleCollection)
+                    //automatically add rules
+                    foreach (PropertyDescriptor prop in TypeDescriptor.GetProperties(this))
                     {
-                        //automatically add rules that inherit from ValidationBaseAttribute
-                        foreach (PropertyDescriptor prop in TypeDescriptor.GetProperties(this))
-                        {
-                            foreach(Attribute customAtt in prop.Attributes)
-                            {
-                                if(customAtt is ValidationBaseAttribute)
-                                {
-                                    ValidationBaseAttribute attrib = (ValidationBaseAttribute)customAtt;
-                                    IList<ValidationRule> tRules = attrib.GetValidationRules(this, prop.Name);
-                                    if(tRules != null && tRules.Count > 0)
-                                    {
-                                        foreach(ValidationRule r in tRules)
-                                            validationRules.Add(r);
-                                    }
-                                }
-                            }
-                        }
+                        validationRules.AddRulesFromAttributes(prop, prop.Attributes);
                     }
                 }
                 return validationRules;

@@ -3,6 +3,10 @@ using System.BusinessObjects.Data;
 using System.Collections;
 using System.ComponentModel;
 
+#if DOT_NET_35
+using System.ComponentModel.DataAnnotations;
+#endif
+
 namespace System.BusinessObjects.Validation
 {
     /// <summary>
@@ -15,6 +19,7 @@ namespace System.BusinessObjects.Validation
         string[] messages = new string[] { };
         bool isvalid = false;
         internal bool isDirty = true;
+        WeakReference parentObject;
 
         /// <summary>
         /// .ctor for a new ValidationRuleCollection
@@ -29,6 +34,7 @@ namespace System.BusinessObjects.Validation
         /// </summary>
         public ValidationRuleCollection(DataObject parent)
         {
+            parentObject = new WeakReference(parent);
             parent.PropertyChanged += parent_PropertyChanged;
         }
 
@@ -43,6 +49,52 @@ namespace System.BusinessObjects.Validation
         public void Add(object rule)
         {
             rules.Add(rule as ValidationRule);
+        }
+
+        /// <summary>
+        /// Adds validation rules based on attributes
+        /// </summary>
+        public void AddRulesFromAttributes(PropertyDescriptor property, AttributeCollection collection)
+        {
+            foreach (Attribute customAtt in collection)
+            {
+                if (customAtt is ValidationBaseAttribute)
+                {
+                    ValidationBaseAttribute attrib = (ValidationBaseAttribute)customAtt;
+                    IList<ValidationRule> tRules = attrib.GetValidationRules(parentObject.Target as DataObject, property.Name);
+                    if (tRules != null && tRules.Count > 0)
+                    {
+                        foreach (ValidationRule r in tRules)
+                            Add(r);
+                    }
+                }
+#if DOT_NET_35
+                else if (customAtt is ValidationAttribute)
+                {
+                    ValidationAttribute innerAttribute = customAtt as ValidationAttribute;
+                    if (innerAttribute != null)
+                    {
+                        ValidatorTemplate frameworkRule = delegate(out string propName, out string message)
+                        {
+                            bool retval = true;
+                            propName = property.Name;
+                            message = string.Empty;
+                            try
+                            {   //Let .net3.5 validate the property
+                                ((ValidationAttribute)innerAttribute).Validate(property.GetValue(parentObject.Target), property.Name);
+                            }
+                            catch (ValidationException ex)
+                            {
+                                retval = false;
+                                message = ex.Message;
+                            }
+                            return retval;
+                        };
+                        Add(new ValidationRule(frameworkRule));
+                    }
+#endif
+                }
+            }
         }
 
         /// <summary>

@@ -76,9 +76,17 @@ namespace System.BusinessObjects.Validation
             throw new NotImplementedException("Please use class attributes or NHValidator xml to configure validation rules.");
         }
 
+        /// <summary>
+        /// Adds validation rules based on attributes
+        /// </summary>
+        public void AddRuleFromAttributes(PropertyDescriptor property, AttributeCollection collection)
+        {
+            
+        }
+
         #endregion
 
-        #region IDataErrorInfo Members
+#region IDataErrorInfo Members
 
         public string Error
         {
@@ -105,7 +113,7 @@ namespace System.BusinessObjects.Validation
 
         #endregion
 
-        #region IEnumerable Members
+#region IEnumerable Members
 
         public System.Collections.IEnumerator GetEnumerator()
         {

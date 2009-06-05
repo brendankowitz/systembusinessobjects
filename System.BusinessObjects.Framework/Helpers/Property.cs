@@ -83,6 +83,27 @@ namespace System.BusinessObjects.Helpers
                 throw new ArgumentException("Could not determine property name.", "propertyNameLambda");
             }
         }
+
+        /// <summary>
+        /// Creates a wrapper function around the passed in expression, if the wrapper is called multiple times
+        /// the value is only calculated one the first call.
+        /// </summary>
+        public static Func<string> Remember<T, TRetVal>(Expression<Func<T, TRetVal>> propertyNameLambda)
+        {
+            bool isCached = false;
+            string cachedResult = "";
+
+            return () =>
+            {
+                if (!isCached)
+                {
+                    cachedResult = For<T, TRetVal>(propertyNameLambda);
+                    isCached = true;
+                }
+                return cachedResult;
+            };
+        }
+
 #endif
     }
 }
