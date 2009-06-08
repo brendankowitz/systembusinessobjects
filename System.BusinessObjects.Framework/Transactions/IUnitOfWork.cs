@@ -26,9 +26,10 @@
 // THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #endregion
 
-using System;
-using System.Data;
 using NHibernate;
+using System;
+using System.BusinessObjects.Helpers;
+using System.Data;
 
 namespace System.BusinessObjects.Transactions
 {

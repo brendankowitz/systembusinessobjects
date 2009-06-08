@@ -1,6 +1,8 @@
+using System;
 using System.Collections.Generic;
 using System.BusinessObjects.Providers;
 using NHibernate;
+using System.BusinessObjects.Helpers;
 
 namespace System.BusinessObjects.Transactions
 {

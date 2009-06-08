@@ -2,6 +2,7 @@ using System;
 using System.BusinessObjects.Transactions;
 using System.Web.UI.WebControls;
 using Sample.BusinessObjects.Contacts;
+using System.BusinessObjects.Transactions;
 
 namespace Sample.UI.AddressBook
 {

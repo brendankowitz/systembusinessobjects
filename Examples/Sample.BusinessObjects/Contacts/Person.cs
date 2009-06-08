@@ -1,11 +1,8 @@
 using System;
 using System.BusinessObjects.Data;
-using System.BusinessObjects.Transactions;
 using Iesi.Collections.Generic;
 using System.BusinessObjects.Validation;
-using System.Xml;
 using System.Xml.Serialization;
-using System.Text.RegularExpressions;
 
 namespace Sample.BusinessObjects.Contacts
 {
