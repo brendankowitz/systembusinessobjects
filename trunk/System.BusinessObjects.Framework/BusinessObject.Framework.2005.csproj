@@ -40,10 +40,10 @@
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
     <OutputPath>bin2005\Debug\</OutputPath>
-    <DefineConstants>TRACE;DEBUG;DOT_NET_35</DefineConstants>
+    <DefineConstants>TRACE;DEBUG</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <DocumentationFile>bin\Debug\System.BusinessObjects.Framework.XML</DocumentationFile>
+    <DocumentationFile>bin2005\Debug\System.BusinessObjects.Framework.XML</DocumentationFile>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -52,7 +52,7 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <DocumentationFile>bin\Release\System.BusinessObjects.Framework.XML</DocumentationFile>
+    <DocumentationFile>bin2005\Release\System.BusinessObjects.Framework.XML</DocumentationFile>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release-IoC|AnyCPU' ">
     <OutputPath>bin2005\Release-IoC\</OutputPath>
