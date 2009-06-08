@@ -2,6 +2,7 @@
 <project name="code.ncover" default="go">
 
 <property name="tests.businessobjects" value="BusinessObject.Framework.Tests" />
+<property name="tests.businessobjects.membership" value="System.BusinessObjects.Membership.Tests" />
 <property name="test.output.folder" value="..\Tests" />
 <property name="ncover.path" value="C:\Program Files\NCover" />
 <property name="ncoverexplorer.path" value="C:\Program Files\NCoverExplorer" />
@@ -18,6 +19,11 @@
 		commandLineExe="${nunit.path}\bin\nunit-console.exe"
 		commandLineArgs="..\${tests.businessobjects}\bin\${build.mode}\${tests.businessobjects}.dll /xml=${test.output.folder}\${tests.businessobjects}.testresults.xml" 
 		coverageFile="${test.output.folder}\${tests.businessobjects}.ncover.xml"
+	/>
+	<ncover program="${ncover.path}\NCover.Console.exe"
+		commandLineExe="${nunit.path}\bin\nunit-console.exe"
+		commandLineArgs="..\${tests.businessobjects.membership}\bin\${build.mode}\${tests.businessobjects.membership}.dll /xml=${test.output.folder}\${tests.businessobjects.membership}.testresults.xml" 
+		coverageFile="${test.output.folder}\${tests.businessobjects.membership}.ncover.xml"
 	/>
 
 	<ncoverexplorer program="${ncoverexplorer.path}\NCoverExplorer.Console.exe" 
