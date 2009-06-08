@@ -92,8 +92,8 @@ namespace System.BusinessObjects.Validation
                         };
                         Add(new ValidationRule(frameworkRule));
                     }
-#endif
                 }
+#endif
             }
         }
 

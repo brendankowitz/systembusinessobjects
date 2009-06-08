@@ -19,6 +19,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "System.BusinessObjects.Memb
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "System.BusinessObjects.Membership.Tests", "System.BusinessObjects.Membership.Tests\System.BusinessObjects.Membership.Tests.csproj", "{D0EE30B2-0D09-4084-996E-5E868CE1BD20}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BusinessObject.Framework.2005", "System.BusinessObjects.Framework\BusinessObject.Framework.2005.csproj", "{33EAD953-873C-451A-B11A-45788661E83C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "System.BusinessObjects.Membership.2005", "System.BusinessObjects.Membership\System.BusinessObjects.Membership.2005.csproj", "{E552E04E-4305-426F-BCCF-3EF15121FC83}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -74,6 +78,18 @@ Global
 		{D0EE30B2-0D09-4084-996E-5E868CE1BD20}.Release|Any CPU.Build.0 = Release|Any CPU
 		{D0EE30B2-0D09-4084-996E-5E868CE1BD20}.Release-IoC|Any CPU.ActiveCfg = Release|Any CPU
 		{D0EE30B2-0D09-4084-996E-5E868CE1BD20}.Release-IoC|Any CPU.Build.0 = Release|Any CPU
+		{33EAD953-873C-451A-B11A-45788661E83C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{33EAD953-873C-451A-B11A-45788661E83C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{33EAD953-873C-451A-B11A-45788661E83C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{33EAD953-873C-451A-B11A-45788661E83C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{33EAD953-873C-451A-B11A-45788661E83C}.Release-IoC|Any CPU.ActiveCfg = Release-IoC|Any CPU
+		{33EAD953-873C-451A-B11A-45788661E83C}.Release-IoC|Any CPU.Build.0 = Release-IoC|Any CPU
+		{E552E04E-4305-426F-BCCF-3EF15121FC83}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E552E04E-4305-426F-BCCF-3EF15121FC83}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E552E04E-4305-426F-BCCF-3EF15121FC83}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E552E04E-4305-426F-BCCF-3EF15121FC83}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E552E04E-4305-426F-BCCF-3EF15121FC83}.Release-IoC|Any CPU.ActiveCfg = Release|Any CPU
+		{E552E04E-4305-426F-BCCF-3EF15121FC83}.Release-IoC|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
