@@ -37,9 +37,10 @@
     <PresentationStyle>Prototype</PresentationStyle>
     <DocumentationSources>
       <DocumentationSource sourceFile="System.BusinessObjects.Expressions\bin\Release\System.BusinessObjects.Expressions.dll" />
-<DocumentationSource sourceFile="System.BusinessObjects.Expressions\bin\Release\System.BusinessObjects.Expressions.XML" />
-<DocumentationSource sourceFile="System.BusinessObjects.Framework\bin\Release\System.BusinessObjects.Framework.dll" />
-<DocumentationSource sourceFile="System.BusinessObjects.Framework\bin\Release\System.BusinessObjects.Framework.xml" /></DocumentationSources>
+      <DocumentationSource sourceFile="System.BusinessObjects.Expressions\bin\Release\System.BusinessObjects.Expressions.XML" />
+      <DocumentationSource sourceFile="System.BusinessObjects.Framework\bin\Release\System.BusinessObjects.Framework.dll" />
+      <DocumentationSource sourceFile="System.BusinessObjects.Framework\bin\Release\System.BusinessObjects.Framework.xml" />
+    </DocumentationSources>
   </PropertyGroup>
   <!-- There are no properties for these two groups but they need to appear in
        order for Visual Studio to perform the build. -->
@@ -49,43 +50,43 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Castle.Core">
-      <HintPath>..\Lib\Castle.Core.dll</HintPath>
+      <HintPath>Lib\Castle.Core.dll</HintPath>
     </Reference>
     <Reference Include="Castle.DynamicProxy2">
-      <HintPath>..\Lib\Castle.DynamicProxy2.dll</HintPath>
+      <HintPath>Lib\Castle.DynamicProxy2.dll</HintPath>
     </Reference>
     <Reference Include="Castle.MicroKernel">
-      <HintPath>..\Lib\Castle.MicroKernel.dll</HintPath>
+      <HintPath>Lib\Castle.MicroKernel.dll</HintPath>
     </Reference>
     <Reference Include="Castle.Windsor">
-      <HintPath>..\Lib\Castle.Windsor.dll</HintPath>
+      <HintPath>Lib\Castle.Windsor.dll</HintPath>
     </Reference>
     <Reference Include="Iesi.Collections">
-      <HintPath>..\Lib\Iesi.Collections.dll</HintPath>
+      <HintPath>Lib\Iesi.Collections.dll</HintPath>
     </Reference>
     <Reference Include="log4net">
-      <HintPath>..\Lib\log4net.dll</HintPath>
+      <HintPath>Lib\log4net.dll</HintPath>
     </Reference>
     <Reference Include="MySql.Data">
-      <HintPath>..\Lib\MySql.Data.dll</HintPath>
+      <HintPath>Lib\MySql.Data.dll</HintPath>
     </Reference>
     <Reference Include="NCoverExplorer.NAntTasks">
-      <HintPath>..\Lib\NCoverExplorer.NAntTasks.dll</HintPath>
+      <HintPath>Lib\NCoverExplorer.NAntTasks.dll</HintPath>
     </Reference>
     <Reference Include="NHibernate">
-      <HintPath>..\Lib\NHibernate.dll</HintPath>
+      <HintPath>Lib\NHibernate.dll</HintPath>
     </Reference>
     <Reference Include="NHibernate.Validator">
-      <HintPath>..\Lib\NHibernate.Validator.dll</HintPath>
+      <HintPath>Lib\NHibernate.Validator.dll</HintPath>
     </Reference>
     <Reference Include="nmock">
-      <HintPath>..\Lib\nmock.dll</HintPath>
+      <HintPath>Lib\nmock.dll</HintPath>
     </Reference>
     <Reference Include="nunit.framework">
-      <HintPath>..\Lib\nunit.framework.dll</HintPath>
+      <HintPath>Lib\nunit.framework.dll</HintPath>
     </Reference>
     <Reference Include="System.Data.SQLite">
-      <HintPath>..\Lib\System.Data.SQLite.DLL</HintPath>
+      <HintPath>Lib\System.Data.SQLite.DLL</HintPath>
     </Reference>
   </ItemGroup>
   <!-- Import the SHFB build targets -->
