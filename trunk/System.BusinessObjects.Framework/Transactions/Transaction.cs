@@ -21,7 +21,7 @@ namespace System.BusinessObjects.With
             /// </summary>
             public static void Execute(Action func)
             {
-                Transaction.Execute(func);
+                System.BusinessObjects.Transactions.Transaction.Execute(func);
             }
         }
 
