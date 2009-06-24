@@ -147,6 +147,7 @@ namespace System.BusinessObjects.Data
         }
     }
 
+    [Serializable]
     public class DataObjectInterceptor : Castle.Core.Interceptor.IInterceptor
     {
         private static object _syncRoot = new object();
