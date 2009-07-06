@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="utf-8"?>
+<project name="nant.extensions">
+
+	<!-- Populates variables (build.major, build.minor, build.build, and build.revision) with values
+	 from AssemblyInfo.cs.  If property assemblyinfo.location is undefined, it will attempt to
+	 read AssemblyInfo.cs from the current directory. -->
+	<target name="GetAssemblyVersion" description="Populates variables with the current version." >
+	<!-- From: http://bloggingabout.net/blogs/joshua/archive/2005/07/26/8675.aspx -->
+	 <script language="C#">
+		 <code><![CDATA[
+		 public static void ScriptMain(Project project) {
+			  string fileName = Path.Combine(project.Properties["project.base.dir"], project.Properties["assemblyinfo.location"]);
+			  StreamReader reader = new StreamReader(fileName);
+			 {
+				 Regex expression = new Regex(@"AssemblyVersion");
+				 string line = reader.ReadLine();
+				 while (line != null) {
+					 Match match = expression.Match(line);
+					 if (match.Success) {
+						  Regex pattern = new Regex("[0-9]+");
+						  MatchCollection matches = pattern.Matches(line);
+						  if (matches.Count != 4)
+						   throw new Exception(string.Format("Version number in {0} has incorrect format.", fileName));
+						  int major = int.Parse(matches[0].Value);
+						  int minor = int.Parse(matches[1].Value);
+						  int build = int.Parse(matches[2].Value);
+						  int revision = int.Parse(matches[3].Value);
+						  project.Properties["build.major"] = major.ToString();
+						  project.Properties["build.minor"] = minor.ToString();
+						  project.Properties["build.build"] = build.ToString();
+						  project.Properties["build.revision"] = revision.ToString();
+						 break;
+					 }
+					 line = reader.ReadLine();
+				 }
+			 }
+			  reader.Close();
+			 }
+		]]></code>
+	 </script>
+	</target>  
+
+	<!-- Sets the assembly version of the assemblies within the build -->
+	<target name="SetAssemblyVersion" description="Increments/Sets the AssemblyVersion value" depends="GetAssemblyVersion">
+	<!-- From: http://bloggingabout.net/blogs/joshua/archive/2005/07/26/8675.aspx -->
+	     <foreach item="File" property="filename">
+	     <in>
+	         <items>
+	             <include name="${project.base.dir}\${assemblyinfo.location}"></include>
+	         </items>
+	     </in>
+	     <do>
+	         <script language="C#">
+	         <code><![CDATA[
+	         public static void ScriptMain(Project project) {
+	             string contents = "";
+	             StreamReader reader = new StreamReader(project.Properties["filename"]);
+	             contents = reader.ReadToEnd();
+	             reader.Close();
+	             string replacement = string.Format(
+	                 "AssemblyVersion(\"{0}.{1}.{2}.{3}\")]",
+	                 project.Properties["build.major"],
+	                 project.Properties["build.minor"],
+	                 project.Properties["build.build"],
+	                 project.Properties["svn.revision"]
+	             );  
+
+	             string newText = Regex.Replace(contents, @"AssemblyVersion\("".*""\)\]", replacement);
+	             StreamWriter writer = new StreamWriter(project.Properties["filename"], false);
+	             writer.Write(newText);
+	             writer.Close();
+	         }        
+	         ]]></code>
+	         </script>
+	       </do>
+	     </foreach>
+	     <echo message="major: ${build.major}"/>
+	     <echo message="minor: ${build.minor}"/>
+	     <echo message="build: ${build.build}"/>
+	     <echo message="revision: ${svn.revision}"/>
+	 </target> 
+ 
+</project>
