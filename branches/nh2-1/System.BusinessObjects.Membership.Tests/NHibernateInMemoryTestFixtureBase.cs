@@ -77,6 +77,7 @@ namespace System.BusinessObjects.Membership.Tests
                 properties.Add("show_sql", "true");
                 properties.Add("connection.provider", "NHibernate.Connection.DriverConnectionProvider");
                 properties.Add("connection.connection_string", "Data Source=:memory:;Version=3;New=True;");
+                properties.Add("proxyfactory.factory_class", "NHibernate.ByteCode.LinFu.ProxyFactoryFactory, NHibernate.ByteCode.LinFu");
                 configuration = new NHibernate.Cfg.Configuration();
                 configuration.Properties = properties;
 
@@ -92,7 +93,7 @@ namespace System.BusinessObjects.Membership.Tests
             {
                 ISession openSession = sessionFactory.OpenSession();
                 IDbConnection connection = openSession.Connection;
-                new SchemaExport(configuration).Execute(false, true, false, true, connection, null);
+                new SchemaExport(configuration).Execute(false, true, false, connection, null);
                 return openSession;
 
             }
