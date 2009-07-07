@@ -1,14 +1,12 @@
 using System;
-using System.Collections.Generic;
 using System.Data;
-using System.Text;
 using NUnit.Framework;
 using Sample.BusinessObjects.Contacts;
 using System.Diagnostics;
-using NHibernate;
 using System.ComponentModel;
 using System.BusinessObjects.Data;
 using System.ComponentModel.DataAnnotations;
+using Iesi.Collections.Generic;
 
 namespace BusinessObject.Framework.Tests
 {
@@ -276,13 +274,13 @@ namespace BusinessObject.Framework.Tests
             bool afterEvent = false;
 
             Person p = BusinessObjectFactory.CreateAndFillPerson();
-            p.PropertyChanging += delegate(object sender, PropertyChangingEventArgs e)
+            p.PropertyChanging += (sender, e) =>
             {
                 beforeEvent = true;
                 Assert.AreEqual("John", p.FirstName);
                 Assert.AreEqual("FirstName", e.PropertyName);
             };
-            p.PropertyChanged += delegate(object sender, PropertyChangedEventArgs e)
+            p.PropertyChanged += (sender, e) =>
             {
                 afterEvent = true;
                 Assert.AreEqual("Peter", p.FirstName);
@@ -309,6 +307,93 @@ namespace BusinessObject.Framework.Tests
             Assert.AreEqual(-1, c.integer);
             Assert.AreEqual(0, c.character);
             Assert.AreEqual(false, c.boolean);
+        }
+
+        #endregion
+
+        #region Serialising
+
+        [Test]
+        public void TestSerialise()
+        {
+            Person p = BusinessObjectFactory.CreateAndFillPerson();
+            p.ID = 21;
+
+            Person newPerson = p.Clone();
+
+            Assert.AreEqual(p.ID, newPerson.ID);
+        }
+
+        [Test]
+        public void TestSerialiseLazyManyToOne()
+        {
+            Person p = BusinessObjectFactory.CreateAndFillPerson();
+            Address addr = new Address
+            {
+                Address1 = "12 Street",
+                Suburb = "Suburb",
+                State = "QLD",
+                Postcode = "1234"
+            };
+            p.Addresses.Add(addr);
+
+            PersonType ptype = new PersonType
+            {
+                ID = "contact",
+                Description = "General Contact"
+            };
+            ptype.Save(SaveMode.Flush);
+            p.ContactType = ptype;
+            p.Save(SaveMode.Flush);
+
+            p.Evict();
+            ptype.Evict();
+
+            Person loadedPerson = Person.Load(p.ID, session);
+            Person newPerson = loadedPerson.Clone();
+
+            Assert.AreEqual(p.ID, newPerson.ID);
+            Assert.AreEqual("contact", newPerson.ContactType.ID);
+        }
+
+        [Test]
+        public void TestSerialiseLazyCollection()
+        {
+            Person p = BusinessObjectFactory.CreateAndFillPerson();
+            Address addr = new Address
+            {
+                Address1 = "12 Street",
+                Suburb = "Suburb",
+                State = "QLD",
+                Postcode = "1234"
+            };
+            p.Addresses.Add(addr);
+
+            PersonType ptype = new PersonType
+            {
+                ID = "contact",
+                Description = "General Contact"
+            };
+            ptype.Save(SaveMode.Flush);
+            p.ContactType = ptype;
+            p.Save(SaveMode.Flush);
+
+            p.Evict();
+            ptype.Evict();
+            addr.Evict();
+
+            Person loadedPerson = Person.Load(p.ID, session);
+            Person newPerson = loadedPerson.Clone();
+            loadedPerson.Evict();
+
+            //the only way so far I can see is to re-attach collections is to lock/attach the base entity
+            session.Lock(newPerson, NHibernate.LockMode.None);
+
+            int addrCount = newPerson.Addresses.Count;
+
+            Assert.AreEqual(p.ID, newPerson.ID);
+            Assert.AreEqual("contact", newPerson.ContactType.ID);
+            Assert.AreEqual(1, addrCount);
         }
 
         #endregion

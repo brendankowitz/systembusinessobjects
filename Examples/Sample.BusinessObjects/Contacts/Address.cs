@@ -1,8 +1,10 @@
 using System.BusinessObjects.Data;
 using System.BusinessObjects.Validation;
+using System;
 
 namespace Sample.BusinessObjects.Contacts
 {
+    [Serializable]
     public class Address : DataObject<Address>
     {
         public virtual int ID

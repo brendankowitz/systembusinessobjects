@@ -1,6 +1,8 @@
 using System;
 using System.Collections.Generic;
+using NHibernate;
 using NHibernate.Criterion;
+using Iesi.Collections.Generic;
 
 #if DOT_NET_35
 using System.Linq.Expressions;
@@ -31,6 +33,14 @@ namespace System.BusinessObjects.Data
         public static new T Load(object Id)
         {
             return Load<T>(Id);
+        }
+
+        /// <summary>
+        /// Loads a business object with the given ID
+        /// </summary>
+        public static new T Load(object Id, ISession session)
+        {
+            return Load<T>(Id, session);
         }
 
 #if DOT_NET_35

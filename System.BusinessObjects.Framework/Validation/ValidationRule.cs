@@ -16,6 +16,7 @@ namespace System.BusinessObjects.Validation
     [Serializable]
     public class ValidationRule
     {
+        [NonSerialized]
         ValidatorTemplate _rule;
         bool isvalid;
         string message;
