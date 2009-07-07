@@ -8,6 +8,7 @@ namespace System.BusinessObjects.Validation
     /// <summary>
     /// Abstract base attribute giving the definition for providing Validation rules
     /// </summary>
+    [Serializable]
     public abstract class ValidationBaseAttribute : Attribute
     {
         public abstract IList<ValidationRule> GetValidationRules(DataObject current, string property);
@@ -16,6 +17,7 @@ namespace System.BusinessObjects.Validation
     /// <summary>
     /// Validates false if the target property is more than the speficified length
     /// </summary>
+    [Serializable]
     [AttributeUsage(AttributeTargets.Property, Inherited = true)]
     public class ValidationLengthAttribute : ValidationBaseAttribute
     {
@@ -66,6 +68,7 @@ namespace System.BusinessObjects.Validation
     /// <summary>
     /// Validates false if the target property is empty or null
     /// </summary>
+    [Serializable]
     [AttributeUsage(AttributeTargets.Property, Inherited = true)]
     public class ValidationNotEmptyAttribute : ValidationBaseAttribute
     {
@@ -81,6 +84,7 @@ namespace System.BusinessObjects.Validation
     /// <summary>
     /// Validates false if the target property is empty or null by checking the DataObject.IsNull() function
     /// </summary>
+    [Serializable]
     [AttributeUsage(AttributeTargets.Property, Inherited = true)]
     public class ValidationIsNotNullAttribute : ValidationBaseAttribute
     {
@@ -96,6 +100,7 @@ namespace System.BusinessObjects.Validation
     /// <summary>
     /// Validates false if the target property fails the regex pattern
     /// </summary>
+    [Serializable]
     [AttributeUsage(AttributeTargets.Property, Inherited = true)]
     public class ValidationRegexAttribute : ValidationBaseAttribute
     {

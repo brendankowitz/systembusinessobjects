@@ -6,6 +6,7 @@ using System.Xml.Serialization;
 
 namespace Sample.BusinessObjects.Contacts
 {
+    [Serializable]
     public class Person : DataObject<Person>
     {
         public virtual int ID
@@ -51,15 +52,31 @@ namespace Sample.BusinessObjects.Contacts
             }
         }
 
-        [NonSerialized]
         private ISet<Address> _addresses = new HashedSet<Address>();
         [XmlIgnore]
         public virtual ISet<Address> Addresses
         {
-            get { return _addresses; }
+            get 
+            {
+                return _addresses; 
+            }
             set
             {
                 _addresses = value;
+            }
+        }
+
+        private PersonType _contactType = null;
+        public virtual PersonType ContactType
+        {
+            get
+            {
+                CheckLazyProperty(_contactType);
+                return _contactType;
+            }
+            set
+            {
+                _contactType = value;
             }
         }
     }

@@ -13,6 +13,7 @@ using System.BusinessObjects.Helpers;
 using NHibernate.Impl;
 using NHibernate;
 using NHibernate.Engine;
+using Iesi.Collections;
 
 #if DOT_NET_35
 using System.Linq;
@@ -61,7 +62,7 @@ namespace System.BusinessObjects.Data
                 return ((SessionImpl)entitySession).PersistenceContext.GetEntry(this);
             }
         }
-        private ISession entitySession
+        internal virtual ISession entitySession
         {
             get
             {
@@ -181,8 +182,7 @@ namespace System.BusinessObjects.Data
         /// </summary>
         public DataObject()
         {
-            Type ruleCollection = ConfigSectionHelper.GetValidationCollectionType();
-            validationRules = Activator.CreateInstance(ruleCollection, this) as IValidationRuleCollection;
+            initialiseValidationCollection();
         }
 
         /// <summary>
@@ -199,6 +199,12 @@ namespace System.BusinessObjects.Data
         public virtual void SetSession(ISession session)
         {
             _entitySession = session;
+        }
+
+        private void initialiseValidationCollection()
+        {
+            Type ruleCollection = ConfigSectionHelper.GetValidationCollectionType();
+            validationRules = Activator.CreateInstance(ruleCollection, this) as IValidationRuleCollection;
         }
         #endregion
 
@@ -388,7 +394,7 @@ namespace System.BusinessObjects.Data
         }
         #endregion
 
-        #region Persistance Methods (Save, Delete)
+        #region Persistance Methods (Save, Delete, CheckConnection)
         /// <summary>
         /// Saves this business object to the datastore.
         /// </summary>
@@ -460,6 +466,19 @@ namespace System.BusinessObjects.Data
         /// </summary>
         [Obsolete]
         public static void SetLoadedRowState(IEnumerable list){ /* To be removed */ }
+
+        /// <summary>
+        /// Checks the connection of a lazy DataObject and reconnects it if missing
+        /// </summary>
+        /// <param name="set">Proxied DataObject to check</param>
+        protected virtual void CheckLazyProperty(DataObject obj)
+        {
+            if (obj != null && obj is NHibernate.Proxy.INHibernateProxy && ((NHibernate.Proxy.INHibernateProxy)obj).HibernateLazyInitializer.Session == null)
+            {
+                //Reconnect session for lazy loading of this proxied Property
+                entitySession.Lock(obj, LockMode.None);
+            }
+        }
 
         /// <summary>
         /// Returns the query action needed to save the current state of the object
@@ -645,7 +664,7 @@ namespace System.BusinessObjects.Data
             MemoryStream stream = new MemoryStream();
             BinaryFormatter BinaryFormat = new BinaryFormatter();
             BinaryFormat.Serialize(stream, obj);
-            stream.Position = 0;
+            stream.Seek(0,0);
             return BinaryFormat.Deserialize(stream);
         }
         #endregion
@@ -681,6 +700,8 @@ namespace System.BusinessObjects.Data
         {
             get
             {
+                if (validationRules == null)
+                    initialiseValidationCollection();
                 if (validationRules.Count == 0)
                 {
                     AddValidationRules();
