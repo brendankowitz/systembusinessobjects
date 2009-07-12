@@ -94,12 +94,6 @@
     </None>
     <None Include="app.config" />
   </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\System.BusinessObjects.Framework\BusinessObject.Framework.2005.csproj">
-      <Project>{33EAD953-873C-451A-B11A-45788661E83C}</Project>
-      <Name>BusinessObject.Framework.2005</Name>
-    </ProjectReference>
-  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
