@@ -1,0 +1,15 @@
+﻿<?xml version="1.0"?>
+<hibernate-mapping xmlns="urn:nhibernate-mapping-2.2" assembly="Sample.T4BusinessObjects" namespace="Sample.T4BusinessObjects" >
+  <class name="Product" table="products">
+
+    <id name="ID" column="productid" type="Int32">
+      <generator class="native" />
+    </id>
+
+    <property name="Name" length="255" />
+    <property name="Description" length="500" not-null="true" />
+    <property name="Cost" type="System.Decimal" />
+    <property name="Quantity" type="System.Int32" />
+
+  </class>
+</hibernate-mapping>

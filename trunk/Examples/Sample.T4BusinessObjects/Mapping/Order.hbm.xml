@@ -1,0 +1,19 @@
+﻿<?xml version="1.0"?>
+<hibernate-mapping xmlns="urn:nhibernate-mapping-2.2" assembly="Sample.T4BusinessObjects" namespace="Sample.T4BusinessObjects" >
+  <class name="Order" table="orders">
+
+    <id name="ID" column="orderid" type="Int32">
+      <generator class="native" />
+    </id>
+    
+    <property name="Cost" type="System.Decimal" />
+    
+    <many-to-one name="Customer" column="customerid" class="Customer" />
+    
+    <set name="Products" table="orderproducts">
+      <key column="orderid" />
+      <one-to-many class="Product" />
+    </set>
+
+  </class>
+</hibernate-mapping>
