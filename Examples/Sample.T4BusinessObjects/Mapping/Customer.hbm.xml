@@ -1,0 +1,21 @@
+﻿<?xml version="1.0"?>
+<hibernate-mapping xmlns="urn:nhibernate-mapping-2.2" assembly="Sample.T4BusinessObjects" namespace="Sample.T4BusinessObjects" >
+  <class name="Customer" table="customers">
+
+    <id name="ID" column="customerid" type="Int32">
+      <generator class="native" />
+    </id>
+
+    <property name="FirstName" length="255" />
+    <property name="LastName" length="255" />
+
+    <property name="Address1" length="255" />
+    <property name="Address2" length="255" />
+    <property name="Suburb" length="255" />
+    <property name="State" length="255" />
+    <property name="Postcode" length="255" />
+    <property name="Country" length="255" />
+   
+
+  </class>
+</hibernate-mapping>

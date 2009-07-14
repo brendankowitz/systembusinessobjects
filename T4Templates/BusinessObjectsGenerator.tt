@@ -1,0 +1,20 @@
+﻿<#@ template language="C#v3.5" debug="True" hostspecific="True"  #>
+<#@ include file="BusinessObjectsStructureTemplate.tt" #>
+<#@ output extension="log" #>
+<#
+
+/////////////////////////////////////////////////////////////////////////////////
+// Download and install: http://t4toolbox.codeplex.com
+//
+// Usage:
+// 1. Add this file to the solution
+// 2. Add BusinessObjectsStructureTemplate.tt to the solution
+// 3. Edit/Add mapping files to generate classes for as seen below...
+//
+
+BusinessObjectStructureTemplate template = new BusinessObjectStructureTemplate();
+var pathBase = new System.IO.FileInfo(Host.TemplateFile).DirectoryName;
+
+BusinessObjectStructureTemplate.RenderClassFromHbm(pathBase, "MyMapping.hbm.xml", template);
+
+#>

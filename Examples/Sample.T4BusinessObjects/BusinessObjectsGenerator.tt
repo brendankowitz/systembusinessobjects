@@ -1,0 +1,14 @@
+﻿<#@ template language="C#v3.5" debug="True" hostspecific="True"  #>
+
+<#@ include file="BusinessObjectsStructureTemplate.ttinclude" #>
+<#@ output extension="log" #>
+<#
+
+BusinessObjectStructureTemplate template = new BusinessObjectStructureTemplate();
+var pathBase = new System.IO.FileInfo(Host.TemplateFile).DirectoryName;
+
+BusinessObjectStructureTemplate.RenderClassFromHbm(pathBase, @"Mapping\Product.hbm.xml", template);
+BusinessObjectStructureTemplate.RenderClassFromHbm(pathBase, @"Mapping\Order.hbm.xml", template);
+BusinessObjectStructureTemplate.RenderClassFromHbm(pathBase, @"Mapping\Customer.hbm.xml", template);
+
+#>
