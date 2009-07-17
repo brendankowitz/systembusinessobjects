@@ -53,7 +53,15 @@
     <Compile Include="PaypalSample\PaypalContext\PaypalContext.cs" />
     <Compile Include="PaypalSample\PaypalContext\PaypalMethodMappings.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="SimpleLinqTests.cs" />
+    <Compile Include="PaypalSample\SimpleLinqTests.cs" />
+    <Compile Include="SimpleInterface\InterfaceContext\ISimpleInterface.cs" />
+    <Compile Include="SimpleInterface\InterfaceContext\SimpleInterfaceContext.cs" />
+    <Compile Include="SimpleInterface\InterfaceContext\SimpleInterfaceMappings.cs" />
+    <Compile Include="SimpleInterface\SimpleInterfaceLinqTests.cs" />
+    <Compile Include="SimpleInterface\TestObjects\Building.cs" />
+    <Compile Include="SimpleInterface\TestObjects\Rate.cs" />
+    <Compile Include="SimpleInterface\TestObjects\RequestParameters.cs" />
+    <Compile Include="SimpleInterface\TestObjects\Scope.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="AuthoringTests.txt" />

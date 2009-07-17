@@ -8,7 +8,6 @@ namespace Sample.T4BusinessObjects
     [Serializable]
     public partial class Customer : DataObject<Customer>
     {   
-		[ValidationIsNotNull]
 		public virtual Int32 ID
         {
             get { return GetValue<Int32>("ID"); }
@@ -41,7 +40,6 @@ namespace Sample.T4BusinessObjects
             }
         }
 
-		[ValidationIsNotNull]
 		public virtual String Address1
         {
             get { return GetValue<String>("Address1"); }
@@ -52,7 +50,6 @@ namespace Sample.T4BusinessObjects
             }
         }
 
-		[ValidationIsNotNull]
 		public virtual String Address2
         {
             get { return GetValue<String>("Address2"); }
@@ -63,7 +60,6 @@ namespace Sample.T4BusinessObjects
             }
         }
 
-		[ValidationIsNotNull]
 		public virtual String Suburb
         {
             get { return GetValue<String>("Suburb"); }
@@ -74,7 +70,6 @@ namespace Sample.T4BusinessObjects
             }
         }
 
-		[ValidationIsNotNull]
 		public virtual String State
         {
             get { return GetValue<String>("State"); }
@@ -85,7 +80,6 @@ namespace Sample.T4BusinessObjects
             }
         }
 
-		[ValidationIsNotNull]
 		public virtual String Postcode
         {
             get { return GetValue<String>("Postcode"); }
@@ -96,7 +90,6 @@ namespace Sample.T4BusinessObjects
             }
         }
 
-		[ValidationIsNotNull]
 		public virtual String Country
         {
             get { return GetValue<String>("Country"); }
