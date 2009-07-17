@@ -8,7 +8,6 @@ namespace Sample.T4BusinessObjects
     [Serializable]
     public partial class Product : DataObject<Product>
     {   
-		[ValidationIsNotNull]
 		public virtual Int32 ID
         {
             get { return GetValue<Int32>("ID"); }
@@ -40,7 +39,6 @@ namespace Sample.T4BusinessObjects
             }
         }
 
-		[ValidationIsNotNull]
 		public virtual Decimal Cost
         {
             get { return GetValue<Decimal>("Cost"); }
@@ -51,7 +49,6 @@ namespace Sample.T4BusinessObjects
             }
         }
 
-		[ValidationIsNotNull]
 		public virtual Int32 Quantity
         {
             get { return GetValue<Int32>("Quantity"); }

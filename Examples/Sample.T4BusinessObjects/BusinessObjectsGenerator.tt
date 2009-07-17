@@ -1,6 +1,6 @@
-﻿<#@ template language="C#v3.5" debug="True" hostspecific="True"  #>
+<#@ template language="C#v3.5" debug="True" hostspecific="True"  #>
 
-<#@ include file="BusinessObjectsStructureTemplate.ttinclude" #>
+<#@ include file="..\..\T4Templates\BusinessObjectsStructureTemplate.tt" #>
 <#@ output extension="log" #>
 <#
 

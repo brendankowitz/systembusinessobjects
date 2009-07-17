@@ -6,15 +6,15 @@
       <generator class="native" />
     </id>
 
-    <property name="FirstName" length="255" />
-    <property name="LastName" length="255" />
+    <property name="FirstName" length="255" not-null="true" />
+    <property name="LastName" length="255" not-null="true" />
 
-    <property name="Address1" length="255" />
-    <property name="Address2" length="255" />
-    <property name="Suburb" length="255" />
-    <property name="State" length="255" />
-    <property name="Postcode" length="255" />
-    <property name="Country" length="255" />
+    <property name="Address1" length="255" not-null="false" />
+    <property name="Address2" length="255" not-null="false" />
+    <property name="Suburb" length="255" not-null="false" />
+    <property name="State" length="255" not-null="false" />
+    <property name="Postcode" length="255" not-null="false" />
+    <property name="Country" length="255" not-null="false" />
    
 
   </class>

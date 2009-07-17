@@ -6,8 +6,8 @@
       <generator class="native" />
     </id>
 
-    <property name="Name" length="255" />
-    <property name="Description" length="500" not-null="true" />
+    <property name="Name" length="255" not-null="true" />
+    <property name="Description" length="500" />
     <property name="Cost" type="System.Decimal" />
     <property name="Quantity" type="System.Int32" />
 

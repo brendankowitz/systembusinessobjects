@@ -51,23 +51,18 @@ using Iesi.Collections.Generic;
 namespace <#= this.ClassInfo.Namespace #>
 {
     [Serializable]
-    public partial class <#= this.ClassInfo.Name #> : DataObject<<#= this.ClassInfo.Name #>>
+    public partial class <#= this.ClassInfo.Name #>
     {   
 <#+ 
 		foreach(PropertyItem p in this.ClassInfo.Properties)
 		{
 			if(p.RelationType == RelationType.Property)
 			{
-#><#+ if(!p.IsNullable){ #>		[ValidationIsNotNull]
-<#+ } #>
+#>
 		public virtual <#= p.GetPropertyType() #> <#= p.Name #>
         {
-            get { return GetValue<<#= p.GetPropertyType() #>>("<#= p.Name #>"); }
-            set
-            {
-                BeginEdit();
-                SetValue("<#= p.Name #>", value);
-            }
+            get;
+            set;
         }
 
 <#+
