@@ -8,6 +8,7 @@ using NHibernate;
 using System.BusinessObjects.Transactions;
 using NHibernate.Criterion;
 using System.BusinessObjects.Expressions;
+using NHibernate.Impl;
 
 namespace BusinessObject.Framework.Tests
 {
@@ -428,7 +429,7 @@ namespace BusinessObject.Framework.Tests
             ICriteria o = UnitOfWork.CurrentSession.CreateCriteria(typeof(Person))
                 .SetProjection(Projections.Min("ID"));
 
-            Assert.AreEqual(o.Projection.ToString(), c.Projection.ToString());
+            Assert.AreEqual(((CriteriaImpl)o).Projection.ToString(), ((CriteriaImpl)c).Projection.ToString());
         }
 
         [Test]

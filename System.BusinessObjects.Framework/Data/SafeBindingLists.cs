@@ -24,7 +24,7 @@ namespace System.BusinessObjects.Data
     /// http://forum.hibernate.org/viewtopic.php?t=959464&start=0&postdays=0&postorder=asc&highlight=
     /// This file has been updated to support DynamicProxy2.
     /// </remarks>
-    public class SafeDataBindingList<T> : List<T>
+    public class SafeDataBindingList<T> : List<T> where T : class
     {
         private IList<T> _innerList;
 
@@ -83,7 +83,7 @@ namespace System.BusinessObjects.Data
         }
     }
 
-    public class SafeDataBindingSet<T> : HashedSet<T>
+    public class SafeDataBindingSet<T> : HashedSet<T> where T : class
     {
         private ISet<T> _innerSet;
 

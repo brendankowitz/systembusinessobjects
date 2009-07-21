@@ -88,6 +88,8 @@ namespace BusinessObject.Framework.Tests
                 properties.Add("show_sql", "true");
                 properties.Add("connection.provider", "NHibernate.Connection.DriverConnectionProvider");
                 properties.Add("connection.connection_string", "Data Source=:memory:;Version=3;New=True;");
+                //properties.Add("proxyfactory.factory_class", "NHibernate.ByteCode.LinFu.ProxyFactoryFactory, NHibernate.ByteCode.LinFu");
+                properties.Add("proxyfactory.factory_class", "NHibernate.ByteCode.Castle.ProxyFactoryFactory, NHibernate.ByteCode.Castle");
                 configuration = new Configuration();
                 configuration.Properties = properties;
 
@@ -103,7 +105,7 @@ namespace BusinessObject.Framework.Tests
             {
                 ISession openSession = sessionFactory.OpenSession();
                 IDbConnection connection = openSession.Connection;
-                new SchemaExport(configuration).Execute(false, true, false, true, connection, null);
+                new SchemaExport(configuration).Execute(false, true, false, connection, null);
                 return openSession;
 
             }

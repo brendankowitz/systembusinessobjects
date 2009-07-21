@@ -17,7 +17,7 @@ namespace Sample.UI.AddressBook
             cfg.Configure();
             cfg.BuildSessionFactory();
             SchemaExport ex = new SchemaExport(cfg);
-            ex.Execute(true, true, false, false);
+            ex.Execute(true, true, false);
         }
     }
 }
