@@ -62,7 +62,7 @@ namespace System.BusinessObjects.Data
                 return ((SessionImpl)entitySession).PersistenceContext.GetEntry(this);
             }
         }
-        internal virtual ISession entitySession
+        private ISession entitySession
         {
             get
             {

@@ -7,4 +7,4 @@ using System.Runtime.InteropServices;
 
 //Version: [Major].[Minor].[Build].[SourceRevision]
 //NHibernate 2.0 Versions of System.BusinessObjects are now prefixed 1.1.x.x
-[assembly: AssemblyVersion("1.1.0.113")]
+[assembly: AssemblyVersion("1.1.0.121")]
