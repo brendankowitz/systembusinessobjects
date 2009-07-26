@@ -64,6 +64,19 @@ namespace System.BusinessObjects.Membership.Tests
         }
 
         [Test]
+        public void GetUserNameByEmail()
+        {
+            System.Web.Security.MembershipCreateStatus status;
+            MembershipUser user = System.Web.Security.Membership.CreateUser("user1", "password", "test123@test.com",
+                                                       "question?", "yes", true, out status);
+            if (status != System.Web.Security.MembershipCreateStatus.Success)
+                Assert.Fail();
+
+            string username = System.Web.Security.Membership.GetUserNameByEmail("test123@test.com");
+            Assert.AreEqual("user1", username);
+        }
+
+        [Test]
         public void GetUsersByEmail_Paging()
         {
             System.Web.Security.MembershipCreateStatus status;

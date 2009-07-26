@@ -690,7 +690,7 @@ namespace System.BusinessObjects.Membership
 
                 if (1 == list.Count)
                 {
-                    username = list[0].ToString();
+                    username = list[0].UserName;
                 }
                 else if (1 < list.Count)
                 {

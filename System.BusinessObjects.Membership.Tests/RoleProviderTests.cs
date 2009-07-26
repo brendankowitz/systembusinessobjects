@@ -32,6 +32,15 @@ namespace System.BusinessObjects.Membership.Tests
         }
 
         [Test]
+        public void AddUserToRole()
+        {
+            System.Web.Security.Roles.CreateRole("admin");
+            new MembershipProviderTests().CreateUser();
+
+            System.Web.Security.Roles.AddUserToRole("user1", "admin");
+        }
+
+        [Test]
         public void GetRolesForUser()
         {
             System.Web.Security.Roles.CreateRole("admin");
