@@ -15,23 +15,24 @@ namespace System.BusinessObjects.Membership
 {
     public class ProfileProvider : System.Web.Profile.ProfileProvider
     {
-        private Application application = new Application();
-
+        private string applicationName = null;
         public Application Application
         {
             get
             {
-                return application;
+                return ApplicationManager.GetApplication(applicationName);
             }
             set
             {
-                application = value;
+                applicationName = value.ApplicationName;
+                ApplicationManager.SetApplication(applicationName, value);
             }
         }
+
         public override string ApplicationName
         {
-            get { return Application.ApplicationName; }
-            set { Application.ApplicationName = value; }
+            get { return applicationName; }
+            set { applicationName = value; }
         }
 
         public override void Initialize(string name, NameValueCollection config)
@@ -53,20 +54,7 @@ namespace System.BusinessObjects.Membership
 
             // Load configuration data.
             string appName = GetConfigValue(config["applicationName"], HostingEnvironment.ApplicationVirtualPath);
-            Application = Application.Fetch(QryFetchApplicationByName.Query(appName));
-
-            if (Application == null)
-            {
-                Application = new Application()
-                {
-                    ID = Guid.NewGuid(),
-                    ApplicationName = appName,
-                    Description = config["description"],
-                    LoweredApplicationName = appName.ToLower()
-                };
-                Application.Save();
-                UnitOfWork.CurrentSession.Flush();
-            }
+            Application = ApplicationManager.FetchApplication(appName, config["description"]);
         }
 
         public override int DeleteInactiveProfiles(System.Web.Profile.ProfileAuthenticationOption authenticationOption, DateTime userInactiveSinceDate)
