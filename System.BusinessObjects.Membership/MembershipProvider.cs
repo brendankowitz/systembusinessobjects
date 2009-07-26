@@ -21,16 +21,17 @@ namespace System.BusinessObjects.Membership
         {
             get
             {
-                return application;
+                return ApplicationManager.GetApplication(applicationName);
             }
             set
             {
-                application = value;
+                applicationName = value.ApplicationName;
+                ApplicationManager.SetApplication(applicationName, value);
             }
         }
 
         #region Fields
-        private Application application = new Application();
+        private string applicationName = null;
         private bool requiresQuestionAndAnswer;
         private bool requiresUniqueEmail;
         private bool enablePasswordRetrieval;
@@ -53,8 +54,8 @@ namespace System.BusinessObjects.Membership
         /// </returns>
         public override string ApplicationName
         {
-            get { return Application.ApplicationName; }
-            set { Application.ApplicationName = value; }
+            get { return applicationName; }
+            set { applicationName = value; }
         }
         /// <summary>
         /// Gets a value indicating whether the membership provider is configured to require
@@ -202,20 +203,7 @@ namespace System.BusinessObjects.Membership
 
             // Load configuration data.
             string appName = GetConfigValue(config["applicationName"], HostingEnvironment.ApplicationVirtualPath);
-            Application = Application.Fetch(QryFetchApplicationByName.Query(appName));
-
-            if (Application == null)
-            {
-                Application = new Application()
-                {
-                    ID = Guid.NewGuid(),
-                    ApplicationName = appName,
-                    Description = config["description"],
-                    LoweredApplicationName = appName.ToLower()
-                };
-                Application.Save();
-                UnitOfWork.CurrentSession.Flush();
-            }
+            Application = ApplicationManager.FetchApplication(appName, config["description"]);
 
             requiresQuestionAndAnswer = Convert.ToBoolean(GetConfigValue(config["requiresQuestionAndAnswer"], "False"));
             requiresUniqueEmail = Convert.ToBoolean(GetConfigValue(config["requiresUniqueEmail"], "True"));
