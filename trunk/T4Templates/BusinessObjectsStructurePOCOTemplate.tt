@@ -128,7 +128,7 @@ namespace <#= this.ClassInfo.Namespace #>
 				if(cl.Id != null)
 				{
 					c.Properties.Add(
-								new PropertyItem{ Name = cl.Id.name, PropertyType = cl.Id.type != null ? cl.Id.type : "String", RelationType = RelationType.Property,
+								new PropertyItem{ Name = cl.Id.name, PropertyType = cl.Id.type1 != null ? cl.Id.type1 : "String", RelationType = RelationType.Property,
 												  IsNullable = true
 								 }
 							); 
@@ -160,7 +160,7 @@ namespace <#= this.ClassInfo.Namespace #>
                         HbmSet se = (HbmSet)po;
                         
                         c.Properties.Add(
-							new PropertyItem{ Name = se.name, PropertyType = ((HbmOneToMany)se.Item1).@class, RelationType = RelationType.ManyToMany
+							new PropertyItem{ Name = se.name, PropertyType = ((HbmOneToMany)se.Item).@class, RelationType = RelationType.ManyToMany
 							 }
 						);  
                     }
