@@ -1,54 +1,52 @@
 using System;
 using System.Data;
-using NUnit.Framework;
 using Sample.BusinessObjects.Contacts;
 using System.Diagnostics;
 using System.ComponentModel;
 using System.BusinessObjects.Data;
 using System.ComponentModel.DataAnnotations;
-using Iesi.Collections.Generic;
+using Xunit;
 
 namespace BusinessObject.Framework.Tests
 {
-    [TestFixture]
     public class DataObjectTests : NHibernateInMemoryTestFixtureBase
     {
-        [Test]
+        [Fact]
         public void GenericTypeTest()
         {
             Type t = typeof(DataObject<Person>);
 
             Type t2 = Type.GetType("System.BusinessObjects.Data.DataObject`1[[Sample.BusinessObjects.Contacts.Person, Sample.BusinessObjects]], System.BusinessObjects.Framework");
 
-            Assert.AreEqual(t, t2);
+            Assert.Equal(t, t2);
         }
 
         #region RowStateTests
-        [Test]
+        [Fact]
         public void CheckRowStateDetached()
         {
             Person p = BusinessObjectFactory.CreateAndFillPerson();
-            Assert.AreEqual(DataRowState.Detached, p.RowState);
+            Assert.Equal(DataRowState.Detached, p.RowState);
         }
 
-        [Test]
+        [Fact]
         public void CheckRowStateSaved()
         {
             Person p = BusinessObjectFactory.CreateAndFillPerson();
             p.Save();
-            Assert.AreEqual(DataRowState.Unchanged, p.RowState);
+            Assert.Equal(DataRowState.Unchanged, p.RowState);
         }
 
-        [Test]
+        [Fact]
         public void CheckRowStateLoaded()
         {
             Person p = BusinessObjectFactory.CreateAndFillPerson();
             p.Save();
             Person p2 = Person.Load(p.ID);
-            Assert.AreEqual(DataRowState.Unchanged, p2.RowState);
+            Assert.Equal(DataRowState.Unchanged, p2.RowState);
         }
 
-        [Test]
+        [Fact]
         public void CheckRowStateModified()
         {
             Person p = BusinessObjectFactory.CreateAndFillPerson();
@@ -57,10 +55,10 @@ namespace BusinessObject.Framework.Tests
 
             p2.FirstName = "Jenny";
 
-            Assert.AreEqual(DataRowState.Modified, p2.RowState);
+            Assert.Equal(DataRowState.Modified, p2.RowState);
         }
 
-        [Test]
+        [Fact]
         public void CheckRowStateSetModified()
         {
             Person p = BusinessObjectFactory.CreateAndFillPerson();
@@ -70,10 +68,10 @@ namespace BusinessObject.Framework.Tests
             p2.ID = p.ID;
             p2.RowState = DataRowState.Modified;
 
-            Assert.AreEqual(DataRowState.Modified, p2.RowState);
+            Assert.Equal(DataRowState.Modified, p2.RowState);
         }
 
-        [Test]
+        [Fact]
         public void CheckRowStateSetModifiedSaved()
         {
             Person p = BusinessObjectFactory.CreateAndFillPerson();
@@ -91,112 +89,109 @@ namespace BusinessObject.Framework.Tests
 
             p2.Save();
 
-            Assert.AreEqual(DataRowState.Unchanged, p2.RowState);
+            Assert.Equal(DataRowState.Unchanged, p2.RowState);
 
             //t.Rollback();
         }
 
-        [Test]
+        [Fact]
         public void CheckRowStateDeleted()
         {
             Person p = BusinessObjectFactory.CreateAndFillPerson();
             p.Save();
             p.Delete();
-            Assert.AreEqual(DataRowState.Deleted, p.RowState);
+            Assert.Equal(DataRowState.Deleted, p.RowState);
 
             p.Save();
             Trace.WriteLine(p.RowState);
-            Assert.AreEqual(DataRowState.Deleted, p.RowState);
+            Assert.Equal(DataRowState.Deleted, p.RowState);
         }
         #endregion
 
         #region Validation Tests
-        [Test]
+        [Fact]
         public void TestStringEmptyValidation_NullString()
         {
             Person p = BusinessObjectFactory.CreateAndFillPerson();
             p.FirstName = null;
 
-            Assert.IsTrue(p.IsNull("FirstName"));
+            Assert.True(p.IsNull("FirstName"));
 
             IDataErrorInfo error = p;
-            Assert.IsNotEmpty(error["FirstName"]);
+            Assert.NotEmpty(error["FirstName"]);
         }
 
-        [Test]
+        [Fact]
         public void TestStringEmptyValidation_NullString_LambdaIsNull()
         {
             Person p = BusinessObjectFactory.CreateAndFillPerson();
             p.FirstName = null;
 
-            Assert.IsTrue(p.IsNull(pr => pr.FirstName));
+            Assert.True(p.IsNull(pr => pr.FirstName));
 
             IDataErrorInfo error = p;
-            Assert.IsNotEmpty(error["FirstName"]);
+            Assert.NotEmpty(error["FirstName"]);
         }
 
-        [Test]
+        [Fact]
         public void TestStringEmptyValidation_EmptyString()
         {
             Person p = BusinessObjectFactory.CreateAndFillPerson();
             p.FirstName = string.Empty;
 
-            Assert.IsFalse(p.IsNull("FirstName"));
+            Assert.False(p.IsNull("FirstName"));
 
             IDataErrorInfo error = p;
-            Assert.IsNotEmpty(error["FirstName"]);
+            Assert.NotEmpty(error["FirstName"]);
         }
 
-        [Test]
+        [Fact]
         public void TestNullValidationAttibute()
         {
             Address a = new Address();
-            Assert.IsTrue(a.IsNull("Postcode"));
+            Assert.True(a.IsNull("Postcode"));
             IDataErrorInfo error = a;
             Trace.WriteLine(error["Postcode"]);
-            Assert.IsNotEmpty(error["Postcode"]);
+            Assert.NotEmpty(error["Postcode"]);
 
             a.Postcode = "1234";
-            Assert.IsEmpty(error["Postcode"]);
+            Assert.Empty(error["Postcode"]);
 
         }
 
-        [Test]
+        [Fact]
         public void TestInvalidRange()
         {
             Address a = new Address();
-            Assert.IsTrue(a.IsNull("Postcode"));
+            Assert.True(a.IsNull("Postcode"));
             
             IDataErrorInfo error = a;
             Trace.WriteLine(error["Postcode"]);
-            Assert.IsNotEmpty(error["Postcode"]);
+            Assert.NotEmpty(error["Postcode"]);
 
             a.Postcode = "1234a";
-            Assert.IsNotEmpty(error["Postcode"]);
+            Assert.NotEmpty(error["Postcode"]);
 
         }
 
-        [Test]
-        [ExpectedException(typeof(NHibernate.Classic.ValidationFailure))]
+        [Fact]
         public void TestNHibernateValidationWhenSaving()
         {
             Address a = new Address();
-            Assert.IsTrue(a.IsNull("Postcode"));
+            Assert.True(a.IsNull("Postcode"));
 
             IDataErrorInfo error = a;
             Trace.WriteLine(error["Postcode"]);
-            Assert.IsNotEmpty(error["Postcode"]);
+            Assert.NotEmpty(error["Postcode"]);
 
-            a.Save();
-
+            Assert.Throws<NHibernate.Classic.ValidationFailure>(() => {a.Save();});
         }
 
-        [Test]
-        [ExpectedException(typeof(NHibernate.Classic.ValidationFailure))]
+        [Fact]
         public void TestNHibernateValidationWhenSaving2()
         {
             Address a = new Address();
-            Assert.IsTrue(a.IsNull("Postcode"));
+            Assert.True(a.IsNull("Postcode"));
             a.Postcode = "1234";
             a.Address1 = "Address1";
             a.Suburb = "Suburb";
@@ -204,14 +199,14 @@ namespace BusinessObject.Framework.Tests
             a.Save();
 
             a.Postcode = null;
-            a.Save(SaveMode.Flush);
+            Assert.Throws<NHibernate.Classic.ValidationFailure>(() => { a.Save(SaveMode.Flush); });
         }
 
-        [Test]
+        [Fact]
         public void TestNHibernateValidationWhenDeleting()
         {
             Address a = new Address();
-            Assert.IsTrue(a.IsNull("Postcode"));
+            Assert.True(a.IsNull("Postcode"));
             a.Postcode = "1234";
             a.Address1 = "Address1";
             a.Suburb = "Suburb";
@@ -224,50 +219,50 @@ namespace BusinessObject.Framework.Tests
 
         }
 
-        [Test]
+        [Fact]
         public void TestNHibernateValidationRegex()
         {
             Person p = BusinessObjectFactory.CreateAndFillPerson();
             IDataErrorInfo error = p;
 
-            Assert.IsEmpty(error["Email"]);
+            Assert.Empty(error["Email"]);
 
             p.Email = "invalid.email";
 
             Trace.WriteLine(error["Email"]);
-            Assert.IsNotEmpty(error["Email"]);
+            Assert.NotEmpty(error["Email"]);
         }
 
-        [Test]
+        [Fact]
         public void TestNHibernateValidationRegexNullProperty()
         {
             Person p = BusinessObjectFactory.CreateAndFillPerson();
             IDataErrorInfo error = p;
 
-            Assert.IsEmpty(error["Email"]);
+            Assert.Empty(error["Email"]);
 
             p.Email = null;
 
             Trace.WriteLine(error["Email"]);
-            Assert.IsNotEmpty(error["Email"]);
+            Assert.NotEmpty(error["Email"]);
         }
 
-        [Test]
+        [Fact]
         public void ValidationFromDotNet35DataAnnotationAttribute()
         {
             DataAnnotationsTestClass obj = new DataAnnotationsTestClass();
             obj.IntRange = 0;
-            Assert.IsEmpty(((IDataErrorInfo)obj)["IntRange"]);
+            Assert.Empty(((IDataErrorInfo)obj)["IntRange"]);
 
             obj.IntRange = 10;
-            Assert.AreEqual("The field IntRange must be between 0 and 5.", ((IDataErrorInfo)obj)["IntRange"]);
+            Assert.Equal("The field IntRange must be between 0 and 5.", ((IDataErrorInfo)obj)["IntRange"]);
         }
 
         #endregion
 
         #region Property Changed Events
 
-        [Test]
+        [Fact]
         public void PropertyChanging()
         {
             bool beforeEvent = false;
@@ -277,43 +272,43 @@ namespace BusinessObject.Framework.Tests
             p.PropertyChanging += (sender, e) =>
             {
                 beforeEvent = true;
-                Assert.AreEqual("John", p.FirstName);
-                Assert.AreEqual("FirstName", e.PropertyName);
+                Assert.Equal("John", p.FirstName);
+                Assert.Equal("FirstName", e.PropertyName);
             };
             p.PropertyChanged += (sender, e) =>
             {
                 afterEvent = true;
-                Assert.AreEqual("Peter", p.FirstName);
-                Assert.AreEqual("FirstName", e.PropertyName);
+                Assert.Equal("Peter", p.FirstName);
+                Assert.Equal("FirstName", e.PropertyName);
             };
 
             p.FirstName = "Peter";
 
-            Assert.AreEqual("Peter", p.FirstName);
-            Assert.AreEqual(true, beforeEvent);
-            Assert.AreEqual(true, afterEvent);
+            Assert.Equal("Peter", p.FirstName);
+            Assert.Equal(true, beforeEvent);
+            Assert.Equal(true, afterEvent);
         }
 
         #endregion
 
         #region GetValue
 
-        [Test]
+        [Fact]
         public void GetPrimitive()
         {
             PrimitiveTestClass c = new PrimitiveTestClass();
 
-            Assert.AreEqual(0, c.unsignedLong);
-            Assert.AreEqual(-1, c.integer);
-            Assert.AreEqual(0, c.character);
-            Assert.AreEqual(false, c.boolean);
+            Assert.Equal<ulong>(0, c.unsignedLong);
+            Assert.Equal(-1, c.integer);
+            Assert.Equal(0, c.character);
+            Assert.Equal(false, c.boolean);
         }
 
         #endregion
 
         #region Serialising
 
-        [Test]
+        [Fact]
         public void TestSerialise()
         {
             Person p = BusinessObjectFactory.CreateAndFillPerson();
@@ -321,10 +316,10 @@ namespace BusinessObject.Framework.Tests
 
             Person newPerson = p.Clone();
 
-            Assert.AreEqual(p.ID, newPerson.ID);
+            Assert.Equal(p.ID, newPerson.ID);
         }
 
-        [Test]
+        [Fact]
         public void TestSerialiseLazyManyToOne()
         {
             Person p = BusinessObjectFactory.CreateAndFillPerson();
@@ -352,11 +347,11 @@ namespace BusinessObject.Framework.Tests
             Person loadedPerson = Person.Load(p.ID, session);
             Person newPerson = loadedPerson.Clone();
 
-            Assert.AreEqual(p.ID, newPerson.ID);
-            Assert.AreEqual("contact", newPerson.ContactType.ID);
+            Assert.Equal(p.ID, newPerson.ID);
+            Assert.Equal("contact", newPerson.ContactType.ID);
         }
 
-        [Test]
+        [Fact]
         public void TestSerialiseLazyCollection()
         {
             Person p = BusinessObjectFactory.CreateAndFillPerson();
@@ -391,9 +386,9 @@ namespace BusinessObject.Framework.Tests
 
             int addrCount = newPerson.Addresses.Count;
 
-            Assert.AreEqual(p.ID, newPerson.ID);
-            Assert.AreEqual("contact", newPerson.ContactType.ID);
-            Assert.AreEqual(1, addrCount);
+            Assert.Equal(p.ID, newPerson.ID);
+            Assert.Equal("contact", newPerson.ContactType.ID);
+            Assert.Equal(1, addrCount);
         }
 
         #endregion

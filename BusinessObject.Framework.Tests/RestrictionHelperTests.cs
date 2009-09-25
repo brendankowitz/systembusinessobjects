@@ -1,24 +1,20 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using NUnit.Framework;
 using Sample.BusinessObjects.Contacts;
 using NHibernate;
 using System.BusinessObjects.Transactions;
 using NHibernate.Criterion;
 using System.BusinessObjects.Expressions;
 using NHibernate.Impl;
+using Xunit;
 
 namespace BusinessObject.Framework.Tests
 {
-    [TestFixture]
     public class RestrictionHelperTests : NHibernateInMemoryTestFixtureBase
     {
         public string QueryFirstNameProperty{ get{ return "John"; } }
 
 #if DOT_NET_35
-        [Test]
+        [Fact]
         public void CanUseEqStrongProperty()
         {
             Person pers = BusinessObjectFactory.CreateAndFillPerson();
@@ -29,11 +25,11 @@ namespace BusinessObject.Framework.Tests
             c.Add(Restrictions.Eq(System.BusinessObjects.Helpers.Property.GetFor(() => new Person().FirstName), "John"));
 
             Person result = c.UniqueResult<Person>();
-            Assert.AreEqual("John", result.FirstName);
+            Assert.Equal("John", result.FirstName);
 
         }
 
-        [Test]
+        [Fact]
         public void CanUseEqStrongProperty2()
         {
             Person pers = BusinessObjectFactory.CreateAndFillPerson();
@@ -44,11 +40,11 @@ namespace BusinessObject.Framework.Tests
             c.Add(Restrictions.Eq(System.BusinessObjects.Helpers.Property.For<Person>(p => p.FirstName), "John"));
 
             Person result = c.UniqueResult<Person>();
-            Assert.AreEqual("John", result.FirstName);
+            Assert.Equal("John", result.FirstName);
 
         }
 
-        [Test]
+        [Fact]
         public void CanUseEqLambda()
         {
             Person pers = BusinessObjectFactory.CreateAndFillPerson();
@@ -58,11 +54,11 @@ namespace BusinessObject.Framework.Tests
             ICriteria c = session.CreateCriteria(typeof(Person));
             c.Add(RestrictBy.Add<Person>(p => p.FirstName == "John" ));
             Person result = c.UniqueResult<Person>();
-            Assert.AreEqual("John", result.FirstName);
+            Assert.Equal("John", result.FirstName);
             
         }
 
-        [Test]
+        [Fact]
         public void CanUseEqLambda2()
         {
             Person pers = BusinessObjectFactory.CreateAndFillPerson();
@@ -72,11 +68,11 @@ namespace BusinessObject.Framework.Tests
             ICriteria c = session.CreateCriteria(typeof(Person));
             c.Add(RestrictBy.Add<Person>(p => "John" == p.FirstName));
             Person result = c.UniqueResult<Person>();
-            Assert.AreEqual("John", result.FirstName);
+            Assert.Equal("John", result.FirstName);
 
         }
 
-        [Test]
+        [Fact]
         public void CanUseGeLambda()
         {
             Person pers = BusinessObjectFactory.CreateAndFillPerson();
@@ -87,11 +83,11 @@ namespace BusinessObject.Framework.Tests
             c.Add(RestrictBy.Add<Person>(p => p.ID >= 0));
 
             Person result = c.UniqueResult<Person>();
-            Assert.AreEqual("John", result.FirstName);
+            Assert.Equal("John", result.FirstName);
 
         }
 
-        [Test]
+        [Fact]
         public void CanUseGtLambda()
         {
             Person pers = BusinessObjectFactory.CreateAndFillPerson();
@@ -102,11 +98,11 @@ namespace BusinessObject.Framework.Tests
             c.Add(RestrictBy.Add<Person>(p => p.ID > 0));
 
             Person result = c.UniqueResult<Person>();
-            Assert.AreEqual("John", result.FirstName);
+            Assert.Equal("John", result.FirstName);
 
         }
 
-        [Test]
+        [Fact]
         public void CanUseLeLambda()
         {
             Person pers = BusinessObjectFactory.CreateAndFillPerson();
@@ -117,11 +113,11 @@ namespace BusinessObject.Framework.Tests
             c.Add(RestrictBy.Add<Person>(p => p.ID <= 0));
 
             Person result = c.UniqueResult<Person>();
-            Assert.IsNull(result);
+            Assert.Null(result);
 
         }
 
-        [Test]
+        [Fact]
         public void CanUseLtLambda()
         {
             Person pers = BusinessObjectFactory.CreateAndFillPerson();
@@ -132,11 +128,11 @@ namespace BusinessObject.Framework.Tests
             c.Add(RestrictBy.Add<Person>(p => p.ID < 0));
 
             Person result = c.UniqueResult<Person>();
-            Assert.IsNull(result);
+            Assert.Null(result);
 
         }
 
-        [Test]
+        [Fact]
         public void CanUseIsNulllambda()
         {
             Person pers = BusinessObjectFactory.CreateAndFillPerson();
@@ -147,10 +143,10 @@ namespace BusinessObject.Framework.Tests
             c.Add(RestrictBy.Add<Person>(p => p.FirstName == null));
 
             Person result = c.UniqueResult<Person>();
-            Assert.IsNull(result);
+            Assert.Null(result);
         }
 
-        [Test]
+        [Fact]
         public void CanUseIsNotNull()
         {
             Person pers = BusinessObjectFactory.CreateAndFillPerson();
@@ -161,10 +157,10 @@ namespace BusinessObject.Framework.Tests
             c.Add(RestrictBy.Add<Person>(p => p.FirstName != null));
 
             Person result = c.UniqueResult<Person>();
-            Assert.AreEqual("John", result.FirstName);
+            Assert.Equal("John", result.FirstName);
         }
 
-        [Test]
+        [Fact]
         public void CanUseIsNotNullExtension()
         {
             Person pers = BusinessObjectFactory.CreateAndFillPerson();
@@ -179,7 +175,7 @@ namespace BusinessObject.Framework.Tests
             c.UniqueResult();
         }
 
-        [Test]
+        [Fact]
         public void CanUseEqlambdaExtension()
         {
             Person pers = BusinessObjectFactory.CreateAndFillPerson();
@@ -192,10 +188,10 @@ namespace BusinessObject.Framework.Tests
                 .Criteria;
 
             Person result = c.UniqueResult<Person>();
-            Assert.AreEqual("John", result.FirstName);
+            Assert.Equal("John", result.FirstName);
         }
 
-        [Test]
+        [Fact]
         public void CanUseEqlambdaExtensionExpression()
         {
             Person pers = BusinessObjectFactory.CreateAndFillPerson();
@@ -207,10 +203,10 @@ namespace BusinessObject.Framework.Tests
                 .Criteria;
 
             Person result = c.UniqueResult<Person>();
-            Assert.AreEqual("John", result.FirstName);
+            Assert.Equal("John", result.FirstName);
         }
 
-        [Test]
+        [Fact]
         public void CanUseEqlambdaExtensionExpression_Multiple_Adds()
         {
             Person pers = BusinessObjectFactory.CreateAndFillPerson();
@@ -224,10 +220,10 @@ namespace BusinessObject.Framework.Tests
                 .Criteria;
 
             Person result = c.UniqueResult<Person>();
-            Assert.AreEqual("John", result.FirstName);
+            Assert.Equal("John", result.FirstName);
         }
 
-        [Test]
+        [Fact]
         public void CanUseEqlambdaExtensionExpressionWhere()
         {
             Person pers = BusinessObjectFactory.CreateAndFillPerson();
@@ -239,10 +235,10 @@ namespace BusinessObject.Framework.Tests
                 .Criteria;
 
             Person result = c.UniqueResult<Person>();
-            Assert.AreEqual("John", result.FirstName);
+            Assert.Equal("John", result.FirstName);
         }
 
-        [Test]
+        [Fact]
         public void CanUseEqlambdaExtensionExpressionWhere2()
         {
             Person pers = BusinessObjectFactory.CreateAndFillPerson();
@@ -254,26 +250,25 @@ namespace BusinessObject.Framework.Tests
                 .Criteria;
 
             Person result = c.UniqueResult<Person>();
-            Assert.AreEqual("John", result.FirstName);
+            Assert.Equal("John", result.FirstName);
         }
 
-        [Test]
-        [ExpectedException(typeof(NotSupportedException))]
+        [Fact]
         public void CanUseEqlambdaExtensionExpressionWhere3()
         {
             Person pers = BusinessObjectFactory.CreateAndFillPerson();
             pers.SetSession(session);
             pers.Save();
 
-            ICriteria c = session.CreateExpression<Person>()
-                .Add(p => p.ID < 1000 && p.FirstName == "John")
-                .Criteria;
-
-            Person result = c.UniqueResult<Person>();
-            Assert.AreEqual("John", result.FirstName);
+            Assert.Throws<NotSupportedException>(() =>
+            {
+                ICriteria c = session.CreateExpression<Person>()
+                    .Add(p => p.ID < 1000 && p.FirstName == "John")
+                    .Criteria;
+            });
         }
 
-        [Test]
+        [Fact]
         public void CanUseEqlambdaExtensionExpressionWhere4()
         {
             Person pers = BusinessObjectFactory.CreateAndFillPerson();
@@ -285,10 +280,10 @@ namespace BusinessObject.Framework.Tests
                 .Criteria;
 
             Person result = c.UniqueResult<Person>();
-            Assert.AreEqual("John", result.FirstName);
+            Assert.Equal("John", result.FirstName);
         }
 
-        [Test]
+        [Fact]
         public void CanUseEqlambdaExtensionExpressionWhere5()
         {
             Person pers = BusinessObjectFactory.CreateAndFillPerson();
@@ -300,10 +295,10 @@ namespace BusinessObject.Framework.Tests
                 .Criteria;
 
             Person result = c.UniqueResult<Person>();
-            Assert.AreEqual("John", result.FirstName);
+            Assert.Equal("John", result.FirstName);
         }
 
-        [Test]
+        [Fact]
         public void CanUseEqlambdaExtensionExpressionWhere6()
         {
             Person pers = BusinessObjectFactory.CreateAndFillPerson();
@@ -317,10 +312,10 @@ namespace BusinessObject.Framework.Tests
                 .Criteria;
 
             Person result = c.UniqueResult<Person>();
-            Assert.AreEqual("John", result.FirstName);
+            Assert.Equal("John", result.FirstName);
         }
 
-        [Test]
+        [Fact]
         public void CanUseEqlambdaExtensionExpressionWhere7()
         {
             Person pers = BusinessObjectFactory.CreateAndFillPerson();
@@ -334,10 +329,10 @@ namespace BusinessObject.Framework.Tests
                 .Criteria;
 
             Person result = c.UniqueResult<Person>();
-            Assert.AreEqual("John", result.FirstName);
+            Assert.Equal("John", result.FirstName);
         }
 
-        [Test]
+        [Fact]
         public void CanUseEqlambdaExtensionExpressionWhere8()
         {
             Person pers = BusinessObjectFactory.CreateAndFillPerson();
@@ -351,10 +346,10 @@ namespace BusinessObject.Framework.Tests
                 .Criteria;
 
             Person result = c.UniqueResult<Person>();
-            Assert.AreEqual("John", result.FirstName);
+            Assert.Equal("John", result.FirstName);
         }
 
-        [Test]
+        [Fact]
         public void CanUseIsNotNull2()
         {
             Person pers = BusinessObjectFactory.CreateAndFillPerson();
@@ -365,10 +360,10 @@ namespace BusinessObject.Framework.Tests
                 .Expression<Person>(p => p.FirstName != null);
 
             Person result = c.UniqueResult<Person>();
-            Assert.AreEqual("John", result.FirstName);
+            Assert.Equal("John", result.FirstName);
         }
 
-        [Test]
+        [Fact]
         public void CanUseIsNotNull_WithOrder()
         {
             Person pers = BusinessObjectFactory.CreateAndFillPerson();
@@ -380,13 +375,13 @@ namespace BusinessObject.Framework.Tests
                 .OrderDesc(p => p.LastName)
                 .Criteria;
 
-            Assert.AreEqual("FirstName is not null\r\nLastName desc", c.ToString());
+            Assert.Equal("FirstName is not null\r\nLastName desc", c.ToString());
 
             Person result = c.UniqueResult<Person>();
-            Assert.AreEqual("John", result.FirstName);
+            Assert.Equal("John", result.FirstName);
         }
 
-        [Test]
+        [Fact]
         public void CanUseAlias()
         {
             Person pers = BusinessObjectFactory.CreateAndFillPerson();
@@ -411,10 +406,10 @@ namespace BusinessObject.Framework.Tests
                 .AddOrder(Order.Asc("ID"));
 
             Console.WriteLine(c.ToString());
-            Assert.AreEqual(c.ToString(), o.ToString());
+            Assert.Equal(c.ToString(), o.ToString());
         }
 
-        [Test]
+        [Fact]
         public void CanUseProjection()
         {
             Person pers = BusinessObjectFactory.CreateAndFillPerson();
@@ -429,10 +424,10 @@ namespace BusinessObject.Framework.Tests
             ICriteria o = UnitOfWork.CurrentSession.CreateCriteria(typeof(Person))
                 .SetProjection(Projections.Min("ID"));
 
-            Assert.AreEqual(((CriteriaImpl)o).Projection.ToString(), ((CriteriaImpl)c).Projection.ToString());
+            Assert.Equal(((CriteriaImpl)o).Projection.ToString(), ((CriteriaImpl)c).Projection.ToString());
         }
 
-        [Test]
+        [Fact]
         public void CanUseParameter()
         {
             Person pers = BusinessObjectFactory.CreateAndFillPerson();
@@ -449,10 +444,10 @@ namespace BusinessObject.Framework.Tests
             del("John");
 
             Person result = c.UniqueResult<Person>();
-            Assert.AreEqual("John", result.FirstName);
+            Assert.Equal("John", result.FirstName);
         }
 
-        [Test]
+        [Fact]
         public void CanUseProperty()
         {
             Person pers = BusinessObjectFactory.CreateAndFillPerson();
@@ -464,10 +459,10 @@ namespace BusinessObject.Framework.Tests
                 .Criteria;
 
             Person result = c.UniqueResult<Person>();
-            Assert.AreEqual("John", result.FirstName);
+            Assert.Equal("John", result.FirstName);
         }
 
-        [Test]
+        [Fact]
         public void DetachedCriteria()
         {
             Person pers = BusinessObjectFactory.CreateAndFillPerson();
@@ -494,7 +489,7 @@ namespace BusinessObject.Framework.Tests
                 .AddOrder(Order.Asc("ID"));
 
             Console.WriteLine(c.ToString());
-            Assert.AreEqual(c.ToString(), o.ToString());
+            Assert.Equal(c.ToString(), o.ToString());
         }
 #endif
     }

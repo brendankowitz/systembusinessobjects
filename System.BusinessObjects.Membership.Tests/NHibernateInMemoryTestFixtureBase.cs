@@ -7,22 +7,12 @@ using NHibernate.Cfg;
 using NHibernate.Tool.hbm2ddl;
 using System.Collections.Generic;
 
-using NUnit.Framework;
-using TestClass = NUnit.Framework.TestFixtureAttribute;
-using TestMethod = NUnit.Framework.TestAttribute;
-using TestInitialize = NUnit.Framework.SetUpAttribute;
-using TestCleanup = NUnit.Framework.TearDownAttribute;
-using ClassInitialize = NUnit.Framework.TestFixtureSetUpAttribute;
-using ClassCleanup = NUnit.Framework.TestFixtureTearDownAttribute;
-
-
 namespace System.BusinessObjects.Membership.Tests
 {
         /// <summary>
         /// Provides a fixture base for Unit tests to be run on an In-Memory SQLite db
         /// </summary>
-        [TestClass]
-        public class NHibernateInMemoryTestFixtureBase
+        public class NHibernateInMemoryTestFixtureBase : IDisposable
         {
             protected static ISessionFactory sessionFactory;
             protected static NHibernate.Cfg.Configuration configuration;
@@ -30,8 +20,7 @@ namespace System.BusinessObjects.Membership.Tests
 
             protected ISession session;
 
-            [TestInitialize]
-            public void Setup()
+            public NHibernateInMemoryTestFixtureBase()
             {
                 OneTimeInitalize(typeof(System.BusinessObjects.Membership.Membership).Assembly, this.GetType().Assembly);
                 NHibernateSessionProvider.CurrentFactory = sessionFactory;
@@ -48,8 +37,7 @@ namespace System.BusinessObjects.Membership.Tests
                 ((ProfileProvider)System.Web.Profile.ProfileManager.Provider).Application = app;
             }
 
-            [TestCleanup]
-            public void FixtureTearDown()
+            public void Dispose()
             {
                 if (session != null)
                     session.Flush();
@@ -60,8 +48,6 @@ namespace System.BusinessObjects.Membership.Tests
                 session.Dispose();
                 session = null;
             }
-
-
 
             /// <summary> 
             /// Initialize NHibernate and builds a session factory 
@@ -95,7 +81,6 @@ namespace System.BusinessObjects.Membership.Tests
                 IDbConnection connection = openSession.Connection;
                 new SchemaExport(configuration).Execute(false, true, false, connection, null);
                 return openSession;
-
             }
         }
     }

@@ -4,11 +4,10 @@ using System.BusinessObjects.MethodLinq.Tests.SimpleInterface.InterfaceContext;
 using Moq;
 using System.Diagnostics;
 using System.BusinessObjects.MethodLinq.Tests.SimpleInterface.TestObjects;
-using NUnit.Framework;
+using Xunit;
 
 namespace System.BusinessObjects.MethodLinq.Tests.SimpleInterface
 {
-    [TestFixture]
     public class SimpleInterfaceLinqTests
     {
          Mock<ISimpleInterface> mockService = null;
@@ -18,7 +17,7 @@ namespace System.BusinessObjects.MethodLinq.Tests.SimpleInterface
             mockService = new Mock<ISimpleInterface>();
         }
 
-        [Test]
+        [Fact]
         public void CanQueryBasic()
         {
             var query = from rate in mockService.Object.Query().Rates
@@ -32,7 +31,7 @@ namespace System.BusinessObjects.MethodLinq.Tests.SimpleInterface
             var response = query.ToList();
         }
 
-        [Test]
+        [Fact]
         public void CanQueryBasicLambda()
         {
             var query = mockService.Object.Query().Rates
@@ -44,7 +43,7 @@ namespace System.BusinessObjects.MethodLinq.Tests.SimpleInterface
             var response = query.ToList();
         }
 
-        [Test]
+        [Fact]
         public void CanQueryBasicWithSelectLambda()
         {
             var query = from rate in mockService.Object.Query().Rates
@@ -58,7 +57,7 @@ namespace System.BusinessObjects.MethodLinq.Tests.SimpleInterface
             var response = query.ToList();
         }
 
-        [Test]
+        [Fact]
         public void CanQueryBasicSetObject()
         {
             RequestParameters p = new RequestParameters
@@ -85,7 +84,7 @@ namespace System.BusinessObjects.MethodLinq.Tests.SimpleInterface
             mockService.Verify();
         }
 
-        [Test]
+        [Fact]
         public void CanQueryBasicSetObjectThenEdit()
         {
             RequestParameters p = new RequestParameters

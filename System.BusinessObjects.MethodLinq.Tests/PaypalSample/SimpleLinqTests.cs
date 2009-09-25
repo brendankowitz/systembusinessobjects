@@ -3,14 +3,13 @@ using System.Linq;
 using Moq;
 using System.BusinessObjects.MethodLinq.Tests.PaypalSample.PaypalContext;
 using System.Diagnostics;
-using NUnit.Framework;
+using Xunit;
 
 namespace System.BusinessObjects.MethodLinq.Tests
 {
     /// <summary>
     /// Summary description for UnitTest1
     /// </summary>
-    [TestFixture]
     public class PaypalSimpleLinqTests
     {
         Mock<PaypalAPI.PayPalAPIAAInterface> mockService = null;
@@ -20,7 +19,7 @@ namespace System.BusinessObjects.MethodLinq.Tests
             mockService = new Mock<PaypalAPI.PayPalAPIAAInterface>();
         }
 
-        [Test]
+        [Fact]
         public void CanQueryBasicReferenceTypeLambda()
         {
             mockService.Setup<PaypalAPI.SetExpressCheckoutResponse>(s => s.SetExpressCheckout(It.IsAny<PaypalAPI.SetExpressCheckoutRequest>()))

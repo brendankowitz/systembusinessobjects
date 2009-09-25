@@ -2,16 +2,15 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using NUnit.Framework;
 using Sample.BusinessObjects.Contacts;
 using System.BusinessObjects.Data;
+using Xunit;
 
 namespace BusinessObject.Framework.Tests
 {
-    [TestFixture]
     public class SafeBindingListTests : NHibernateInMemoryTestFixtureBase
     {
-        [Test]
+        [Fact]
         public void CreateSafeList_UsingProxies()
         {
             Castle.DynamicProxy.ProxyGenerator generator = new Castle.DynamicProxy.ProxyGenerator();
@@ -23,11 +22,11 @@ namespace BusinessObject.Framework.Tests
             IList<Person> safeList = SafeDataBindingList<Person>.Create(new List<Person>() { obj1, proxObj });
 
             //Should have converted both to proxies
-            Assert.AreNotEqual(obj1.GetType(), safeList[0].GetType());
-            Assert.IsTrue(safeList[0].GetType() == safeList[1].GetType());
+            Assert.NotEqual(obj1.GetType(), safeList[0].GetType());
+            Assert.True(safeList[0].GetType() == safeList[1].GetType());
         }
 
-        [Test]
+        [Fact]
         public void CreateSafeList_DoNothing()
         {
             Castle.DynamicProxy.ProxyGenerator generator = new Castle.DynamicProxy.ProxyGenerator();
@@ -38,10 +37,10 @@ namespace BusinessObject.Framework.Tests
             IList<Person> safeList = SafeDataBindingList<Person>.Create(new List<Person>() { obj1, obj2 });
 
             //Should have converted both to proxies
-            Assert.AreEqual(obj1.GetType(), safeList[0].GetType());
-            Assert.AreEqual(obj2.GetType(), safeList[1].GetType());
+            Assert.Equal(obj1.GetType(), safeList[0].GetType());
+            Assert.Equal(obj2.GetType(), safeList[1].GetType());
 
-            Assert.IsTrue(safeList[0].GetType() == safeList[1].GetType());
+            Assert.True(safeList[0].GetType() == safeList[1].GetType());
         }
     }
 }

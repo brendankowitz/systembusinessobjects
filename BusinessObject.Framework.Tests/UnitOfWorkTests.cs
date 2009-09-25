@@ -1,17 +1,13 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using NUnit.Framework;
 using System.BusinessObjects.Transactions;
 using Sample.BusinessObjects.Contacts;
-using System.BusinessObjects.With;
+using Xunit;
 
 namespace BusinessObject.Framework.Tests
 {
-    [TestFixture]
     public class UnitOfWorkTests : NHibernateInMemoryTestFixtureBase
     {
-        [Test]
+        [Fact]
         public void SimpleDelegate()
         {
             Person p = BusinessObjectFactory.CreateAndFillPerson();
