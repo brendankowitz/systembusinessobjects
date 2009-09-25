@@ -1,34 +1,33 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using NUnit.Framework;
 using System.Web.Security;
 using System.BusinessObjects.Membership.Qry;
 using System.Web.Profile;
+using Xunit;
 
 namespace System.BusinessObjects.Membership.Tests
 {
-    [TestFixture]
     public class MembershipProviderTests : NHibernateInMemoryTestFixtureBase
-    {
-        [Test]
-        public void CreateUser()
+    {       
+        public static void CreateUser()
         {
             System.Web.Security.MembershipCreateStatus status;
              MembershipUser user = System.Web.Security.Membership.CreateUser("user1", "password", "test@test.com",
                                                         "question?", "yes", true, out status);
 
-            if (status != System.Web.Security.MembershipCreateStatus.Success)
-                Assert.Fail();
-
-            Assert.AreEqual("user1", user.UserName);
-            Assert.AreEqual("test@test.com", user.Email);
-            Assert.AreEqual("question?", user.PasswordQuestion);
-            Assert.AreEqual(true, user.IsApproved);
+            Assert.Equal(System.Web.Security.MembershipCreateStatus.Success, status);
+            Assert.Equal("user1", user.UserName);
+            Assert.Equal("test@test.com", user.Email);
+            Assert.Equal("question?", user.PasswordQuestion);
+            Assert.Equal(true, user.IsApproved);
         }
 
-        [Test]
+        [Fact]
+        public void CreateUserTest()
+        {
+            CreateUser();
+        }
+
+        [Fact]
         public void CanFetchApplication()
         {
             System.Web.Security.MembershipCreateStatus status;
@@ -37,14 +36,14 @@ namespace System.BusinessObjects.Membership.Tests
 
             Application app = Application.Fetch(QryFetchApplicationByName.Query("Blazing.Membership"));
             
-            Assert.IsNotNull(app);
+            Assert.NotNull(app);
 
             User u = User.Fetch(QryFetchUserByName.Query("user1", app.ID));
 
-            Assert.AreEqual(u.Application.ID, app.ID);
+            Assert.Equal(u.Application.ID, app.ID);
         }
 
-        [Test]
+        [Fact]
         public void GetAllUsers_Paging()
         {
             System.Web.Security.MembershipCreateStatus status;
@@ -53,30 +52,28 @@ namespace System.BusinessObjects.Membership.Tests
             MembershipUser user2 = System.Web.Security.Membership.CreateUser("user2", "password", "test2@test.com",
                                                        "question?", "yes", true, out status);
 
-            if (status != System.Web.Security.MembershipCreateStatus.Success)
-                Assert.Fail(status.ToString());
+            Assert.Equal(System.Web.Security.MembershipCreateStatus.Success, status);
 
             int total;
             MembershipUserCollection col = System.Web.Security.Membership.GetAllUsers(0, 1, out total);
 
-            Assert.AreEqual(1, col.Count);
-            Assert.AreEqual(2, total);
+            Assert.Equal(1, col.Count);
+            Assert.Equal(2, total);
         }
 
-        [Test]
+        [Fact]
         public void GetUserNameByEmail()
         {
             System.Web.Security.MembershipCreateStatus status;
             MembershipUser user = System.Web.Security.Membership.CreateUser("user1", "password", "test123@test.com",
                                                        "question?", "yes", true, out status);
-            if (status != System.Web.Security.MembershipCreateStatus.Success)
-                Assert.Fail();
+            Assert.Equal(System.Web.Security.MembershipCreateStatus.Success, status);
 
             string username = System.Web.Security.Membership.GetUserNameByEmail("test123@test.com");
-            Assert.AreEqual("user1", username);
+            Assert.Equal("user1", username);
         }
 
-        [Test]
+        [Fact]
         public void GetUsersByEmail_Paging()
         {
             System.Web.Security.MembershipCreateStatus status;
@@ -85,17 +82,16 @@ namespace System.BusinessObjects.Membership.Tests
             MembershipUser user2 = System.Web.Security.Membership.CreateUser("user2", "password", "test321@test.net",
                                                        "question?", "yes", true, out status);
 
-            if (status != System.Web.Security.MembershipCreateStatus.Success)
-                Assert.Fail();
+            Assert.Equal(System.Web.Security.MembershipCreateStatus.Success, status);
 
             int total;
             MembershipUserCollection col = System.Web.Security.Membership.FindUsersByEmail("test???@test*", 0, 1, out total);
 
-            Assert.AreEqual(1, col.Count);
-            Assert.AreEqual(2, total);
+            Assert.Equal(1, col.Count);
+            Assert.Equal(2, total);
         }
 
-        [Test]
+        [Fact]
         public void GetUsersByName_Paging()
         {
             System.Web.Security.MembershipCreateStatus status;
@@ -104,146 +100,136 @@ namespace System.BusinessObjects.Membership.Tests
             MembershipUser user2 = System.Web.Security.Membership.CreateUser("user2", "password", "test321@test.net",
                                                        "question?", "yes", true, out status);
 
-            if (status != System.Web.Security.MembershipCreateStatus.Success)
-                Assert.Fail();
+            Assert.Equal(System.Web.Security.MembershipCreateStatus.Success, status);
 
             int total;
             MembershipUserCollection col = System.Web.Security.Membership.FindUsersByName("?ser%", 0, 1, out total);
 
-            Assert.AreEqual(1, col.Count);
-            Assert.AreEqual(2, total);
+            Assert.Equal(1, col.Count);
+            Assert.Equal(2, total);
         }
 
-        [Test]
+        [Fact]
         public void UsersOnline()
         {
             System.Web.Security.MembershipCreateStatus status;
             MembershipUser user = System.Web.Security.Membership.CreateUser("user1", "password", "test@test.com",
                                                        "question?", "yes", true, out status);
 
-            if (status != System.Web.Security.MembershipCreateStatus.Success)
-                Assert.Fail();
+            Assert.Equal(System.Web.Security.MembershipCreateStatus.Success, status);
 
             user.LastActivityDate = DateTime.Now;
             System.Web.Security.Membership.UpdateUser(user);
 
-            Assert.AreEqual(1, System.Web.Security.Membership.GetNumberOfUsersOnline());
+            Assert.Equal(1, System.Web.Security.Membership.GetNumberOfUsersOnline());
         }
 
-        [Test]
+        [Fact]
         public void UpdateUser()
         {
             System.Web.Security.MembershipCreateStatus status;
             MembershipUser user = System.Web.Security.Membership.CreateUser("user1", "password", "test@test.com",
                                                        "question?", "yes", true, out status);
 
-            if (status != System.Web.Security.MembershipCreateStatus.Success)
-                Assert.Fail();
+            Assert.Equal(System.Web.Security.MembershipCreateStatus.Success, status);
 
             user.Comment = "Hello Comment";
             System.Web.Security.Membership.UpdateUser(user);
         }
 
-        [Test]
+        [Fact]
         public void GetProviderUser()
         {
             System.Web.Security.MembershipCreateStatus status;
             MembershipUser user = System.Web.Security.Membership.CreateUser("user1", "password", "test@test.com",
                                                        "question?", "yes", true, out status);
 
-            if (status != System.Web.Security.MembershipCreateStatus.Success)
-                Assert.Fail();
+            Assert.Equal(System.Web.Security.MembershipCreateStatus.Success, status);
 
             object providerKey = user.ProviderUserKey;
 
             MembershipUser testUser = System.Web.Security.Membership.GetUser(providerKey, false);
 
-            Assert.AreEqual(user.UserName, testUser.UserName);
+            Assert.Equal(user.UserName, testUser.UserName);
         }
 
-        [Test]
+        [Fact]
         public void ChangePassword()
         {
             System.Web.Security.MembershipCreateStatus status;
             MembershipUser user = System.Web.Security.Membership.CreateUser("user1", "password", "test@test.com",
                                                        "question?", "yes", true, out status);
 
-            if (status != System.Web.Security.MembershipCreateStatus.Success)
-                Assert.Fail();
+            Assert.Equal(System.Web.Security.MembershipCreateStatus.Success, status);
 
             user.ChangePassword("password", "password1");
         }
 
-        [Test]
+        [Fact]
         public void ChangePasswordQuestion()
         {
             System.Web.Security.MembershipCreateStatus status;
             MembershipUser user = System.Web.Security.Membership.CreateUser("user1", "password", "test@test.com",
                                                        "question?", "yes", true, out status);
 
-            if (status != System.Web.Security.MembershipCreateStatus.Success)
-                Assert.Fail();
+            Assert.Equal(System.Web.Security.MembershipCreateStatus.Success, status);
 
             bool retval = user.ChangePasswordQuestionAndAnswer("password", "new question", "new answer");
-            Assert.IsTrue(retval);
+            Assert.True(retval);
         }
 
-        [Test]
+        [Fact]
         public void ResetPassword()
         {
             System.Web.Security.MembershipCreateStatus status;
             MembershipUser user = System.Web.Security.Membership.CreateUser("user1", "password", "test@test.com",
                                                        "question?", "yes", true, out status);
 
-            if (status != System.Web.Security.MembershipCreateStatus.Success)
-                Assert.Fail();
+            Assert.Equal(System.Web.Security.MembershipCreateStatus.Success, status);
 
             string newpassword = user.ResetPassword("yes");
         }
 
-        [Test]
+        [Fact]
         public void GetPassword()
         {
             System.Web.Security.MembershipCreateStatus status;
             MembershipUser user = System.Web.Security.Membership.CreateUser("user1", "password", "test@test.com",
                                                        "question?", "yes", true, out status);
 
-            if (status != System.Web.Security.MembershipCreateStatus.Success)
-                Assert.Fail();
+            Assert.Equal(System.Web.Security.MembershipCreateStatus.Success, status);
 
             string password = user.GetPassword("yes");
-            Assert.AreEqual("password", password);
+            Assert.Equal("password", password);
         }
 
-        [Test]
+        [Fact]
         public void UnlockUser()
         {
             System.Web.Security.MembershipCreateStatus status;
             MembershipUser user = System.Web.Security.Membership.CreateUser("user1", "password", "test@test.com",
                                                        "question?", "yes", true, out status);
 
-            if (status != System.Web.Security.MembershipCreateStatus.Success)
-                Assert.Fail();
+            Assert.Equal(System.Web.Security.MembershipCreateStatus.Success, status);
 
             bool retval = user.UnlockUser();
-            Assert.IsTrue(retval);
+            Assert.True(retval);
         }
 
-        [Test]
+        [Fact]
         public void ApproveUser()
         {
             System.Web.Security.MembershipCreateStatus status;
             MembershipUser user = System.Web.Security.Membership.CreateUser("user1", "password", "test@test.com",
                                                        "question?", "yes", true, out status);
 
-            if (status != System.Web.Security.MembershipCreateStatus.Success)
-                Assert.Fail();
+            Assert.Equal(System.Web.Security.MembershipCreateStatus.Success, status);
 
             user.IsApproved = true;
             System.Web.Security.Membership.UpdateUser(user);
         }
 
-        [Test]
+        [Fact]
         public void DeleteUser()
         {
             System.Web.Security.MembershipCreateStatus status;
@@ -264,8 +250,7 @@ namespace System.BusinessObjects.Membership.Tests
 
             ProfileManager.Provider.SetPropertyValues(sc, properties);
 
-            if (status != System.Web.Security.MembershipCreateStatus.Success)
-                Assert.Fail();
+            Assert.Equal(System.Web.Security.MembershipCreateStatus.Success, status);
 
             System.Web.Security.Membership.DeleteUser("user1");
         }

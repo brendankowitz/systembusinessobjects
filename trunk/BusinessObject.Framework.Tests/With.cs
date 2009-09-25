@@ -1,17 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
-using NUnit.Framework;
 using System.BusinessObjects.With;
 using Sample.BusinessObjects.Contacts;
-using System.Diagnostics;
+using Xunit;
 
 namespace BusinessObject.Framework.Tests
 {
-    [TestFixture]
     public class WithTests : NHibernateInMemoryTestFixtureBase
     {
-        [Test]
+        [Fact]
         public void TestEachDelegate()
         {
             List<Person> list = new List<Person>();
@@ -22,10 +19,10 @@ namespace BusinessObject.Framework.Tests
                 person.FirstName = "Changed";
             });
 
-            Assert.AreEqual("Changed", list[0].FirstName);
+            Assert.Equal("Changed", list[0].FirstName);
         }
 
-        [Test]
+        [Fact]
         public void TestEachHandleNullArray()
         {
             With.Each(null).Item(delegate(Person person)
@@ -34,7 +31,7 @@ namespace BusinessObject.Framework.Tests
             });
         }
 
-        [Test]
+        [Fact]
         public void TestEachFunction()
         {
             List<Person> list = new List<Person>();
@@ -42,10 +39,10 @@ namespace BusinessObject.Framework.Tests
 
             With.Each(list).Item<Person>(ChangePersonName);
 
-            Assert.AreEqual("Changed", list[0].FirstName);
+            Assert.Equal("Changed", list[0].FirstName);
         }
 
-        [Test]
+        [Fact]
         public void TestEachFunctionCollection()
         {
             List<Person> list = new List<Person>();
@@ -53,10 +50,10 @@ namespace BusinessObject.Framework.Tests
 
             IList<string> outputlist = With.Each(list).Item<Person, string>(FormatPerson) as IList<string>;
 
-            Assert.AreEqual("John Smith", outputlist[0]);
+            Assert.Equal("John Smith", outputlist[0]);
         }
 
-        [Test]
+        [Fact]
         public void TestEachFunctionCollection_WithExistingList()
         {
             List<Person> list = new List<Person>();
@@ -66,10 +63,10 @@ namespace BusinessObject.Framework.Tests
 
             IList<string> outputlist = With.Each(list).Item<Person, string>(myConvertToList, FormatPerson) as IList<string>;
 
-            Assert.AreEqual("John Smith", myConvertToList[0]);
+            Assert.Equal("John Smith", myConvertToList[0]);
         }
 
-        [Test]
+        [Fact]
         public void TestWithSplit()
         {
             List<int> list = new List<int>();
@@ -81,11 +78,11 @@ namespace BusinessObject.Framework.Tests
 
             IList<int>[] array = With.Each(list).Split<int>(3);
 
-            Assert.AreEqual(3, array[0].Count);
-            Assert.AreEqual(2, array[1].Count);
+            Assert.Equal(3, array[0].Count);
+            Assert.Equal(2, array[1].Count);
 
-            Assert.AreEqual(1, array[0][0]);
-            Assert.AreEqual(4, array[1][0]);
+            Assert.Equal(1, array[0][0]);
+            Assert.Equal(4, array[1][0]);
         }
 
         public void ChangePersonName(Person person)
@@ -99,7 +96,7 @@ namespace BusinessObject.Framework.Tests
         }
 
 #if DOT_NET_35
-        [Test]
+        [Fact]
         public void TestEachFunctionCollectionExtension()
         {
             List<Person> list = new List<Person>();
@@ -107,10 +104,10 @@ namespace BusinessObject.Framework.Tests
 
             IList<string> outputlist = list.Each().Item<Person, string>(FormatPerson) as IList<string>;
 
-            Assert.AreEqual("John Smith", outputlist[0]);
+            Assert.Equal("John Smith", outputlist[0]);
         }
 
-        [Test]
+        [Fact]
         public void TestlambdaEachFunctionCollectionExtension()
         {
             List<Person> list = new List<Person>();
@@ -118,10 +115,10 @@ namespace BusinessObject.Framework.Tests
 
             list.Each<Person>(x => x.FirstName = "Change");
 
-            Assert.AreEqual("Change", list[0].FirstName);
+            Assert.Equal("Change", list[0].FirstName);
         }
 
-        [Test]
+        [Fact]
         public void TestlambdaEachFunctionCollectionConvertExtension()
         {
             List<Person> list = new List<Person>();
@@ -129,21 +126,21 @@ namespace BusinessObject.Framework.Tests
 
             list.Each<Person>(x => x.FirstName = "Change");
 
-            Assert.AreEqual("Change", list[0].FirstName);
+            Assert.Equal("Change", list[0].FirstName);
 
         }
 
-        [Test]
+        [Fact]
         public void TestlambdaEachFunctionCollectionConvertOutputExtension()
         {
             List<Person> list = new List<Person>();
             list.Add(BusinessObjectFactory.CreateAndFillPerson());
 
             IList<string> outputlist = list.Each().Item<Person, string>(p => p.FirstName + "." + p.LastName) as IList<string>;
-            Assert.AreEqual("John.Smith", outputlist[0]);
+            Assert.Equal("John.Smith", outputlist[0]);
         }
 
-        [Test]
+        [Fact]
         public void TestlambdaEachFunctionCollectionPredicateSelect()
         {
             List<Person> list = new List<Person>();
@@ -151,7 +148,7 @@ namespace BusinessObject.Framework.Tests
 
             Person selected = list.FirstMatch(x => x.FirstName == "John");
 
-            Assert.AreEqual("John", selected.FirstName);
+            Assert.Equal("John", selected.FirstName);
 
         }
 #endif

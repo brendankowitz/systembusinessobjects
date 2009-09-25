@@ -1,15 +1,14 @@
 using System.Diagnostics;
 using System.IO;
 using System.Xml.Serialization;
-using NUnit.Framework;
 using Sample.BusinessObjects.Contacts;
+using Xunit;
 
 namespace BusinessObject.Framework.Tests
 {
-    [TestFixture]
     public class XmlSerialiseTest : NHibernateInMemoryTestFixtureBase
     {
-        [Test]
+        [Fact]
         public void Serialise()
         {
             StringWriter writer = new StringWriter();
@@ -23,7 +22,7 @@ namespace BusinessObject.Framework.Tests
             Trace.WriteLine(writer.ToString());
         }
 
-        [Test]
+        [Fact]
         public void SerialiseFromObject()
         {
             Person obj = BusinessObjectFactory.CreateAndFillPerson();

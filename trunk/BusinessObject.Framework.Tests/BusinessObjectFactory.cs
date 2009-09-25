@@ -1,8 +1,6 @@
 using System;
-using System.Collections.Generic;
-using System.Text;
 using Sample.BusinessObjects.Contacts;
-using NUnit.Framework;
+using Xunit;
 
 namespace BusinessObject.Framework.Tests
 {
@@ -10,10 +8,10 @@ namespace BusinessObject.Framework.Tests
     {
         public static void CheckPerson(Person obj, Person p2)
         {
-            Assert.AreEqual(obj.ID, p2.ID);
-            Assert.AreEqual(obj.FirstName, p2.FirstName);
-            Assert.AreEqual(obj.LastName, p2.LastName);
-            Assert.AreEqual(obj.RowState, p2.RowState);
+            Assert.Equal(obj.ID, p2.ID);
+            Assert.Equal(obj.FirstName, p2.FirstName);
+            Assert.Equal(obj.LastName, p2.LastName);
+            Assert.Equal(obj.RowState, p2.RowState);
         }
 
         public static Person CreateAndFillPerson()

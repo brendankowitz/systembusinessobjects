@@ -1,46 +1,41 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using NUnit.Framework;
+using Xunit;
 
 namespace System.BusinessObjects.Membership.Tests
 {
-    [TestFixture]
     public class RoleProviderTests : NHibernateInMemoryTestFixtureBase
     {
-        [Test]
+        [Fact]
         public void AddRole()
         {
             System.Web.Security.Roles.CreateRole("admin");
         }
 
-        [Test]
+        [Fact]
         public void DeleteRole()
         {
             System.Web.Security.Roles.CreateRole("admin");
             System.Web.Security.Roles.DeleteRole("admin");
         }
 
-        [Test]
+        [Fact]
         public void AddUsersToRole()
         {
+            MembershipProviderTests.CreateUser();
             System.Web.Security.Roles.CreateRole("admin");
-            new MembershipProviderTests().CreateUser();
 
             System.Web.Security.Roles.AddUsersToRole(new string[] { "user1" }, "admin");
         }
 
-        [Test]
+        [Fact]
         public void AddUserToRole()
         {
+            MembershipProviderTests.CreateUser();
             System.Web.Security.Roles.CreateRole("admin");
-            new MembershipProviderTests().CreateUser();
-
             System.Web.Security.Roles.AddUserToRole("user1", "admin");
         }
 
-        [Test]
+        [Fact]
         public void GetRolesForUser()
         {
             System.Web.Security.Roles.CreateRole("admin");
@@ -51,10 +46,10 @@ namespace System.BusinessObjects.Membership.Tests
             System.Web.Security.Roles.AddUsersToRole(new string[] { "user1" }, "admin");
 
             string[] list = System.Web.Security.Roles.GetRolesForUser("user1");
-            Assert.AreEqual(1, list.Length);
+            Assert.Equal(1, list.Length);
         }
 
-        [Test]
+        [Fact]
         public void GetUsersInRole()
         {
             System.Web.Security.Roles.CreateRole("admin");
@@ -66,11 +61,11 @@ namespace System.BusinessObjects.Membership.Tests
 
             string[] list = System.Web.Security.Roles.GetUsersInRole("admin");
 
-            Assert.AreEqual(1, list.Length);
-            Assert.AreEqual("user1", list[0]);
+            Assert.Equal(1, list.Length);
+            Assert.Equal("user1", list[0]);
         }
 
-        [Test]
+        [Fact]
         public void FindUsersInRole()
         {
             System.Web.Security.Roles.CreateRole("admin");
@@ -85,10 +80,10 @@ namespace System.BusinessObjects.Membership.Tests
 
             string[] list = System.Web.Security.Roles.FindUsersInRole("admin", "?ser%");
 
-            Assert.AreEqual(2, list.Length);
+            Assert.Equal(2, list.Length);
         }
 
-        [Test]
+        [Fact]
         public void IsUserInRole()
         {
             System.Web.Security.Roles.CreateRole("admin");
@@ -101,21 +96,21 @@ namespace System.BusinessObjects.Membership.Tests
 
             System.Web.Security.Roles.AddUsersToRole(new string[] { "user1", "user2" }, "admin");
 
-            Assert.IsTrue(System.Web.Security.Roles.IsUserInRole("user2", "admin"));
-            Assert.IsFalse(System.Web.Security.Roles.IsUserInRole("user3", "admin"));
+            Assert.True(System.Web.Security.Roles.IsUserInRole("user2", "admin"));
+            Assert.False(System.Web.Security.Roles.IsUserInRole("user3", "admin"));
         }
 
-        [Test]
+        [Fact]
         public void GetAllRoles()
         {
             System.Web.Security.Roles.CreateRole("admin");
             System.Web.Security.Roles.CreateRole("users");
 
             string[] roles = System.Web.Security.Roles.GetAllRoles();
-            Assert.AreEqual(2, roles.Length);
+            Assert.Equal(2, roles.Length);
         }
 
-        [Test]
+        [Fact]
         public void RemoveUsersFromRoles()
         {
             System.Web.Security.Roles.CreateRole("admin");
@@ -128,11 +123,11 @@ namespace System.BusinessObjects.Membership.Tests
 
             System.Web.Security.Roles.AddUsersToRole(new string[] { "user1", "user2" }, "admin");
 
-            Assert.IsTrue(System.Web.Security.Roles.IsUserInRole("user2", "admin"));
+            Assert.True(System.Web.Security.Roles.IsUserInRole("user2", "admin"));
 
             System.Web.Security.Roles.RemoveUsersFromRoles(new string[] { "user2" }, new string[] { "admin" });
 
-            Assert.IsFalse(System.Web.Security.Roles.IsUserInRole("user2", "admin"));
+            Assert.False(System.Web.Security.Roles.IsUserInRole("user2", "admin"));
         }
     }
 }

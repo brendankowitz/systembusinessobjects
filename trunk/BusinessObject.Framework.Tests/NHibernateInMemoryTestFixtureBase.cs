@@ -1,78 +1,39 @@
-using System.BusinessObjects.Providers;
-using System.Collections;
+using System;
 using System.Data;
 using System.Reflection;
 using NHibernate;
 using NHibernate.Cfg;
 using NHibernate.Tool.hbm2ddl;
+using System.BusinessObjects.Providers;
 using Sample.BusinessObjects.Contacts;
 using System.Collections.Generic;
-
-//#if !NUNIT
-//    using Microsoft.VisualStudio.TestTools.UnitTesting;
-//#else
-using NUnit.Framework;
-using TestClass = NUnit.Framework.TestFixtureAttribute;
-using TestMethod = NUnit.Framework.TestAttribute;
-using TestInitialize = NUnit.Framework.SetUpAttribute;
-using TestCleanup = NUnit.Framework.TearDownAttribute;
-using ClassInitialize = NUnit.Framework.TestFixtureSetUpAttribute;
-using ClassCleanup = NUnit.Framework.TestFixtureTearDownAttribute;
-
-//#endif
 
 namespace BusinessObject.Framework.Tests
 {
         /// <summary>
         /// Provides a fixture base for Unit tests to be run on an In-Memory SQLite db
         /// </summary>
-        [TestClass]
-        public class NHibernateInMemoryTestFixtureBase
+        public class NHibernateInMemoryTestFixtureBase : IDisposable
         {
             protected static ISessionFactory sessionFactory;
             protected static Configuration configuration;
 
             protected ISession session;
 
-//#if !NUNIT
-//            private TestContext testContextInstance;
-//            /// <summary>
-//            ///Gets or sets the test context which provides
-//            ///information about and functionality for the current test run.
-//            ///</summary>
-//            public TestContext TestContext
-//            {
-//                get
-//                {
-//                    return testContextInstance;
-//                }
-//                set
-//                {
-//                    testContextInstance = value;
-//                }
-//            }
-//#endif
-
-            [TestInitialize]
-            public void Setup()
+            public NHibernateInMemoryTestFixtureBase()
             {
-                OneTimeInitalize(typeof(Person).Assembly, this.GetType().Assembly);
+                OneTimeInitalize(typeof(Person).Assembly, GetType().Assembly);
                 NHibernateSessionProvider.CurrentFactory = sessionFactory;
                 session = CreateSession();
                 NHibernateSessionProvider.Provider.CurrentSession = session;
                 session.BeginTransaction();
             }
 
-            [TestCleanup]
-            public void FixtureTearDown()
+            public void Dispose()
             {
                 session.Dispose();
                 session = null;
-
-                //sessionFactory.Dispose();
             }
-
-
 
             /// <summary> 
             /// Initialize NHibernate and builds a session factory 
@@ -107,7 +68,6 @@ namespace BusinessObject.Framework.Tests
                 IDbConnection connection = openSession.Connection;
                 new SchemaExport(configuration).Execute(false, true, false, connection, null);
                 return openSession;
-
             }
         }
     }

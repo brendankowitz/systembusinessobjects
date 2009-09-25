@@ -1,14 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using NUnit.Framework;
 using System.Web.Profile;
 using System.BusinessObjects.Transactions;
+using Xunit;
 
 namespace System.BusinessObjects.Membership.Tests
 {
-    [TestFixture]
     public class ProfileProviderTests : NHibernateInMemoryTestFixtureBase
     {
         public void saveProfile(string user, bool saveUser)
@@ -39,7 +35,7 @@ namespace System.BusinessObjects.Membership.Tests
             ProfileManager.Provider.SetPropertyValues(sc, properties);
         }
 
-        [Test]
+        [Fact]
         public void DeleteInactiveProfiles()
         {
             System.Web.Profile.ProfileManager.DeleteInactiveProfiles(System.Web.Profile.ProfileAuthenticationOption.Anonymous,
@@ -47,7 +43,7 @@ namespace System.BusinessObjects.Membership.Tests
             UnitOfWork.CurrentSession.Flush();
         }
 
-        [Test]
+        [Fact]
         public void SetPropertyValues()
         {
             User p = new User()
@@ -76,10 +72,10 @@ namespace System.BusinessObjects.Membership.Tests
 
             User u2 = User.Load(p.ID);
 
-            Assert.AreEqual(p.ID, u2.Profile.ID);
+            Assert.Equal(p.ID, u2.Profile.ID);
         }
 
-        [Test]
+        [Fact]
         public void SetPropertyValuesAnonnymous()
         {
 
@@ -100,7 +96,7 @@ namespace System.BusinessObjects.Membership.Tests
             ProfileManager.Provider.SetPropertyValues(sc, properties);
         }
 
-        [Test]
+        [Fact]
         public void GetPropertyValues()
         {
             User p = new User()
@@ -129,10 +125,10 @@ namespace System.BusinessObjects.Membership.Tests
             outCol.Add(new System.Configuration.SettingsProperty("Test") { DefaultValue = "", PropertyType = typeof(string) });
             System.Configuration.SettingsPropertyValueCollection collection = ProfileManager.Provider.GetPropertyValues(sc, outCol);
 
-            Assert.AreEqual("test string", collection["Test"].PropertyValue);
+            Assert.Equal("test string", collection["Test"].PropertyValue);
         }
 
-        [Test]
+        [Fact]
         public void GetAllProfiles()
         {
             saveProfile("user1", true);
@@ -140,59 +136,59 @@ namespace System.BusinessObjects.Membership.Tests
             int total;
             ProfileInfoCollection profiles = ProfileManager.GetAllProfiles(ProfileAuthenticationOption.All, 0, 10, out total);
 
-            Assert.AreEqual(1, total);
-            Assert.AreEqual("user1", profiles["user1"].UserName);
+            Assert.Equal(1, total);
+            Assert.Equal("user1", profiles["user1"].UserName);
         }
 
-        [Test]
+        [Fact]
         public void GetAllInactiveProfiles()
         {
             saveProfile("user1", false);
 
             ProfileInfoCollection profiles = ProfileManager.GetAllInactiveProfiles(ProfileAuthenticationOption.All, DateTime.Now);
 
-            Assert.AreEqual(1, profiles.Count);
-            Assert.AreEqual("user1", profiles["user1"].UserName);
+            Assert.Equal(1, profiles.Count);
+            Assert.Equal("user1", profiles["user1"].UserName);
         }
 
-        [Test]
+        [Fact]
         public void GetProfileCounts()
         {
             saveProfile("user1", false);
 
             int profiles = ProfileManager.GetNumberOfProfiles(ProfileAuthenticationOption.All);
-            Assert.AreEqual(1, profiles);
+            Assert.Equal(1, profiles);
 
             profiles = ProfileManager.GetNumberOfProfiles(ProfileAuthenticationOption.Authenticated);
-            Assert.AreEqual(1, profiles);
+            Assert.Equal(1, profiles);
 
             profiles = ProfileManager.GetNumberOfProfiles(ProfileAuthenticationOption.Anonymous);
-            Assert.AreEqual(0, profiles);
+            Assert.Equal(0, profiles);
         }
 
-        [Test]
+        [Fact]
         public void FindInactiveProfilesByUserName()
         {
             saveProfile("user1", false);
 
             ProfileInfoCollection profiles = ProfileManager.FindInactiveProfilesByUserName(ProfileAuthenticationOption.All, "?ser*", DateTime.Now);
 
-            Assert.AreEqual(1, profiles.Count);
-            Assert.AreEqual("user1", profiles["user1"].UserName);
+            Assert.Equal(1, profiles.Count);
+            Assert.Equal("user1", profiles["user1"].UserName);
         }
 
-        [Test]
+        [Fact]
         public void FindProfilesByUserName()
         {
             saveProfile("user1", false);
 
             ProfileInfoCollection profiles = ProfileManager.FindProfilesByUserName(ProfileAuthenticationOption.All, "?ser*");
 
-            Assert.AreEqual(1, profiles.Count);
-            Assert.AreEqual("user1", profiles["user1"].UserName);
+            Assert.Equal(1, profiles.Count);
+            Assert.Equal("user1", profiles["user1"].UserName);
         }
 
-        [Test]
+        [Fact]
         public void FindProfilesByUserName2()
         {
             saveProfile("user1", false);
@@ -200,19 +196,19 @@ namespace System.BusinessObjects.Membership.Tests
             int total;
             ProfileInfoCollection profiles = ProfileManager.FindProfilesByUserName(ProfileAuthenticationOption.All, "?ser*", 0, 10, out total);
 
-            Assert.AreEqual(1, total);
-            Assert.AreEqual("user1", profiles["user1"].UserName);
+            Assert.Equal(1, total);
+            Assert.Equal("user1", profiles["user1"].UserName);
         }
 
-        [Test]
+        [Fact]
         public void DeleteUserProfile()
         {
             saveProfile("user1", false);
 
-            Assert.IsTrue(ProfileManager.DeleteProfile("user1"));
+            Assert.True(ProfileManager.DeleteProfile("user1"));
         }
 
-        [Test]
+        [Fact]
         public void DeleteUserProfile2()
         {
             saveProfile("user1", false);
@@ -220,7 +216,7 @@ namespace System.BusinessObjects.Membership.Tests
             ProfileInfoCollection profiles = ProfileManager.FindProfilesByUserName(ProfileAuthenticationOption.All, "?ser*");
 
             int total = ProfileManager.DeleteProfiles(profiles);
-            Assert.AreEqual(1, total);
+            Assert.Equal(1, total);
         }
     }
 }

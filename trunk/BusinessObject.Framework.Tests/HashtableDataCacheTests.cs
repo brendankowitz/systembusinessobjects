@@ -1,44 +1,41 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using NUnit.Framework;
 using System.BusinessObjects.Data;
 using Sample.BusinessObjects.Contacts;
 using System.Threading;
+using Xunit;
 
 namespace BusinessObject.Framework.Tests
 {
-    [TestFixture]
     public class HashtableDataCacheTests : NHibernateInMemoryTestFixtureBase
     {
         HashtableDataCache cache;
 
 
-        [Test]
+        [Fact]
         public void AddItem_BusinessObject()
         {
             cache = new HashtableDataCache();
             Person p = BusinessObjectFactory.CreateAndFillPerson();
             cache.SetCache("person", p);
 
-            Assert.AreEqual(1, cache.ItemCount);
+            Assert.Equal(1, cache.ItemCount);
         }
 
-        [Test]
+        [Fact]
         public void RemoveItem_BusinessObject()
         {
             cache = new HashtableDataCache();
             Person p = BusinessObjectFactory.CreateAndFillPerson();
             cache.SetCache("person", p);
 
-            Assert.AreEqual(1, cache.ItemCount);
+            Assert.Equal(1, cache.ItemCount);
 
             cache.RemoveCache("person");
 
-            Assert.AreEqual(0, cache.ItemCount);
+            Assert.Equal(0, cache.ItemCount);
         }
 
-        [Test]
+        [Fact]
         public void ExpiresItem_BusinessObject()
         {
             cache = new HashtableDataCache();
@@ -46,14 +43,14 @@ namespace BusinessObject.Framework.Tests
 
             Person p = BusinessObjectFactory.CreateAndFillPerson();
             cache.SetCache("person", p);
-            Assert.AreEqual(1, cache.ItemCount);
+            Assert.Equal(1, cache.ItemCount);
 
             Thread.Sleep(1100);
-            Assert.IsNull(cache.GetCache<Person>("person"));
-            Assert.AreEqual(0, cache.ItemCount);
+            Assert.Null(cache.GetCache<Person>("person"));
+            Assert.Equal(0, cache.ItemCount);
         }
 
-        [Test]
+        [Fact]
         public void RemovesOldItems()
         {
             cache = new HashtableDataCache();
@@ -61,12 +58,12 @@ namespace BusinessObject.Framework.Tests
 
             Person p = BusinessObjectFactory.CreateAndFillPerson();
             cache.SetCache("person", p);
-            Assert.AreEqual(1, cache.ItemCount);
+            Assert.Equal(1, cache.ItemCount);
 
             Thread.Sleep(1100);
 
             cache.RemoveOldItems();
-            Assert.AreEqual(0, cache.ItemCount);
+            Assert.Equal(0, cache.ItemCount);
         }
     }
 }
