@@ -1,9 +1,4 @@
 using System;
-using System.Data;
-using System.Collections.Generic;
-using Iesi.Collections.Generic;
-using System.BusinessObjects.Data;
-using System.BusinessObjects.Validation;
 
 namespace System.BusinessObjects.Membership
 {
@@ -68,6 +63,7 @@ namespace System.BusinessObjects.Membership
             get { return GetValue<String>("LoweredEmail"); }
             set
             {
+                //Set in Property: Email
             }
         }
 
@@ -210,17 +206,18 @@ namespace System.BusinessObjects.Membership
         public virtual Membership FromMembershipUser(System.Web.Security.MembershipUser mu)
         {
             ID = (Guid)mu.ProviderUserKey;
-            Email = mu.Email;
-            PasswordQuestion = mu.PasswordQuestion;
-            Comment = mu.Comment;
-            IsApproved = mu.IsApproved;
-            IsLockedOut = mu.IsLockedOut;
-            CreateDate = mu.CreationDate;
-            UserName = mu.UserName;
-            LastActivityDate = mu.LastActivityDate;
-            LastLoginDate = mu.LastLoginDate;
-            LastPasswordChangedDate = mu.LastPasswordChangedDate;
-            LastLockoutDate = mu.LastLockoutDate;
+            if(IsNull("Email"))
+            Email                    = mu.Email;
+            PasswordQuestion         = mu.PasswordQuestion;
+            Comment                  = mu.Comment;
+            IsApproved               = mu.IsApproved;
+            IsLockedOut              = mu.IsLockedOut;
+            CreateDate               = mu.CreationDate;
+            UserName                 = mu.UserName;
+            LastActivityDate         = mu.LastActivityDate;
+            LastLoginDate            = mu.LastLoginDate;
+            LastPasswordChangedDate  = mu.LastPasswordChangedDate;
+            LastLockoutDate          = mu.LastLockoutDate;
             return this;
         }
 

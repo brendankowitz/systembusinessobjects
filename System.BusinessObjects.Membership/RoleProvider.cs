@@ -77,8 +77,6 @@ namespace System.BusinessObjects.Membership
                     foreach (string roleName in roleNames)
                     {
                         Role role = Role.Fetch(QryFetchRoleByName.Query(roleName, Application.ID));
-                        int i = role.Users.Count;
-
                         role.Users.Add(user);
                         role.Save();
                     }

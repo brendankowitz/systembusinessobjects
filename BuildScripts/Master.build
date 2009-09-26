@@ -20,21 +20,21 @@
   <property name="clean.pattern.obj" value="./**/obj" />
 
   <!-- EXE Locations -->
+  <property name="program.files" value="C:\Program Files" />
   <property name="msbuild.executable" value="c:\Windows\Microsoft.NET\Framework\v3.5\msbuild.exe" />
   <property name="svn.executable" value="svn.exe" />
   <property name="fxcop.executable" value="C:\Program Files\Microsoft FxCop 1.35\FxCopCmd.exe" />
   <property name="tortoise.executable" value="C:\Program Files\TortoiseSVN\bin\tortoiseproc.exe" />
-  <property name="nunit.path" value="C:\Program Files\NUnit 2.4.8" />
 
   <!-- Primary Entry Point -->
   <target name="auto">
 	<call target="code.compile" />
   </target>
   
-    <target name="coverage">
+  <target name="coverage">
 	<call target="code.compile" />
 	<call target="code.ncover" />
-    </target>
+  </target>
   
   <target name="code.compile">
 	<nant buildfile="Extensions.build" failonerror="true" inheritall="true" target="GetAssemblyVersion" />
@@ -45,6 +45,10 @@
   </target>
 
   <target name="code.ncover">
+    <if test="${not platform::is-win32() or directory::exists('C:\Program Files (x86)')}">
+		<property name="program.files" value="C:\Program Files (x86)" />
+	</if>
+
     <nant buildfile="NCover.build" failonerror="true" inheritall="true" />
   </target>
 
