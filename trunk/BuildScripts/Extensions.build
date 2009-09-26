@@ -78,6 +78,5 @@
 	     <echo message="minor: ${build.minor}"/>
 	     <echo message="build: ${build.build}"/>
 	     <echo message="revision: ${svn.revision}"/>
-	 </target> 
- 
+	 </target>
 </project>
