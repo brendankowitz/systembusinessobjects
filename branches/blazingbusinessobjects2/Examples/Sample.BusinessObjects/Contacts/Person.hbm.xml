@@ -1,0 +1,28 @@
+﻿<?xml version="1.0"?>
+<hibernate-mapping xmlns="urn:nhibernate-mapping-2.2" assembly="Sample.BusinessObjects" namespace="Sample.BusinessObjects.Contacts" >
+	<class name="Person" table="contacts">
+
+		<id name="ID" column="contactid" type="Int32">
+			<generator class="native" />
+		</id>
+
+		<property name="FirstName" length="50" not-null="true" />
+		<property name="LastName" length="50" not-null="true" />
+    <many-to-one name="ContactType" column="persontypeid" class="PersonType" />
+
+		<set name="Addresses" table="contactaddresses" cascade="all-delete-orphan" lazy="true">
+			<key column="contactid"/>
+			<many-to-many column="addressid"
+			   class="Address"/>
+		</set>
+	</class>
+
+  <class name="PersonType" table="persontypes">
+
+    <id name="ID" column="persontypeid" type="String">
+      <generator class="assigned" />
+    </id>
+
+    <property name="Description" length="50" not-null="true" />
+  </class>
+</hibernate-mapping>

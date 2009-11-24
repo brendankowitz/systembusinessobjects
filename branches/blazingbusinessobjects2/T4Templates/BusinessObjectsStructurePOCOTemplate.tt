@@ -1,0 +1,175 @@
+<#@ assembly name="EnvDTE" #>
+<#@ assembly name="NHibernate.dll" #>
+<#@ include file="T4Toolbox.tt" #>
+<#@ import namespace="NHibernate.Cfg.MappingSchema"  #>
+<#@ import namespace="System.Collections.Generic" #>
+<#+
+public enum RelationType
+{
+	Property, ManyToOne, ManyToMany
+}
+
+public class ClassItem
+{
+	public string Name{ get; set; }
+	public string Namespace{ get; set; }
+	
+	public List<PropertyItem> Properties { get; set; }
+}
+
+public class PropertyItem
+{
+	public string Name{ get; set; }
+	public string PropertyType{ get; set; }
+	public bool IsNullable{ get; set; }
+
+	public RelationType RelationType{ get; set; }
+	public string ForeignKeyClassName{ get; set; }
+	public string ForeignKeyID{ get; set; }
+	
+	public string GetPropertyType(){
+		return PropertyType.ToString().Replace("System.","");
+	}
+	
+	public string GetTypeCode(){
+		return "TypeCode."+PropertyType.ToString().Replace("System.","");
+	}
+}
+
+public class BusinessObjectStructureTemplate : Template
+{
+	public ClassItem ClassInfo { get; set; }
+	
+	protected override void RenderCore()
+	{
+#>
+using System;
+using System.BusinessObjects.Data;
+using System.BusinessObjects.Validation;
+using Iesi.Collections.Generic;
+
+namespace <#= this.ClassInfo.Namespace #>
+{
+    [Serializable]
+    public partial class <#= this.ClassInfo.Name #>
+    {   
+<#+ 
+		foreach(PropertyItem p in this.ClassInfo.Properties)
+		{
+			if(p.RelationType == RelationType.Property)
+			{
+#>
+		public virtual <#= p.GetPropertyType() #> <#= p.Name #>
+        {
+            get;
+            set;
+        }
+
+<#+
+			}
+		}		
+#>
+
+<#+ 
+		foreach(PropertyItem p in this.ClassInfo.Properties)
+		{
+			if(p.RelationType == RelationType.ManyToOne)
+			{ 
+#>
+		public virtual <#= p.GetPropertyType() #> <#= p.Name #>
+        {
+            get;
+            set;
+        }
+
+<#+
+			}
+		}		
+#>
+
+<#+ 
+		foreach(PropertyItem p in this.ClassInfo.Properties)
+		{
+			if(p.RelationType == RelationType.ManyToMany)
+			{ 
+#>
+		ISet<<#= p.GetPropertyType() #>> _<#= p.Name #> = new HashedSet<<#= p.GetPropertyType() #>>();
+		public virtual ISet<<#= p.GetPropertyType() #>> <#= p.Name #>
+        {
+            get{ return _<#= p.Name #>; }
+            set{ _<#= p.Name #> = value; }
+        }
+
+<#+
+			}
+		}		
+#>
+    }
+}
+<#+
+	}
+
+	public static void RenderClassFromHbm(string basePath, string fileName, BusinessObjectStructureTemplate template)
+	{
+
+		MappingDocumentParser p = new MappingDocumentParser();
+		HbmMapping m = p.Parse(System.IO.File.Open(System.IO.Path.Combine(basePath, fileName),  System.IO.FileMode.Open));
+		foreach (object o in m.Items)
+		{
+			if (o is HbmClass)
+			{ 
+				HbmClass cl = (HbmClass)o;
+		        
+				ClassItem c = new ClassItem();
+				c.Namespace = m.@namespace;
+				c.Name = cl.name;
+				c.Properties = new List<PropertyItem>();
+				
+				if(cl.Id != null)
+				{
+					c.Properties.Add(
+								new PropertyItem{ Name = cl.Id.name, PropertyType = cl.Id.type1 != null ? cl.Id.type1 : "String", RelationType = RelationType.Property,
+												  IsNullable = true
+								 }
+							); 
+				} 
+
+				foreach (object po in cl.Items)
+				{
+					if (po is HbmProperty)
+					{
+						HbmProperty prop = (HbmProperty)po;
+						c.Properties.Add(
+							new PropertyItem{ Name = prop.name, PropertyType = prop.type1 != null ? prop.type1 : "String", RelationType = RelationType.Property,
+											  IsNullable = !prop.notnull
+							 }
+						);  
+					}
+					else if (po is HbmManyToOne)
+                    {
+                        HbmManyToOne mo = (HbmManyToOne)po;
+                        //m.name
+                        c.Properties.Add(
+							new PropertyItem{ Name = mo.name, PropertyType = mo.@class, RelationType = RelationType.ManyToOne,
+											  IsNullable = !mo.notnull
+							 }
+						);  
+                    }
+                    else if (po is HbmSet)
+                    {
+                        HbmSet se = (HbmSet)po;
+                        
+                        c.Properties.Add(
+							new PropertyItem{ Name = se.name, PropertyType = ((HbmOneToMany)se.Item).@class, RelationType = RelationType.ManyToMany
+							 }
+						);  
+                    }
+				}
+		        
+				template.ClassInfo = c;
+				template.RenderToFile(template.ClassInfo.Name + ".generated.cs");
+			}
+		}
+	}
+}
+#>
