@@ -10,12 +10,12 @@ using System.Collections.Generic;
 using System.BusinessObjects.Providers;
 
 
-namespace System.BusinessObjects.Data
+namespace System.BusinessObjects.Cache
 {
 	/// <summary>
 	/// Provides a controlled access to the http cache
 	/// </summary>
-	public class AspNetDataCache : CacheProvider
+	public class AspNetDataCache : CacheBase
 	{
         public AspNetDataCache()
 		{

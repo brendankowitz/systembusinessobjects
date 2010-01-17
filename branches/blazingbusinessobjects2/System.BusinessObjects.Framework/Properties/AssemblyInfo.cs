@@ -2,6 +2,7 @@
 using System.Runtime.InteropServices;
 using System.Security.Permissions;
 using System.Security;
+using System.Runtime.CompilerServices;
 
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
@@ -19,4 +20,6 @@ using System.Security;
 
 [assembly: ComVisible(false)]
 [assembly: Guid("dd05297e-64dc-4a1a-a7c4-fe01c471b76a")]
+
+//[assembly: InternalsVisibleTo("BusinessObject.Framework.Tests")]
 

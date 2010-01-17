@@ -1,8 +1,8 @@
 ﻿using System;
-using System.BusinessObjects.Data;
 using Sample.BusinessObjects.Contacts;
 using System.Threading;
 using Xunit;
+using System.BusinessObjects.Cache;
 
 namespace BusinessObject.Framework.Tests
 {

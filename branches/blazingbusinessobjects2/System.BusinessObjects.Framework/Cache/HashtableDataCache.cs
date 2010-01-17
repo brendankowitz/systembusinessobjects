@@ -4,7 +4,7 @@ using System.Text;
 using System.Collections;
 using System.BusinessObjects.Providers;
 
-namespace System.BusinessObjects.Data
+namespace System.BusinessObjects.Cache
 {
     /// <summary>
     /// A simple cache implementation that stores items in a Hashtable,
@@ -14,7 +14,7 @@ namespace System.BusinessObjects.Data
     /// <remarks>This class would typically be used in a testing environment or
     /// when no other cache is available see <seealso cref="System.BusinessObjects.Data.AspNetDataCache">AspNetDataCache</seealso>
     /// </remarks>
-    public class HashtableDataCache : CacheProvider
+    public class HashtableDataCache : CacheBase
     {
         static Hashtable _data = new Hashtable();
 

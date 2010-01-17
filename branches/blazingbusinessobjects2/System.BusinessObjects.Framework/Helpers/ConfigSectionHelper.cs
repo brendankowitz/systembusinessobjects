@@ -28,14 +28,14 @@ namespace System.BusinessObjects.Helpers
             if (_validationCollection == null)
             {
                 if (getSettings() != null)
-                foreach (System.Configuration.NameValueConfigurationElement element in getSettings())
-                {
-                    if (element.Name == "IValidationRuleCollection")
+                    foreach (NameValueConfigurationElement element in getSettings())
                     {
-                        _validationCollection = Type.GetType(element.Value);
-                        break;
+                        if (element.Name == "IValidationRuleCollection")
+                        {
+                            _validationCollection = Type.GetType(element.Value);
+                            break;
+                        }
                     }
-                }
                 if (_validationCollection == null) //use the default validation
                     _validationCollection = typeof(ValidationRuleCollection);
             }

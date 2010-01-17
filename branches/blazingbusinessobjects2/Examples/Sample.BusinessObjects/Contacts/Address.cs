@@ -1,6 +1,7 @@
 using System.BusinessObjects.Data;
 using System.BusinessObjects.Validation;
 using System;
+using System.ComponentModel.DataAnnotations;
 
 namespace Sample.BusinessObjects.Contacts
 {
@@ -17,7 +18,7 @@ namespace Sample.BusinessObjects.Contacts
             }
         }
 
-        [ValidationNotEmpty]
+        [Required]
         public virtual string Address1
         {
             get { return GetValue<string>("Address1"); }
@@ -28,7 +29,7 @@ namespace Sample.BusinessObjects.Contacts
             }
         }
 
-        [ValidationNotEmpty]
+        [Required]
         public virtual string Suburb
         {
             get { return GetValue<string>("Suburb"); }
@@ -39,7 +40,7 @@ namespace Sample.BusinessObjects.Contacts
             }
         }
 
-        [ValidationNotEmpty]
+        [Required]
         public virtual string State
         {
             get { return GetValue<string>("State"); }
@@ -63,7 +64,7 @@ namespace Sample.BusinessObjects.Contacts
 
         protected override void AddValidationRules()
         {
-            validationRules.Add(new ValidationRule(GeneralAssertionTemplate.ValidCharacterRange(this,"Postcode","0123456789",false)));
+            //validationRules.Add(new ValidationRule(GeneralAssertionTemplate.ValidCharacterRange(this,"Postcode","0123456789",false)));
         }
     }
 }

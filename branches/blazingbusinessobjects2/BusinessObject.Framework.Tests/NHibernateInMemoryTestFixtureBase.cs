@@ -23,9 +23,9 @@ namespace BusinessObject.Framework.Tests
             public NHibernateInMemoryTestFixtureBase()
             {
                 OneTimeInitalize(typeof(Person).Assembly, GetType().Assembly);
-                NHibernateSessionProvider.CurrentFactory = sessionFactory;
+                //NHibernateSessionProvider.CurrentFactory = sessionFactory;
                 session = CreateSession();
-                NHibernateSessionProvider.Provider.CurrentSession = session;
+                //NHibernateSessionProvider.Provider.CurrentSession = session;
                 session.BeginTransaction();
             }
 

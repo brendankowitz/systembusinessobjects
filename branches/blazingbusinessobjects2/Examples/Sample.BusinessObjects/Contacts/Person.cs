@@ -3,6 +3,7 @@ using System.BusinessObjects.Data;
 using Iesi.Collections.Generic;
 using System.BusinessObjects.Validation;
 using System.Xml.Serialization;
+using System.ComponentModel.DataAnnotations;
 
 namespace Sample.BusinessObjects.Contacts
 {
@@ -19,7 +20,7 @@ namespace Sample.BusinessObjects.Contacts
             }
         }
 
-        [ValidationNotEmpty]
+        [Required]
         public virtual string FirstName
         {
             get { return GetValue(p => p.FirstName); }
@@ -30,7 +31,7 @@ namespace Sample.BusinessObjects.Contacts
             }
         }
 
-        [ValidationNotEmpty]
+        [Required]
         public virtual string LastName
         {
             get { return GetValue(p => p.LastName); }
@@ -41,7 +42,7 @@ namespace Sample.BusinessObjects.Contacts
             }
         }
 
-        [ValidationRegex(@"[\w-]+@([\w-]+\.)+[\w-]+", ErrorMessage="{0} does not contain a valid email address")]
+        [RegularExpression(@"[\w-]+@([\w-]+\.)+[\w-]+", ErrorMessage="Please provide a valid email address")]
         public virtual string Email
         {
             get { return GetValue(p => p.Email); }
@@ -71,7 +72,6 @@ namespace Sample.BusinessObjects.Contacts
         {
             get
             {
-                CheckLazyProperty(_contactType);
                 return _contactType;
             }
             set

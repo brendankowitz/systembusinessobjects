@@ -92,32 +92,27 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="AspNetDataCache.cs" />
-    <Compile Include="Controls\BindableDropDownListExtender.cs" />
+    <Compile Include="Cache\AspNetDataCache.cs" />
     <Compile Include="Data\DataObject.FlushMode.cs" />
     <Compile Include="Data\DataObject.Generic.cs" />
+    <Compile Include="Data\GenericDataObjectRepository.cs" />
     <Compile Include="Data\GenericObjectComparer.cs" />
-    <Compile Include="Data\NHibernateAspContextProvider.cs" />
-    <Compile Include="Data\NHibernateThreadSlotProvider.cs" />
+    <Compile Include="Data\IDataObjectRepository.cs" />
+    <Compile Include="Data\IDataQuery.cs" />
+    <Compile Include="Data\IRequiresNHibernateSession.cs" />
     <Compile Include="Data\SafeBindingLists.cs" />
     <Compile Include="Helpers\ConfigSectionHelper.cs" />
+    <Compile Include="Infrastructure\IFactory.cs" />
     <Compile Include="Properties\GlobalAssemblyInfo.cs" />
-    <Compile Include="HashtableDataCache.cs" />
+    <Compile Include="Cache\HashtableDataCache.cs" />
     <Compile Include="Helpers\Property.cs" />
     <Compile Include="Helpers\WebHelper.cs" />
     <Compile Include="Helpers\XmlHelper.cs" />
-    <Compile Include="NamespaceDocumentation.cs" />
-    <Compile Include="NameValuePair.cs" />
     <Compile Include="Data\DataObject.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Providers\CacheProvider.cs" />
+    <Compile Include="Cache\CacheProvider.cs" />
     <Compile Include="Providers\GenericProviderCollection.cs" />
-    <Compile Include="Providers\NHibernateSessionProvider.cs" />
     <Compile Include="Providers\ProviderHelper.cs" />
-    <Compile Include="Providers\ServiceLocator.cs" />
-    <Compile Include="Transactions\IUnitOfWork.cs" />
-    <Compile Include="Transactions\Transaction.cs" />
-    <Compile Include="Transactions\UnitOfWork.cs" />
     <Compile Include="Validation\GeneralAssertionRules.cs" />
     <Compile Include="Validation\IValidationRuleCollection.cs" />
     <Compile Include="Validation\NHValidationRuleCollection.cs" />
@@ -125,7 +120,6 @@
     <Compile Include="Validation\ValidationRule.cs" />
     <Compile Include="Validation\ValidationRuleCollection.cs" />
     <Compile Include="Controls\WebValidationControl.cs" />
-    <Compile Include="With\With.Each.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="SystemBusinessObjectsPublic.snk" />
@@ -152,6 +146,9 @@
       <Install>true</Install>
     </BootstrapperPackage>
   </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Transactions\" />
+  </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
@@ -161,7 +158,7 @@
   </Target>
   -->
   <PropertyGroup>
-    <PostBuildEvent>copy $(TargetPath) $(SolutionDir)bin /Y
-copy $(TargetDir)$(TargetName).XML $(SolutionDir)bin /Y</PostBuildEvent>
+    <PostBuildEvent>
+    </PostBuildEvent>
   </PropertyGroup>
 </Project>
