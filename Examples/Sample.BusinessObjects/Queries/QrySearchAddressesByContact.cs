@@ -1,21 +1,30 @@
 using NHibernate;
-
-using System.BusinessObjects.Providers;
-using System.BusinessObjects.Transactions;
+using System.BusinessObjects.Data;
+using Sample.BusinessObjects.Contacts;
+using System.Collections.Generic;
 
 namespace Sample.BusinessObjects.Queries
 {
-    public class QrySearchAddressesByContact
+    public class QrySearchAddressesByContact : IDataQuery<Address>, IRequiresNHibernateSession
     {
-        public static IQuery Query(int personID)
+        private readonly int _personID;
+        ISession IRequiresNHibernateSession.Session { get; set; }
+
+        public QrySearchAddressesByContact(int personID)
+        {
+            _personID = personID;
+        }
+
+        public IEnumerable<Address> Execute()
         {
             string sql = "select address from Person p join p.Addresses as address where p.ID = :personid";
 
-            IQuery qry = UnitOfWork.CurrentSession.CreateQuery(sql);
-            qry.SetParameter("personid", personID);
+            IQuery qry = ((IRequiresNHibernateSession)this).Session.CreateQuery(sql);
+            qry.SetParameter("personid", _personID);
             qry.SetFlushMode(FlushMode.Commit);
 
-            return qry;
+            return qry.List<Address>();
         }
+
     }
 }

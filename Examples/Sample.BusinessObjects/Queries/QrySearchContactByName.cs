@@ -1,32 +1,36 @@
 using NHibernate;
 using Sample.BusinessObjects.Contacts;
-using System.BusinessObjects.Transactions;
 using NHibernate.Criterion;
+using System.BusinessObjects.Data;
+using System.Collections.Generic;
 
 namespace Sample.BusinessObjects.Queries
 {
     /// <summary>
     /// Provides a query to search for contacts by name
     /// </summary>
-    public class QrySearchContactByName
+    public class QrySearchContactByName : IDataQuery<Person>, IRequiresNHibernateSession
     {
-        /// <summary>
-        /// Query
-        /// </summary>
-        /// <param name="name">Name of the contact to search for</param>
-        public static ICriteria Query(string name)
-        {
-            ICriteria qry = UnitOfWork.CurrentSession.CreateCriteria(typeof(Person));
+        private readonly string _name;
+        ISession IRequiresNHibernateSession.Session { get; set; }
 
-            if(!string.IsNullOrEmpty(name))
+        public QrySearchContactByName(string name)
+        {
+            _name = name;
+        }
+
+        IEnumerable<Person> IDataQuery<Person>.Execute()
+        {
+            ICriteria qry = ((IRequiresNHibernateSession)this).Session.CreateCriteria(typeof(Person));
+
+            if (!string.IsNullOrEmpty(_name))
             {
-                string nameWildcard = string.Format("%{0}%", name);
+                string nameWildcard = string.Format("%{0}%", _name);
                 qry.Add(Expression.Or(Expression.Like("FirstName", nameWildcard), Expression.Like("LastName", nameWildcard)));
             }
-
             qry.AddOrder(Order.Asc("FirstName"));
 
-            return qry;
+            return qry.List<Person>();
         }
     }
 }

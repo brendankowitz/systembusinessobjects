@@ -4,38 +4,14 @@ using System.Text;
 using System.Configuration.Provider;
 using System.Collections;
 
-namespace System.BusinessObjects.Providers
+namespace System.BusinessObjects.Cache
 {
     /// <summary>
     /// An abstract provider for access to a cache
     /// </summary>
-    public abstract class CacheProvider : ProviderBase
+    public abstract class CacheBase
     {
-        static CacheProvider provider = null;
-
-        /// <summary>
-        /// Returns an instance of the default cache provider
-        /// </summary>
-        public static CacheProvider Provider
-        {
-            get
-            {
-                if(provider == null)
-                    provider = ProviderHelper.LoadDefaultProvider<CacheProvider>("DataCache");
-                return provider;
-            }
-        }
-
-        /// <summary>
-        /// Returns a collection of cache providers
-        /// </summary>
-        public static GenericProviderCollection<CacheProvider> Providers
-        {
-            get
-            {
-                return ProviderHelper.LoadProviderCollection<CacheProvider>("DataCache");
-            }
-        }
+        static CacheBase provider = null;
 
         int _timeout = 60;
         /// <summary>
@@ -65,7 +41,7 @@ namespace System.BusinessObjects.Providers
             }
         }
 
-        public override void Initialize(string name, System.Collections.Specialized.NameValueCollection config)
+        public void Initialize(string name, System.Collections.Specialized.NameValueCollection config)
         {
             //DefaultCacheTimeout config
             object retval;
@@ -93,8 +69,6 @@ namespace System.BusinessObjects.Providers
             {
                 _usecache = true;
             }
-
-            base.Initialize(name, config);
         }
 
         /// <summary>

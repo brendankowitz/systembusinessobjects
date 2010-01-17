@@ -11,7 +11,6 @@ namespace BusinessObject.Framework.Tests
             Assert.Equal(obj.ID, p2.ID);
             Assert.Equal(obj.FirstName, p2.FirstName);
             Assert.Equal(obj.LastName, p2.LastName);
-            Assert.Equal(obj.RowState, p2.RowState);
         }
 
         public static Person CreateAndFillPerson()
