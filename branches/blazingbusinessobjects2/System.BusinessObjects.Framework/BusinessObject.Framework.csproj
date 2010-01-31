@@ -100,6 +100,7 @@
     <Compile Include="Data\IDataObjectRepository.cs" />
     <Compile Include="Data\IDataQuery.cs" />
     <Compile Include="Data\IRequiresNHibernateSession.cs" />
+    <Compile Include="Data\NHDataQuery.cs" />
     <Compile Include="Data\SafeBindingLists.cs" />
     <Compile Include="Helpers\ConfigSectionHelper.cs" />
     <Compile Include="Infrastructure\IFactory.cs" />
