@@ -1,27 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using NHibernate;
-using System.Data;
+using System.BusinessObjects.Infrastructure;
 
 namespace System.BusinessObjects.Data
 {
-    public class GenericDataObjectRepository<T> : IDataObjectRepository<T>
+    public abstract class GenericDataObjectRepository<T> : IDataObjectRepository<T>
         where T : DataObject
     {
-        private readonly ISession _session;
+        protected readonly ISession _session;
         public GenericDataObjectRepository(ISession session)
         {
             _session = session;
-        }
-
-        private void CheckSessionInterface(IDataQuery<T> query)
-        {
-            if(query is IRequiresNHibernateSession)
-            {
-                ((IRequiresNHibernateSession)query).Session = _session;
-            }
         }
 
         /// <summary>
@@ -33,11 +23,7 @@ namespace System.BusinessObjects.Data
             return newObj;
         }
 
-        public T Fetch(IDataQuery<T> query)
-        {
-            CheckSessionInterface(query);
-            return query.Execute().FirstOrDefault();
-        }
+        public abstract T Fetch(params ISpecification[] specifications);
 
         /// <summary>
         /// Returns a list of all business objects of this type
@@ -49,12 +35,7 @@ namespace System.BusinessObjects.Data
             return list;
         }
 
-        public IEnumerable<T> Search(IDataQuery<T> query)
-        {
-            CheckSessionInterface(query);
-            IEnumerable<T> list = query.Execute();
-            return list;
-        }
+        public abstract IEnumerable<T> Search(params ISpecification[] specifications);
 
         public T Save(T src)
         {

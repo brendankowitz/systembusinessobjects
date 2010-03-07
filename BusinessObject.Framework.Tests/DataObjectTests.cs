@@ -15,7 +15,7 @@ namespace BusinessObject.Framework.Tests
 
         public DataObjectTests()
         {
-            _repository = new GenericDataObjectRepository<Person>(session);
+            _repository = new NHExpressionsRepository<Person>(session);
         }
 
         [Fact]
@@ -36,7 +36,7 @@ namespace BusinessObject.Framework.Tests
             Person p = BusinessObjectFactory.CreateAndFillPerson();
             //Assert.Equal(DataRowState.Detached, p.RowState);
 
-            var repository = new GenericDataObjectRepository<Person>(session);
+            var repository = new NHExpressionsRepository<Person>(session);
             Assert.True(p.IsDirty);
 
             repository.Save(p);
@@ -49,7 +49,7 @@ namespace BusinessObject.Framework.Tests
         public void CheckRowStateSaved()
         {
             Person p = BusinessObjectFactory.CreateAndFillPerson();
-            IDataObjectRepository<Person> repository = new GenericDataObjectRepository<Person>(session);
+            IDataObjectRepository<Person> repository = new NHExpressionsRepository<Person>(session);
             repository.Save(p);
             Assert.False(p.IsDirty);
         }

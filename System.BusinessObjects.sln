@@ -35,10 +35,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		System.BusinessObjects.vsmdi = System.BusinessObjects.vsmdi
 	EndProjectSection
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "System.BusinessObjects.Framework.Web", "System.BusinessObjects.Framework.Web\System.BusinessObjects.Framework.Web.csproj", "{EF57E9C9-E434-49E2-9494-0D582F913840}"
+EndProject
 Global
-	GlobalSection(TestCaseManagementSettings) = postSolution
-		CategoryFile = System.BusinessObjects.vsmdi
-	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
 		Release|Any CPU = Release|Any CPU
@@ -105,6 +104,12 @@ Global
 		{F40F4BF2-A50C-444F-A6AA-DB0A4F5F75D5}.Release|Any CPU.Build.0 = Release|Any CPU
 		{F40F4BF2-A50C-444F-A6AA-DB0A4F5F75D5}.Release-IoC|Any CPU.ActiveCfg = Release|Any CPU
 		{F40F4BF2-A50C-444F-A6AA-DB0A4F5F75D5}.Release-IoC|Any CPU.Build.0 = Release|Any CPU
+		{EF57E9C9-E434-49E2-9494-0D582F913840}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EF57E9C9-E434-49E2-9494-0D582F913840}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EF57E9C9-E434-49E2-9494-0D582F913840}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EF57E9C9-E434-49E2-9494-0D582F913840}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EF57E9C9-E434-49E2-9494-0D582F913840}.Release-IoC|Any CPU.ActiveCfg = Release|Any CPU
+		{EF57E9C9-E434-49E2-9494-0D582F913840}.Release-IoC|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

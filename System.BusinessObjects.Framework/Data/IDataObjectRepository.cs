@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.BusinessObjects.Infrastructure;
 
 namespace System.BusinessObjects.Data
 {
@@ -10,11 +11,11 @@ namespace System.BusinessObjects.Data
     {
         T Fetch(object Id);
 
-        T Fetch(IDataQuery<T> query);
+        T Fetch(params ISpecification[] query);
 
         IEnumerable<T> Search();
 
-        IEnumerable<T> Search(IDataQuery<T> query);
+        IEnumerable<T> Search(params ISpecification[] query);
 
         T Save(T src);
     }
