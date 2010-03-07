@@ -44,7 +44,7 @@ namespace System.BusinessObjects.Expressions
         /// <summary>
         /// Handles ==, != as a 'like' criteria
         /// </summary>
-        public static AbstractCriterion Like<T>(Expression<Func<T, object>> propertyLambda)
+        public static AbstractCriterion Like<T>(Expression<Func<T, bool>> propertyLambda)
         {
             return Like(propertyLambda, null);
         }
@@ -52,7 +52,7 @@ namespace System.BusinessObjects.Expressions
         /// <summary>
         /// Handles ==, != as a 'like' criteria
         /// </summary>
-        public static AbstractCriterion Like<T>(Expression<Func<T, object>> propertyLambda, string alias)
+        public static AbstractCriterion Like<T>(Expression<Func<T, bool>> propertyLambda, string alias)
         {
             ResolveLambda r = new ResolveLambda();
             r.Resolve<T>(propertyLambda);
@@ -63,13 +63,13 @@ namespace System.BusinessObjects.Expressions
             else
                 alias = "";
 
-            ExpressionType expType = r.OperationType;
+            NHExpressionType expType = r.OperationType;
             switch (expType)
             {
-                case ExpressionType.NotEqual:
+                case NHExpressionType.NotEqual:
                     retval = Restrictions.Not(Restrictions.Like(alias + r.PropertyName, r.Value));
                     break;
-                case ExpressionType.Equal:
+                case NHExpressionType.Equal:
                     retval = Restrictions.Like(alias + r.PropertyName, r.Value);
                     break;
                 default:
@@ -83,7 +83,7 @@ namespace System.BusinessObjects.Expressions
         /// Adds criteria for "Equals", "Greater Than", "Less Than", "Greater Than or Equal", "Less Than or Equal",
         /// "NotEqual", "NotNull" and "Between"
         /// </summary>
-        public static AbstractCriterion Add<T>(Expression<Func<T, object>> propertyLambda)
+        public static AbstractCriterion Add<T>(Expression<Func<T, bool>> propertyLambda)
         {
             return Add(propertyLambda, null);
         }
@@ -93,7 +93,7 @@ namespace System.BusinessObjects.Expressions
         /// "NotEqual", "NotNull" and "Between"
         /// </summary>
         /// <param name="propertyLambda">lambda function to evaluate: p => p.Name == "string"</param>
-        public static AbstractCriterion Add<T>(Expression<Func<T, object>> propertyLambda, string alias)
+        public static AbstractCriterion Add<T>(Expression<Func<T, bool>> propertyLambda, string alias)
         {
             AbstractCriterion retval;
             ResolveLambda r = new ResolveLambda();
@@ -104,42 +104,45 @@ namespace System.BusinessObjects.Expressions
             else
                 alias = "";
 
-            ExpressionType outerType = r.OperationType;
+            NHExpressionType outerType = r.OperationType;
             object val1;
             switch (outerType)
             {
-                case ExpressionType.NotEqual:
+                case NHExpressionType.NotEqual:
                     val1 = r.Value;
                     if (val1 == null)
                         retval = Restrictions.IsNotNull(alias + r.PropertyName);
                     else
                         retval = Restrictions.Not(Restrictions.Eq(alias + r.PropertyName, val1));
                     break;
-                case ExpressionType.Equal:
+                case NHExpressionType.Equal:
                     val1 = r.Value;
                     if(val1 == null)
                         retval = Restrictions.IsNull(alias + r.PropertyName);
                     else
                         retval = Restrictions.Eq(alias + r.PropertyName, val1);
                     break;
-                case ExpressionType.GreaterThanOrEqual:
+                case NHExpressionType.GreaterThanOrEqual:
                     retval = Restrictions.Ge(alias + r.PropertyName, r.Value);
                     break;
-                case ExpressionType.GreaterThan:
+                case NHExpressionType.GreaterThan:
                     retval = Restrictions.Gt(alias + r.PropertyName, r.Value);
                     break;
-                case ExpressionType.LessThanOrEqual:
+                case NHExpressionType.LessThanOrEqual:
                     retval = Restrictions.Le(alias + r.PropertyName, r.Value);
                     break;
-                case ExpressionType.LessThan:
+                case NHExpressionType.LessThan:
                     retval = Restrictions.Lt(alias + r.PropertyName, r.Value);
                     break;
-                case ExpressionType.AndAlso: //Between
-                    ExpressionType innerType1 = r.OperationType;
-                    ExpressionType innerType2 = r.OperationType;
-                    if (innerType1 == ExpressionType.GreaterThan && innerType2 == ExpressionType.LessThan)
+                case NHExpressionType.Like:
+                    retval = Restrictions.Like(alias + r.PropertyName, r.Value);
+                    break;
+                case NHExpressionType.AndAlso: //Between
+                    NHExpressionType innerType1 = r.OperationType;
+                    NHExpressionType innerType2 = r.OperationType;
+                    if (innerType1 == NHExpressionType.GreaterThan && innerType2 == NHExpressionType.LessThan)
                         retval = Restrictions.Between(alias + r.PropertyName, r.Value, r.Value);
-                    else if (innerType1 == ExpressionType.LessThan && innerType2 == ExpressionType.GreaterThan)
+                    else if (innerType1 == NHExpressionType.LessThan && innerType2 == NHExpressionType.GreaterThan)
                     {
                         val1 = r.Value;
                         retval = Restrictions.Between(alias + r.PropertyName, r.Value, val1);

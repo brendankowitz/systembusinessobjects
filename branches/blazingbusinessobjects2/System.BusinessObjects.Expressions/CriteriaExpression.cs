@@ -81,7 +81,7 @@ namespace System.BusinessObjects.Expressions
         /// <summary>
         /// Handles ==, != as a 'like'
         /// </summary>
-        public CriteriaExpression<T> Like(Expression<Func<T, object>> propertyLambda)
+        public CriteriaExpression<T> Like(Expression<Func<T, bool>> propertyLambda)
         {
             AddCriterion(RestrictBy.Like(propertyLambda));
             return this;
@@ -91,7 +91,7 @@ namespace System.BusinessObjects.Expressions
         /// Adds criteria for "Equals", "Greater Than", "Less Than", "Greater Than or Equal", "Less Than or Equal",
         /// "NotEqual", "NotNull" and "Between"
         /// </summary>
-        public CriteriaExpression<T> Add(Expression<Func<T, object>> propertyLambda)
+        public CriteriaExpression<T> Add(Expression<Func<T, bool>> propertyLambda)
         {
             AddCriterion(RestrictBy.Add(propertyLambda));
             return this;
@@ -140,6 +140,16 @@ namespace System.BusinessObjects.Expressions
         public CriteriaExpression<T> OrderDesc(Expression<Func<T, object>> propertyLambda)
         {
             AddOrder(RestrictBy.OrderDesc(propertyLambda));
+            return this;
+        }
+
+        /// <summary>
+        /// Join an association, adding an alias to the joined entity
+        /// </summary>
+        public CriteriaExpression<T> Alias(Expression<Func<T, object>> propertyLambda)
+        {
+            string propname = Property.For<T>(propertyLambda);
+            AddAlias(Property.For<T>(propertyLambda), propname+"1");
             return this;
         }
 

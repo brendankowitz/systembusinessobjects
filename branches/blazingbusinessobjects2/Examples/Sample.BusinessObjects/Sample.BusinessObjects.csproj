@@ -68,8 +68,8 @@
     <Compile Include="Contacts\Person.cs" />
     <Compile Include="Contacts\PersonType.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Queries\QrySearchAddressesByContact.cs" />
-    <Compile Include="Queries\QrySearchContactByName.cs" />
+    <Compile Include="Queries\ContactByIdSpec.cs" />
+    <Compile Include="Queries\SearchContactByNameSpec.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\System.BusinessObjects.Framework\BusinessObject.Framework.csproj">

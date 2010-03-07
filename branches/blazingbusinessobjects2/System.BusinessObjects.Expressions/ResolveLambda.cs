@@ -16,7 +16,7 @@ namespace System.BusinessObjects.Expressions
         private string _propertyName = "";
         internal Type PropertyType;
         private Queue<object> _values = new Queue<object>();
-        private Queue<ExpressionType> _operationType = new Queue<ExpressionType>();
+        private Queue<NHExpressionType> _operationType = new Queue<NHExpressionType>();
         internal bool OperationTypeSpecified = false;
 
         public string PropertyName
@@ -46,7 +46,7 @@ namespace System.BusinessObjects.Expressions
                 _values.Enqueue(value);
             }
         }
-        public ExpressionType OperationType
+        public NHExpressionType OperationType
         {
             get
             {
@@ -62,6 +62,12 @@ namespace System.BusinessObjects.Expressions
         internal ResolveLambda() { }
 
         internal void Resolve<T>(Expression<Func<T, object>> expression)
+        {
+            evaluatedType = typeof(T);
+            Visit(expression);
+        }
+
+        internal void Resolve<T>(Expression<Func<T, bool>> expression)
         {
             evaluatedType = typeof(T);
             Visit(expression);
@@ -121,9 +127,21 @@ namespace System.BusinessObjects.Expressions
                 case ExpressionType.Lambda:
                     Visit((LambdaExpression)expression);
                     break;
+                case ExpressionType.Call:
+                    Visit((MethodCallExpression)expression);
+                    break;
                 default:
                     throw new NotSupportedException(string.Format("lambda expression with type {0} not supported", expression.NodeType));
 
+            }
+        }
+        internal void Visit(System.Linq.Expressions.MethodCallExpression expression)
+        {
+            if (expression.Method.Name == "Contains")
+            {
+                OperationType = NHExpressionType.Like;
+                Visit(expression.Arguments.First());
+                Visit(expression.Object);
             }
         }
         internal void Visit(System.Linq.Expressions.UnaryExpression expression)
@@ -136,7 +154,7 @@ namespace System.BusinessObjects.Expressions
         }
         internal void Visit(System.Linq.Expressions.BinaryExpression expression)
         {
-            OperationType = expression.NodeType;
+            OperationType = ToExpressionType(expression.NodeType);
 
             Visit(expression.Left);
             Visit(expression.Right);
@@ -166,7 +184,14 @@ namespace System.BusinessObjects.Expressions
                 throw new NotSupportedException(string.Format("Unsure how to evaluate {0}", expression));
             }
         }
+
+        NHExpressionType ToExpressionType(ExpressionType t)
+        {
+            return (NHExpressionType)Enum.Parse(typeof(NHExpressionType), t.ToString());
+        }
     }
+
+    
 
     #endregion
 }

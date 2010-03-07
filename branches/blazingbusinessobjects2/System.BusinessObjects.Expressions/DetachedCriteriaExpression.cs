@@ -68,7 +68,7 @@ namespace System.BusinessObjects.Expressions
         /// <summary>
         /// Handles ==, != as a 'like'
         /// </summary>
-        public new DetachedCriteriaExpression<T> Like(Expression<Func<T, object>> propertyLambda)
+        public new DetachedCriteriaExpression<T> Like(Expression<Func<T, bool>> propertyLambda)
         {
             return base.Like(propertyLambda) as DetachedCriteriaExpression<T>;
         }
@@ -77,7 +77,7 @@ namespace System.BusinessObjects.Expressions
         /// Adds criteria for "Equals", "Greater Than", "Less Than", "Greater Than or Equal", "Less Than or Equal",
         /// "NotEqual", "NotNull" and "Between"
         /// </summary>
-        public new DetachedCriteriaExpression<T> Add(Expression<Func<T, object>> propertyLambda)
+        public new DetachedCriteriaExpression<T> Add(Expression<Func<T, bool>> propertyLambda)
         {
             return base.Add(propertyLambda) as DetachedCriteriaExpression<T>;
         }

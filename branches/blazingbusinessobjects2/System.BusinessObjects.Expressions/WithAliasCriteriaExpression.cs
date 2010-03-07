@@ -24,7 +24,7 @@ namespace System.BusinessObjects.Expressions
         /// Adds a Restrction based on a lambda evaluation of: "Equals", "Greater Than", "Less Than", "Greater Than or Equal", "Less Than or Equal",
         /// "NotEqual", "NotNull" and "Between"
         /// </summary>
-        public WithAliasCriteriaExpression<T, R, CR> Add(Expression<Func<R, object>> propertyLambda)
+        public WithAliasCriteriaExpression<T, R, CR> Add(Expression<Func<R, bool>> propertyLambda)
         {
             inner.AddCriterion(RestrictBy.Add(propertyLambda, _alias));
             return this;
@@ -32,7 +32,7 @@ namespace System.BusinessObjects.Expressions
         /// <summary>
         /// Performs the same as Add() but returns to the original expression wrapper
         /// </summary>
-        public CR AddAndReturn(Expression<Func<R, object>> propertyLambda)
+        public CR AddAndReturn(Expression<Func<R, bool>> propertyLambda)
         {
             inner.AddCriterion(RestrictBy.Add(propertyLambda, _alias));
             return inner;
@@ -40,7 +40,7 @@ namespace System.BusinessObjects.Expressions
         /// <summary>
         /// Handles ==, != as a 'like'
         /// </summary>
-        public WithAliasCriteriaExpression<T, R, CR> Like(Expression<Func<R, object>> propertyLambda)
+        public WithAliasCriteriaExpression<T, R, CR> Like(Expression<Func<R, bool>> propertyLambda)
         {
             inner.AddCriterion(RestrictBy.Like(propertyLambda, _alias));
             return this;
@@ -48,7 +48,7 @@ namespace System.BusinessObjects.Expressions
         /// <summary>
         /// Performs the same as Like() but returns to the original expression wrapper
         /// </summary>
-        public CR LikeAndReturn(Expression<Func<R, object>> propertyLambda)
+        public CR LikeAndReturn(Expression<Func<R, bool>> propertyLambda)
         {
             inner.AddCriterion(RestrictBy.Like(propertyLambda, _alias));
             return inner;

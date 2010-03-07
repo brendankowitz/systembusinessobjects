@@ -1,9 +1,6 @@
 using System;
-using System.Collections.Generic;
-using NHibernate;
-using NHibernate.Criterion;
-using Iesi.Collections.Generic;
 using System.Linq.Expressions;
+using Prop = System.BusinessObjects.Helpers.Property;
 
 namespace System.BusinessObjects.Data
 {
@@ -21,7 +18,7 @@ namespace System.BusinessObjects.Data
         /// </summary>
         public virtual bool IsNull(Expression<Func<T, object>> propertyLambda)
         {
-            return IsNull(System.BusinessObjects.Helpers.Property.For<T>(propertyLambda));
+            return IsNull(Prop.For<T>(propertyLambda));
         }
 
         /// <summary>
@@ -34,7 +31,7 @@ namespace System.BusinessObjects.Data
         /// </remarks>
         protected TRetVal GetValue<TRetVal>(Expression<Func<T, TRetVal>> propertyLambda)
         {
-            return GetValue<TRetVal>(System.BusinessObjects.Helpers.Property.For<T, TRetVal>(propertyLambda));
+            return GetValue<TRetVal>(Prop.For<T, TRetVal>(propertyLambda));
         }
 
         /// <summary>
@@ -43,7 +40,7 @@ namespace System.BusinessObjects.Data
         /// </summary>
         protected void SetValue(Expression<Func<T, object>> propertyLambda, object value)
         {
-            SetValue(System.BusinessObjects.Helpers.Property.For<T>(propertyLambda), value);
+            SetValue(Prop.For<T>(propertyLambda), value);
         }
     }
 }
