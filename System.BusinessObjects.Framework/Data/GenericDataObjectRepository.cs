@@ -23,7 +23,9 @@ namespace System.BusinessObjects.Data
             return newObj;
         }
 
-        public abstract T Fetch(params ISpecification[] specifications);
+        public abstract T Fetch(params Specification<T>[] specifications);
+
+        public abstract T Fetch(Query<T> query);
 
         /// <summary>
         /// Returns a list of all business objects of this type
@@ -35,7 +37,9 @@ namespace System.BusinessObjects.Data
             return list;
         }
 
-        public abstract IEnumerable<T> Search(params ISpecification[] specifications);
+        public abstract IEnumerable<T> Search(params Specification<T>[] specifications);
+
+        public abstract IEnumerable<T> Search(Query<T> query);
 
         public T Save(T src)
         {

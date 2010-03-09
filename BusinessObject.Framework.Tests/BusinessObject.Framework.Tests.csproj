@@ -15,7 +15,7 @@
     <UpgradeBackupLocation>
     </UpgradeBackupLocation>
     <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
-    <SignAssembly>true</SignAssembly>
+    <SignAssembly>false</SignAssembly>
     <AssemblyOriginatorKeyFile>..\System.BusinessObjects.Framework\SystemBusinessObjectsPublic.snk</AssemblyOriginatorKeyFile>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
@@ -74,6 +74,10 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\Lib\Required_For_LazyLoading\LinFu\NHibernate.ByteCode.LinFu.dll</HintPath>
     </Reference>
+    <Reference Include="NHibernate.Linq, Version=1.1.0.1001, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\Lib\NHibernate.Linq.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.DataAnnotations">
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
@@ -98,8 +102,9 @@
     <Compile Include="BusinessObjectFactory.cs" />
     <Compile Include="DataObjectTests.cs" />
     <Compile Include="HashtableDataCacheTests.cs" />
+    <Compile Include="Infrastructure\NHLinqRepository.cs" />
     <Compile Include="Modules\AutofacTypeFactory.cs" />
-    <Compile Include="NHExpressionsRepository.cs" />
+    <Compile Include="Infrastructure\NHExpressionsRepository.cs" />
     <Compile Include="NHibernateInMemoryTestFixtureBase.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RestrictionHelperTests.cs" />

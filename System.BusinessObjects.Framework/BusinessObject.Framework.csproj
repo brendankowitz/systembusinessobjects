@@ -97,23 +97,18 @@
     <Compile Include="Data\GenericDataObjectRepository.cs" />
     <Compile Include="Data\GenericObjectComparer.cs" />
     <Compile Include="Data\IDataObjectRepository.cs" />
-    <Compile Include="Data\Join.cs" />
     <Compile Include="Data\SafeBindingLists.cs" />
     <Compile Include="Helpers\ConfigSectionHelper.cs" />
-    <Compile Include="Infrastructure\AndSpecification.cs" />
     <Compile Include="Infrastructure\IFactory.cs" />
-    <Compile Include="Infrastructure\ISpecification.cs" />
-    <Compile Include="Infrastructure\NotSpecification.cs" />
-    <Compile Include="Infrastructure\OrSpecification.cs" />
+    <Compile Include="Infrastructure\Query.cs" />
     <Compile Include="Infrastructure\Specification.cs" />
-    <Compile Include="Infrastructure\SpecificationExtensions.cs" />
     <Compile Include="Properties\GlobalAssemblyInfo.cs" />
     <Compile Include="Cache\HashtableDataCache.cs" />
     <Compile Include="Helpers\Property.cs" />
     <Compile Include="Helpers\XmlHelper.cs" />
     <Compile Include="Data\DataObject.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Cache\CacheProvider.cs" />
+    <Compile Include="Cache\CacheBase.cs" />
     <Compile Include="Providers\GenericProviderCollection.cs" />
     <Compile Include="Providers\ProviderHelper.cs" />
     <Compile Include="Validation\GeneralAssertionRules.cs" />
@@ -147,9 +142,6 @@
       <ProductName>Windows Installer 3.1</ProductName>
       <Install>true</Install>
     </BootstrapperPackage>
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Transactions\" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
