@@ -6,6 +6,7 @@ using System.ComponentModel;
 using System.BusinessObjects.Data;
 using System.ComponentModel.DataAnnotations;
 using Xunit;
+using System.BusinessObjects.Helpers;
 
 namespace BusinessObject.Framework.Tests
 {
@@ -199,10 +200,11 @@ namespace BusinessObject.Framework.Tests
             Assert.True(a.IsNull("Postcode"));
             
             IDataErrorInfo error = a;
-            Trace.WriteLine(error["Postcode"]);
+            Console.WriteLine(error["Postcode"]);
             Assert.NotEmpty(error["Postcode"]);
 
             a.Postcode = "1234a";
+            Console.WriteLine(error["Postcode"]);
             Assert.NotEmpty(error["Postcode"]);
 
         }
@@ -272,11 +274,11 @@ namespace BusinessObject.Framework.Tests
             Person p = BusinessObjectFactory.CreateAndFillPerson();
             IDataErrorInfo error = p;
 
-            Assert.Empty(error["Email"]);
+            Assert.Empty(error[Property.For<Person>(x => x.Email)]);
 
             p.Email = null;
 
-            Trace.WriteLine(error["Email"]);
+            Console.WriteLine(error["Email"]);
             Assert.NotEmpty(error["Email"]);
         }
 

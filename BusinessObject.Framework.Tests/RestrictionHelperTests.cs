@@ -149,20 +149,19 @@ namespace BusinessObject.Framework.Tests
         //    Assert.Equal("John", result.FirstName);
         //}
 
-        //[Fact]
-        //public void CanUseIsNotNullExtension()
-        //{
-        //    Person pers = BusinessObjectFactory.CreateAndFillPerson();
-        //    pers.SetSession(session);
-        //    pers.Save();
+        [Fact]
+        public void CanUseIsNotNullExtension()
+        {
+            Person pers = BusinessObjectFactory.CreateAndFillPerson();
+            _repository.Save(pers);
 
-        //    ICriteria c = UnitOfWork.CurrentSession.CreateCriteria(typeof(Person))
-        //        .Expression<Person>()
-        //        .Add(p => p.FirstName != null)
-        //        .Criteria;
+            ICriteria c = session.CreateCriteria(typeof(Person))
+                .Expression<Person>()
+                .Add(p => p.FirstName != null)
+                .Criteria;
 
-        //    c.UniqueResult();
-        //}
+            c.UniqueResult();
+        }
 
         [Fact]
         public void CanUseEqlambdaExtension()
@@ -348,33 +347,29 @@ namespace BusinessObject.Framework.Tests
         //    Assert.Equal("John", result.FirstName);
         //}
 
-        //[Fact]
-        //public void CanUseAlias()
-        //{
-        //    Person pers = BusinessObjectFactory.CreateAndFillPerson();
-        //    pers.SetSession(session);
-        //    pers.Save();
+        [Fact]
+        public void CanUseAlias()
+        {
+            //Using expression interface
+            ICriteria c = session.CreateExpression<Person>()
+                .Add(p => p.FirstName == "John")
+                .Alias<Address>(p => p.Addresses)
+                    .Add(a => a.Postcode != null)
+                    .AddAndReturn(a => a.Address1 == null)
+                .OrderAsc(p => p.ID)
+                .Criteria;
 
-        //    //Using expression interface
-        //    ICriteria c = UnitOfWork.CurrentSession.CreateExpression<Person>()
-        //        .Add(p => p.FirstName == "John")
-        //        .Alias<Address>(p => p.Addresses, "addr")
-        //            .Add(a => a.Postcode != null)
-        //            .AddAndReturn(a => a.Address1 == null)
-        //        .OrderAsc(p => p.ID)
-        //        .Criteria;
+            //Normal interface
+            ICriteria o = session.CreateCriteria(typeof(Person))
+                .Add(Restrictions.Eq("FirstName", "John"))
+                .CreateAlias("Addresses", "Addresses0")
+                    .Add(Restrictions.IsNotNull("Addresses0.Postcode"))
+                    .Add(Restrictions.IsNull("Addresses0.Address1"))
+                .AddOrder(Order.Asc("ID"));
 
-        //    //Normal interface
-        //    ICriteria o = UnitOfWork.CurrentSession.CreateCriteria(typeof(Person))
-        //        .Add(Restrictions.Eq("FirstName", "John"))
-        //        .CreateAlias("Addresses", "addr")
-        //            .Add(Restrictions.IsNotNull("addr.Postcode"))
-        //            .Add(Restrictions.IsNull("addr.Address1"))
-        //        .AddOrder(Order.Asc("ID"));
-
-        //    Console.WriteLine(c.ToString());
-        //    Assert.Equal(c.ToString(), o.ToString());
-        //}
+            Console.WriteLine(c.ToString());
+            Assert.Equal(c.ToString(), o.ToString());
+        }
 
         //[Fact]
         //public void CanUseProjection()
@@ -458,6 +453,20 @@ namespace BusinessObject.Framework.Tests
         //    Console.WriteLine(c.ToString());
         //    Assert.Equal(c.ToString(), o.ToString());
         //}
+
+        [Fact]
+        public void UsingSpecification()
+        {
+            Sample.BusinessObjects.Queries.ContactByIdSpec spec = new Sample.BusinessObjects.Queries.ContactByIdSpec(1);
+
+            Person pers = BusinessObjectFactory.CreateAndFillPerson();
+            _repository.Save(pers);
+
+            var result = _repository.Fetch(spec);
+            
+            Assert.Equal("John", result.FirstName);
+
+        }
 #endif
     }
 }

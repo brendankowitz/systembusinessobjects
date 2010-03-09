@@ -42,6 +42,7 @@ namespace Sample.BusinessObjects.Contacts
             }
         }
 
+        [Required]
         [RegularExpression(@"[\w-]+@([\w-]+\.)+[\w-]+", ErrorMessage="Please provide a valid email address")]
         public virtual string Email
         {
