@@ -44,6 +44,20 @@ namespace BusinessObject.Framework.Tests
             Assert.False(p.IsDirty);
         }
 
+        [Fact]
+        public void CheckRowStateDetached_Linq()
+        {
+            Person p = BusinessObjectFactory.CreateAndFillPerson();
+            //Assert.Equal(DataRowState.Detached, p.RowState);
+
+            var repository = new NHLinqRepository<Person>(session);
+            Assert.True(p.IsDirty);
+
+            repository.Save(p);
+
+            Assert.False(p.IsDirty);
+        }
+
         
         [Fact]
         public void CheckRowStateSaved()

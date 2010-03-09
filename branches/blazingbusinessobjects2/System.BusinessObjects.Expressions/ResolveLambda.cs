@@ -143,6 +143,10 @@ namespace System.BusinessObjects.Expressions
                 Visit(expression.Arguments.First());
                 Visit(expression.Object);
             }
+            else
+            {
+                throw new NotSupportedException(string.Format("MethodCall {0} is not supported", expression.Method.Name));
+            }
         }
         internal void Visit(System.Linq.Expressions.UnaryExpression expression)
         {

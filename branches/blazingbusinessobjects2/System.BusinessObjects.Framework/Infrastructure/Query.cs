@@ -5,8 +5,8 @@ using System.Text;
 
 namespace System.BusinessObjects.Infrastructure
 {
-    public interface ISpecification
+    public abstract class Query<T>
     {
-        bool IsSatisfiedBy(object candidate);
+        public abstract IQueryable Expression(IQueryable<T> query);
     }
 }

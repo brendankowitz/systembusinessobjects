@@ -16,28 +16,34 @@ namespace BusinessObject.Framework.Tests
         {
         }
 
-        ICriteria Convert(ISpecification[] specifications)
+        ICriteria Convert(Specification<T>[] specifications)
         {
             var qry = _session.CreateCriteria<T>().Expression<T>();
-            foreach (ISpecification spec in specifications)
+            foreach (var spec in specifications)
             {
-                if (spec is Specification<T>)
-                    qry = qry.Add(((Specification<T>)spec).Predicate);
-                else if (spec is Join<T>)
-                    qry = qry.Alias(((Join<T>)spec).Predicate);
- 
+                qry = qry.Add(((Specification<T>)spec).Predicate);
             }
             return qry.Criteria;
         }
 
-        public override T Fetch(params ISpecification[] specifications)
+        public override T Fetch(params Specification<T>[] specifications)
         {
             return Convert(specifications).UniqueResult<T>();
         }
 
-        public override IEnumerable<T> Search(params ISpecification[] specifications)
+        public override IEnumerable<T> Search(params Specification<T>[] specifications)
         {
             return Convert(specifications).List<T>();
+        }
+
+        public override T Fetch(Query<T> query)
+        {
+            throw new NotImplementedException("Full Linq queries are not implemented by this repository");
+        }
+
+        public override IEnumerable<T> Search(Query<T> query)
+        {
+            throw new NotImplementedException("Full Linq queries are not implemented by this repository");
         }
     }
 }

@@ -16,7 +16,7 @@ namespace System.BusinessObjects.Infrastructure
     /// var overdue = bookRepository.Find(overdueBookSpec);
     /// </code>
     /// </example>
-    public abstract class Specification<T> : ISpecification
+    public abstract class Specification<T>
     {
         Func<T, bool> _compiledPredicate;
 
@@ -53,11 +53,5 @@ namespace System.BusinessObjects.Infrastructure
         /// Describes the selection criteria for the specification.
         /// </summary>
         public abstract Expression<Func<T, bool>> Predicate { get; }
-
-        public bool IsSatisfiedBy(object candidate)
-        {
-            return IsSatisfiedBy((T)candidate);
-        }
-
     }
 }
