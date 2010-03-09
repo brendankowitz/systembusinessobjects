@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq.Expressions;
 using NHibernate.Criterion;
+using System.Collections.Generic;
 
 namespace System.BusinessObjects.Expressions
 {
@@ -12,6 +13,7 @@ namespace System.BusinessObjects.Expressions
     {
         internal NHibernate.ICriteria inner = null;
         internal NHibernate.Criterion.DetachedCriteria innerDetached = null;
+        internal List<string> aliases = new List<string>();
 
         internal CriteriaExpression()
         {
@@ -42,6 +44,7 @@ namespace System.BusinessObjects.Expressions
                 inner.CreateAlias(property, alias);
             else if (innerDetached != null)
                 innerDetached.CreateAlias(property, alias);
+            aliases.Add(alias);
         }
         internal void AddProjection(IProjection c)
         {
@@ -169,6 +172,21 @@ namespace System.BusinessObjects.Expressions
         public WithAliasCriteriaExpression<T, R, CriteriaExpression<T>> Alias<R>(Expression<Func<T, object>> propertyLambda, string alias)
         {
             AddAlias(Property.For<T>(propertyLambda), alias);
+            return new WithAliasCriteriaExpression<T, R, CriteriaExpression<T>>(this, alias);
+        }
+
+        /// <summary>
+        /// Join an association, adding an alias to the joined entity and returning a wrapper to add
+        /// criteria to the joined entity.
+        /// </summary>
+        public WithAliasCriteriaExpression<T, R, CriteriaExpression<T>> Alias<R>(Expression<Func<T, object>> propertyLambda)
+        {
+            string property = Property.For<T>(propertyLambda);
+            int i = 0;
+            while(aliases.Contains(string.Format("{0}{1}", property, i)))
+                i++;
+            string alias = string.Format("{0}{1}", property, i);
+            AddAlias(property, alias);
             return new WithAliasCriteriaExpression<T, R, CriteriaExpression<T>>(this, alias);
         }
 

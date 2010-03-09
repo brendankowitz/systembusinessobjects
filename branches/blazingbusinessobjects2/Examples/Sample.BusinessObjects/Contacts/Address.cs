@@ -52,6 +52,7 @@ namespace Sample.BusinessObjects.Contacts
         }
 
         [ValidationIsNotNull]
+        [RegularExpression("[0-9]{4,6}", ErrorMessage="Please enter a valid postcode")]
         public virtual string Postcode
         {
             get { return GetValue<string>("Postcode"); }
@@ -60,11 +61,6 @@ namespace Sample.BusinessObjects.Contacts
                 BeginEdit();
                 SetValue("Postcode", value);
             }
-        }
-
-        protected override void AddValidationRules()
-        {
-            //validationRules.Add(new ValidationRule(GeneralAssertionTemplate.ValidCharacterRange(this,"Postcode","0123456789",false)));
         }
     }
 }

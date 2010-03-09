@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Linq;
 using System.Linq.Expressions;
+using System.Reflection;
 
 namespace System.BusinessObjects.Expressions
 {
@@ -10,6 +11,7 @@ namespace System.BusinessObjects.Expressions
     /// <summary>
     /// Helper class to break down and resolve lambda values
     /// </summary>
+    [System.Runtime.InteropServices.GuidAttribute("F11940FA-4293-4B48-9F61-97BCB3B2A4CF")]
     internal class ResolveLambda
     {
         private Type evaluatedType;
@@ -179,7 +181,7 @@ namespace System.BusinessObjects.Expressions
                 if (expression.Member.MemberType == System.Reflection.MemberTypes.Property)
                     Value = ((ConstantExpression)expression.Expression).Value.GetType().GetProperty(expression.Member.Name).GetValue(((ConstantExpression)expression.Expression).Value, null);
                 if (expression.Member.MemberType == System.Reflection.MemberTypes.Field)
-                    Value = ((ConstantExpression)expression.Expression).Value.GetType().GetField(expression.Member.Name).GetValue(((ConstantExpression)expression.Expression).Value);
+                    Value = ((ConstantExpression)expression.Expression).Value.GetType().GetField(expression.Member.Name, BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public).GetValue(((ConstantExpression)expression.Expression).Value);
                 else
                     Value = ((ConstantExpression)expression.Expression).Value;
             }
