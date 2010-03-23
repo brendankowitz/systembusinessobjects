@@ -16,4 +16,12 @@ namespace System.BusinessObjects.Expressions
         AndAlso,
         Like
     }
+
+    public enum UnaryModifier
+    {
+        None,
+        Not,
+        Or,
+        And
+    }
 }

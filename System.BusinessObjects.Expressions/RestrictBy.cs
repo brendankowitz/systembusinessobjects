@@ -153,6 +153,8 @@ namespace System.BusinessObjects.Expressions
                 default:
                     throw new NotSupportedException("Only ==,<,>,>=,<=,&& operators supported in this function");
             }
+            if (r.Modifier == UnaryModifier.Not)
+                retval = Restrictions.Not(retval);
             return retval;
         }
 

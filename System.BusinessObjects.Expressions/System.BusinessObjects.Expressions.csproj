@@ -79,7 +79,7 @@
   </Target>
   -->
   <PropertyGroup>
-    <PostBuildEvent>copy $(TargetPath) $(SolutionDir)bin /Y
+    <PostBuildEvent>
 copy $(TargetDir)$(TargetName).XML $(SolutionDir)bin /Y</PostBuildEvent>
   </PropertyGroup>
 </Project>
