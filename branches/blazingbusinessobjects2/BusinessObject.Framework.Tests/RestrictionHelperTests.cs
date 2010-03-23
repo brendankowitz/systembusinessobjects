@@ -6,6 +6,7 @@ using System.BusinessObjects.Expressions;
 using NHibernate.Impl;
 using Xunit;
 using System.BusinessObjects.Data;
+using Xunit.Extensions;
 
 namespace BusinessObject.Framework.Tests
 {
@@ -20,7 +21,7 @@ namespace BusinessObject.Framework.Tests
         }
 
 #if DOT_NET_35
-        [Fact]
+        [Fact, AutoRollback]
         public void CanUseEqStrongProperty()
         {
             Person pers = BusinessObjectFactory.CreateAndFillPerson();
@@ -34,7 +35,7 @@ namespace BusinessObject.Framework.Tests
 
         }
 
-        [Fact]
+        [Fact, AutoRollback]
         public void CanUseEqStrongProperty2()
         {
             Person pers = BusinessObjectFactory.CreateAndFillPerson();
@@ -47,7 +48,7 @@ namespace BusinessObject.Framework.Tests
 
         }
 
-        [Fact]
+        [Fact, AutoRollback]
         public void CanUseEqLambda()
         {
             Person pers = BusinessObjectFactory.CreateAndFillPerson();
@@ -59,7 +60,7 @@ namespace BusinessObject.Framework.Tests
             
         }
 
-        [Fact]
+        [Fact, AutoRollback]
         public void CanUseEqLambda2()
         {
             Person pers = BusinessObjectFactory.CreateAndFillPerson();
@@ -71,7 +72,7 @@ namespace BusinessObject.Framework.Tests
 
         }
 
-        [Fact]
+        [Fact, AutoRollback]
         public void CanUseGeLambda()
         {
             Person pers = BusinessObjectFactory.CreateAndFillPerson();
@@ -84,7 +85,7 @@ namespace BusinessObject.Framework.Tests
 
         }
 
-        [Fact]
+        [Fact, AutoRollback]
         public void CanUseGtLambda()
         {
             Person pers = BusinessObjectFactory.CreateAndFillPerson();
@@ -293,7 +294,7 @@ namespace BusinessObject.Framework.Tests
             string john = "Jo%";
 
             ICriteria c = session.CreateExpression<Person>()
-                .Like(p => p.FirstName == john)
+                .Add(p => p.FirstName.Contains(john))
                 .Criteria;
 
             Person result = c.UniqueResult<Person>();
@@ -308,7 +309,7 @@ namespace BusinessObject.Framework.Tests
             string john = "ab%";
 
             ICriteria c = session.CreateExpression<Person>()
-                .Like(p => p.FirstName != john)
+                .Add(p => !p.FirstName.Contains(john))
                 .Criteria;
 
             Person result = c.UniqueResult<Person>();

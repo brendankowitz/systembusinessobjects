@@ -7,71 +7,79 @@ using System.Reflection;
 
 namespace System.BusinessObjects.Expressions
 {
-    #region Resolve Lambda Helper
     /// <summary>
     /// Helper class to break down and resolve lambda values
     /// </summary>
     [System.Runtime.InteropServices.GuidAttribute("F11940FA-4293-4B48-9F61-97BCB3B2A4CF")]
     internal class ResolveLambda
     {
-        private Type evaluatedType;
-        private string _propertyName = "";
-        internal Type PropertyType;
-        private Queue<object> _values = new Queue<object>();
-        private Queue<NHExpressionType> _operationType = new Queue<NHExpressionType>();
-        internal bool OperationTypeSpecified = false;
+        internal class ExpressionSet
+        {
+            internal Type evaluatedType;
+            internal string propertyName = "";
+            internal Type PropertyType;
+            internal Queue<object> values = new Queue<object>();
+            internal Queue<NHExpressionType> operationType = new Queue<NHExpressionType>();
+            internal bool OperationTypeSpecified = false;
+            internal UnaryModifier modifier = UnaryModifier.None;
+        }
+        List<ExpressionSet> resolved = new List<ExpressionSet>();
+        ExpressionSet currentExpression = new ExpressionSet();
 
         public string PropertyName
         {
             get
             {
-                return _propertyName;
+                return currentExpression.propertyName;
             }
             set
             {
-                if (!string.IsNullOrEmpty(_propertyName))
+                if (!string.IsNullOrEmpty(currentExpression.propertyName))
                 {
-                    if (_propertyName != value)
+                    if (currentExpression.propertyName != value)
                         throw new NotSupportedException("Unable to evaluate multiple properties in the one expression.");
                 }
-                _propertyName = value;
+                currentExpression.propertyName = value;
             }
         }
         public object Value
         {
             get
             {
-                return _values.Dequeue();
+                return currentExpression.values.Dequeue();
             }
             set
             {
-                _values.Enqueue(value);
+                currentExpression.values.Enqueue(value);
             }
         }
         public NHExpressionType OperationType
         {
             get
             {
-                return _operationType.Dequeue();
+                return currentExpression.operationType.Dequeue();
             }
             set
             {
-                OperationTypeSpecified = true;
-                _operationType.Enqueue(value);
+                currentExpression.OperationTypeSpecified = true;
+                currentExpression.operationType.Enqueue(value);
             }
         }
+        public UnaryModifier Modifier { get { return currentExpression.modifier; } }
+
+        public bool OperationTypeSpecified { get { return currentExpression.OperationTypeSpecified; } }
 
         internal ResolveLambda() { }
 
         internal void Resolve<T>(Expression<Func<T, object>> expression)
         {
-            evaluatedType = typeof(T);
+            currentExpression.evaluatedType = typeof(T);
             Visit(expression);
         }
 
         internal void Resolve<T>(Expression<Func<T, bool>> expression)
         {
-            evaluatedType = typeof(T);
+            currentExpression.evaluatedType = typeof(T);
             Visit(expression);
         }
 
@@ -152,6 +160,14 @@ namespace System.BusinessObjects.Expressions
         }
         internal void Visit(System.Linq.Expressions.UnaryExpression expression)
         {
+            if (expression.NodeType == ExpressionType.Not)
+                currentExpression.modifier = UnaryModifier.Not;
+            else if (expression.NodeType == ExpressionType.Convert) { }
+            //else if (expression.NodeType == ExpressionType.Or) { }
+            //else if (expression.NodeType == ExpressionType.And){}
+            else{
+                throw new NotSupportedException(string.Format("UnaryExpression {0} is not supported", expression.NodeType));
+            }
             Visit(expression.Operand);
         }
         internal void Visit(System.Linq.Expressions.LambdaExpression expression)
@@ -171,10 +187,10 @@ namespace System.BusinessObjects.Expressions
         }
         internal void Visit(System.Linq.Expressions.MemberExpression expression)
         {
-            if (evaluatedType != null && expression.Member.DeclaringType == evaluatedType && expression.Expression.NodeType == ExpressionType.Parameter)
+            if (currentExpression.evaluatedType != null && expression.Member.DeclaringType == currentExpression.evaluatedType && expression.Expression.NodeType == ExpressionType.Parameter)
             { //this is the property name from a parameter that we are evaluating
                 PropertyName = expression.Member.Name;
-                PropertyType = ((System.Reflection.PropertyInfo)expression.Member).PropertyType;
+                currentExpression.PropertyType = ((System.Reflection.PropertyInfo)expression.Member).PropertyType;
             }
             else if (expression.Expression is ConstantExpression)
             { //treat this as a variable to compare against
@@ -199,5 +215,4 @@ namespace System.BusinessObjects.Expressions
 
     
 
-    #endregion
 }

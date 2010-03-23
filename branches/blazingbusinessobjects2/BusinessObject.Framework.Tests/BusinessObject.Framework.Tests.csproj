@@ -97,11 +97,16 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\Lib\xunit.dll</HintPath>
     </Reference>
+    <Reference Include="xunit.extensions, Version=1.5.0.1479, Culture=neutral, PublicKeyToken=8d05b1bb7a6fdb6c, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\Lib\xunit.extensions.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="BusinessObjectFactory.cs" />
     <Compile Include="DataObjectTests.cs" />
     <Compile Include="HashtableDataCacheTests.cs" />
+    <Compile Include="Infrastructure\IsolatedTestAttribute.cs" />
     <Compile Include="Infrastructure\NHLinqRepository.cs" />
     <Compile Include="Modules\AutofacTypeFactory.cs" />
     <Compile Include="Infrastructure\NHExpressionsRepository.cs" />

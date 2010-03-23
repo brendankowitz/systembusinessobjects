@@ -7,6 +7,7 @@ using NHibernate.Tool.hbm2ddl;
 using System.BusinessObjects.Providers;
 using Sample.BusinessObjects.Contacts;
 using System.Collections.Generic;
+using Xunit;
 
 namespace BusinessObject.Framework.Tests
 {
