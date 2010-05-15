@@ -25,7 +25,7 @@ namespace System.BusinessObjects.MethodLinq.Tests.SimpleInterface
                           rate.Parameters.FromDate == DateTime.Today &&
                           rate.Building.ID == 501 &&
                           rate.Parameters.ToDate == DateTime.Today.AddDays(3)
-                          select rate;
+                          select rate.Building;
 
             Trace.WriteLine(query.ToString());
             var response = query.ToList();
