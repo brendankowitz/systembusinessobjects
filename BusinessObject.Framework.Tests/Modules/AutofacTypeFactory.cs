@@ -1,6 +1,6 @@
 ﻿using System;
-using System.BusinessObjects.Kernel;
 using Autofac;
+using System.BusinessObjects.Infrastructure;
 
 namespace BusinessObject.Framework.Tests.Modules
 {

@@ -59,6 +59,8 @@ namespace System.BusinessObjects.Membership.Tests
 
             System.Web.Security.Roles.AddUsersToRole(new string[] { "user1" }, "admin");
 
+            session.Flush();
+
             string[] list = System.Web.Security.Roles.GetUsersInRole("admin");
 
             Assert.Equal(1, list.Length);
@@ -78,6 +80,8 @@ namespace System.BusinessObjects.Membership.Tests
 
             System.Web.Security.Roles.AddUsersToRole(new string[] { "user1", "user2" }, "admin");
 
+            session.Flush();
+
             string[] list = System.Web.Security.Roles.FindUsersInRole("admin", "?ser%");
 
             Assert.Equal(2, list.Length);
@@ -95,6 +99,8 @@ namespace System.BusinessObjects.Membership.Tests
                                                         "question?", "yes", true, out status);
 
             System.Web.Security.Roles.AddUsersToRole(new string[] { "user1", "user2" }, "admin");
+
+            session.Flush();
 
             Assert.True(System.Web.Security.Roles.IsUserInRole("user2", "admin"));
             Assert.False(System.Web.Security.Roles.IsUserInRole("user3", "admin"));
@@ -123,9 +129,13 @@ namespace System.BusinessObjects.Membership.Tests
 
             System.Web.Security.Roles.AddUsersToRole(new string[] { "user1", "user2" }, "admin");
 
+            session.Flush();
+
             Assert.True(System.Web.Security.Roles.IsUserInRole("user2", "admin"));
 
             System.Web.Security.Roles.RemoveUsersFromRoles(new string[] { "user2" }, new string[] { "admin" });
+
+            session.Flush();
 
             Assert.False(System.Web.Security.Roles.IsUserInRole("user2", "admin"));
         }

@@ -113,7 +113,6 @@
     <Compile Include="NHibernateInMemoryTestFixtureBase.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RestrictionHelperTests.cs" />
-    <Compile Include="SafeBindingListTests.cs" />
     <Compile Include="SpecificationTests.cs" />
     <Compile Include="XmlSerialiseTest.cs" />
   </ItemGroup>

@@ -13,6 +13,11 @@
     <many-to-one name="Application" column="ApplicationId" class="Application" />
 
     <one-to-one name="Profile" class="Profile" property-ref="User" constrained="false" cascade="all" />
-      
+
+    <set name="Roles" table="aspnet_UsersInRoles" inverse="true">
+      <key column="UserId" />
+      <many-to-many class="Role" column="RoleId" />
+    </set>
+    
  </class>
 </hibernate-mapping>

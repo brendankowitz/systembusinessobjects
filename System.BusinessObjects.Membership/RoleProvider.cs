@@ -1,10 +1,10 @@
 ﻿using System;
-using System.BusinessObjects.Membership.Qry;
-using System.BusinessObjects.Transactions;
+using System.Linq;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Configuration.Provider;
 using System.Web.Hosting;
+using System.BusinessObjects.Membership.Qry;
 
 namespace System.BusinessObjects.Membership
 {
@@ -66,22 +66,30 @@ namespace System.BusinessObjects.Membership
             // Add the users to the given roles.
             try
             {
+                var userRepository = RepositoryFactory.GetUserRepository();
+                var roleRepository = RepositoryFactory.GetRoleRepository();
+
                 // For every user in the given list attempt to add to the given roles.
                 foreach (string userName in usernames)
                 {
-                    User user = User.Fetch<User>(QryFetchUserByName.Query(userName, Application.ID));
+                    User user = userRepository.Fetch(new UserWithNameSpecification(userName), 
+                        new UsersInApplicationSpecification(Application.ID));
+
                     if (user == null)
                     {
                         throw new ProviderException(string.Format("Unable find user {0} to add to role.", userName));
                     }
                     foreach (string roleName in roleNames)
                     {
-                        Role role = Role.Fetch(QryFetchRoleByName.Query(roleName, Application.ID));
+                        Role role = roleRepository.Fetch(new RoleWithNameSpecification(roleName), 
+                            new RoleInApplicationSpecification(Application.ID));
+
                         role.Users.Add(user);
-                        role.Save();
+                        user.Roles.Add(role);
+                        userRepository.Save(user);
                     }
-                    UnitOfWork.CurrentSession.Flush();
                 }
+                userRepository.SubmitChanges();
             }
             catch (Exception ex)
             {
@@ -97,14 +105,15 @@ namespace System.BusinessObjects.Membership
                 throw new ProviderException("Role already exists.");
             }
 
+            var roleRepository = RepositoryFactory.GetRoleRepository();
             try
             {
                 Role role = new Role();
                 role.RoleName = roleName;
                 role.Application = Application;
 
-                role.Save();
-                UnitOfWork.CurrentSession.Flush();
+                roleRepository.Save(role);
+                roleRepository.SubmitChanges();
             }
             catch (Exception ex)
             {
@@ -123,20 +132,21 @@ namespace System.BusinessObjects.Membership
             }
 
             // Remove role information from the data store.
+            var roleRepository = RepositoryFactory.GetRoleRepository();
             try
             {
                 // Get the role information.
-                Role role = Role.Fetch(QryFetchRoleByName.Query(roleName, Application.ID));
+                Role role = roleRepository.Fetch(new RoleWithNameSpecification(roleName), 
+                    new RoleInApplicationSpecification(Application.ID));
 
                 if (role != null)
                 {
                     // Delete the references to applications/roles.
 
 
-                    role.Delete();
-                    role.Save();
-                    UnitOfWork.CurrentSession.Flush();
-
+                    role.MarkDeleted();
+                    roleRepository.Save(role);
+                    roleRepository.SubmitChanges();
                     // Indicate no errors occured.
                     result = true;
                 }
@@ -153,24 +163,31 @@ namespace System.BusinessObjects.Membership
         public override string[] FindUsersInRole(string roleName, string usernameToMatch)
         {
             // Prepare a placeholder for the users.
-            string[] userNames = new string[0];
+            List<string> userNames = new List<string>();
 
             // Load the list of users for the given role name.
+            var userRepository = RepositoryFactory.GetUserRepository();
+            var roleRepository = RepositoryFactory.GetRoleRepository();
+
             try
             {
                 // Replace all * and ? wildcards for % and _, respectively.
                 usernameToMatch = usernameToMatch.Replace('*', '%');
                 usernameToMatch = usernameToMatch.Replace('?', '_');
 
+                Role role = roleRepository.Fetch(new RoleWithNameSpecification(roleName), 
+                            new RoleInApplicationSpecification(Application.ID));
+
                 // Perform the search.
-                IList<User> users = User.Search<User>(QrySearchUsersInRole.Query(roleName, Application.ID, usernameToMatch));
+                IEnumerable<User> users = userRepository.Search(new UserWithNameLikeSpecification(usernameToMatch),
+                    new UsersInApplicationSpecification(Application.ID),
+                    new UserWithRoleSpecification(role));
 
                 if (null != users)
                 {
-                    userNames = new string[users.Count];
-                    for (int i = 0; i < users.Count; i++)
+                    foreach (var user in users)
                     {
-                        userNames[i] = users[i].UserName;
+                        userNames.Add(user.UserName);
                     }
                 }
             }
@@ -180,27 +197,23 @@ namespace System.BusinessObjects.Membership
             }
 
             // Return the result of the operation.
-            return userNames;
+            return userNames.ToArray();
         }
 
         public override string[] GetAllRoles()
         {
             // Prepare a placeholder for the roles.
-            string[] roleNames = new string[0];
+            List<string> roleNames = new List<string>();
 
             // Load the list of roles for the configured application name.
+            var roleRepository = RepositoryFactory.GetRoleRepository();
             try
             {
-                IList<Role> list = Role.Search(QrySearchRoles.Query(Application.ID));
+                IEnumerable<Role> list = roleRepository.Search(new RoleInApplicationSpecification(Application.ID));
 
-                if (0 < list.Count)
+                foreach (var role in list)
                 {
-                    roleNames = new string[list.Count];
-                    int i = 0;
-                    foreach (Role role in list)
-                    {
-                        roleNames[i++] = role.RoleName;
-                    }
+                    roleNames.Add(role.RoleName);
                 }
             }
             catch (Exception ex)
@@ -209,26 +222,28 @@ namespace System.BusinessObjects.Membership
             }
 
             // Return the result of the operation.
-            return roleNames;
+            return roleNames.ToArray();
         }
 
         public override string[] GetRolesForUser(string username)
         {
             // Prepare a placeholder for the roles.
-            string[] roleNames = new string[0];
+            List<string> roleNames = new List<string>();
 
             // Load the list from the data store.
+            var membershipRepository = RepositoryFactory.GetMembershipRepository();
+
             try
             {
-                Membership user = Membership.Fetch<Membership>(QryFetchMemberByName.Query(username, Application.ID));
-                IList<Role> roles = Role.Search(QrySearchRoles.Query(user.ID, Application.ID));
+                Membership user = membershipRepository.Fetch(new MemberWithNameSpecification(username),
+                    new MembersInApplicationSpecification(Application.ID));
+                IEnumerable<Role> roles = user.Roles;
 
                 if (null != roles)
                 {
-                    roleNames = new string[roles.Count];
-                    for (int i = 0; i < roles.Count; i++)
+                    foreach(var role in roles)
                     {
-                        roleNames[i] = roles[i].RoleName;
+                        roleNames.Add(role.RoleName);
                     }
                 }
             }
@@ -238,26 +253,31 @@ namespace System.BusinessObjects.Membership
             }
 
             // Return the result of the operation.
-            return roleNames;
+            return roleNames.ToArray();
         }
 
         public override string[] GetUsersInRole(string roleName)
         {
             // Prepare a placeholder for the roles.
-            string[] userNames = new string[0];
+            List<string> userNames = new List<string>();
 
             // Load the list from the data store.
+            var userRepository = RepositoryFactory.GetUserRepository();
+            var roleRepository = RepositoryFactory.GetRoleRepository();
+
             try
             {
-                Role role = Role.Fetch(QryFetchRoleByName.Query(roleName, Application.ID));
-                IList<User> users = User.Search(QrySearchUsersInRole.Query(role.ID, Application.ID));
+                Role role = roleRepository.Fetch(new RoleWithNameSpecification(roleName),
+                            new RoleInApplicationSpecification(Application.ID));
+
+                IEnumerable<User> users = userRepository.Search(new UserWithRoleSpecification(role),
+                    new UsersInApplicationSpecification(Application.ID));
 
                 if (null != users)
                 {
-                    userNames = new string[users.Count];
-                    for (int i = 0; i < users.Count; i++)
+                    foreach (var user in users)
                     {
-                        userNames[i] = users[i].UserName;
+                        userNames.Add(user.UserName);
                     }
                 }
             }
@@ -267,15 +287,26 @@ namespace System.BusinessObjects.Membership
             }
 
             // Return the result of the operation.
-            return userNames;
+            return userNames.ToArray();
         }
 
         public override bool IsUserInRole(string username, string roleName)
         {
             bool isInRole = false;
+
+            var membershipRepository = RepositoryFactory.GetMembershipRepository();
+            var roleRepository = RepositoryFactory.GetRoleRepository();
+
             try
             {
-                isInRole = QrySearchUsersInRole.QueryCount(roleName, Application.ID, username).UniqueResult<long>() > 0;
+                Role role = roleRepository.Fetch(new RoleWithNameSpecification(roleName),
+                            new RoleInApplicationSpecification(Application.ID));
+
+                var userCount = membershipRepository.AsQueryable(new MemberWithNameSpecification(username),
+                    new MembersInApplicationSpecification(Application.ID),
+                    new MemberWithRoleSpecification(role));
+
+                isInRole = userCount.Count() > 0;
             }
             catch (Exception ex)
             {
@@ -288,22 +319,25 @@ namespace System.BusinessObjects.Membership
         {
             try
             {
+                var userRepository = RepositoryFactory.GetUserRepository();
+                var roleRepository = RepositoryFactory.GetRoleRepository();
+
                 foreach (string userName in usernames)
                 {
-                    User user = User.Fetch<User>(QryFetchUserByName.Query(userName, Application.ID));
+                    User user = userRepository.Fetch(new UserWithNameSpecification(userName),
+                        new UsersInApplicationSpecification(Application.ID));
 
                     foreach (string roleName in roleNames)
                     {
-                        Role role = Role.Fetch(QryFetchRoleByName.Query(roleName, Application.ID));
+                        Role role = roleRepository.Fetch(new RoleWithNameSpecification(roleName),
+                            new RoleInApplicationSpecification(Application.ID));
 
                         role.Users.Remove(user);
-                        role.Save();
+                        user.Roles.Remove(role);
+                        roleRepository.Save(role);
                     }
-                    UnitOfWork.CurrentSession.Flush();
                 }
-
-                //flush all changes
-                UnitOfWork.CurrentSession.Flush();
+                roleRepository.SubmitChanges();
             }
             catch (Exception ex)
             {
@@ -317,9 +351,14 @@ namespace System.BusinessObjects.Membership
             bool exists;
 
             // Check against the data store if the role exists.
+            var roleRepository = RepositoryFactory.GetRoleRepository();
+
             try
             {
-                exists = (QryFetchRoleByName.QueryCount(roleName, Application.ID).UniqueResult<int>() > 0);
+                var roleExists = roleRepository.AsQueryable(new RoleWithNameSpecification(roleName),
+                    new RoleInApplicationSpecification(Application.ID));
+
+                exists = roleExists.Count() > 0;
             }
             catch (Exception ex)
             {

@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.BusinessObjects.Membership.Qry;
-using System.BusinessObjects.Transactions;
 using System.Web.Hosting;
+using System.BusinessObjects.Data;
 
 namespace System.BusinessObjects.Membership
 {
@@ -39,13 +39,16 @@ namespace System.BusinessObjects.Membership
         {
             // Load configuration data.
             string appName = GetConfigValue(applicationName, HostingEnvironment.ApplicationVirtualPath);
-            Application app = Application.Fetch(QryFetchApplicationByName.Query(appName));
+
+            ApplicationWithNameSpecification withName = new ApplicationWithNameSpecification(appName);
+            IDataObjectRepository<Application> repo = RepositoryFactory.GetApplicationRepository();
+            Application app = repo.Fetch(withName);
 
             if (app == null)
             {
                 lock (fetchApplication)
                 {
-                    app = Application.Fetch(QryFetchApplicationByName.Query(appName));
+                    app = repo.Fetch(withName);
                     if (app == null)
                     {
                         app = new Application()
@@ -55,12 +58,11 @@ namespace System.BusinessObjects.Membership
                             Description = description,
                             LoweredApplicationName = appName.ToLower()
                         };
-                        app.Save();
-                        UnitOfWork.CurrentSession.Flush();
+                        repo.Save(app);
+                        repo.SubmitChanges();
                     }
                 }
             }
-
             return app;
         }
 

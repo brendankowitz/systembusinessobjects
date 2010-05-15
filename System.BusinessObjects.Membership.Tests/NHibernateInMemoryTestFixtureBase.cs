@@ -6,13 +6,15 @@ using NHibernate;
 using NHibernate.Cfg;
 using NHibernate.Tool.hbm2ddl;
 using System.Collections.Generic;
+using System.BusinessObjects.Data;
+using BusinessObject.Framework.Tests;
 
 namespace System.BusinessObjects.Membership.Tests
 {
         /// <summary>
         /// Provides a fixture base for Unit tests to be run on an In-Memory SQLite db
         /// </summary>
-        public class NHibernateInMemoryTestFixtureBase : IDisposable
+    public class NHibernateInMemoryTestFixtureBase : IDisposable, IMembershipRepositoryFactory
         {
             protected static ISessionFactory sessionFactory;
             protected static NHibernate.Cfg.Configuration configuration;
@@ -20,21 +22,22 @@ namespace System.BusinessObjects.Membership.Tests
 
             protected ISession session;
 
+
             public NHibernateInMemoryTestFixtureBase()
             {
                 OneTimeInitalize(typeof(System.BusinessObjects.Membership.Membership).Assembly, this.GetType().Assembly);
-                NHibernateSessionProvider.CurrentFactory = sessionFactory;
                 session = CreateSession();
                 session.BeginTransaction();
-                NHibernateSessionProvider.Provider.CurrentSession = session;
+                MembershipProviderRepository.Set(this);
 
                 app.ApplicationName = "Blazing.Membership";
                 app.Description = "NHibernateMembership";
-                app.Save();
+                session.Save(app);
+
 
                 ((MembershipProvider)System.Web.Security.Membership.Provider).Application = app;
                 ((RoleProvider)System.Web.Security.Roles.Provider).Application = app;
-                ((ProfileProvider)System.Web.Profile.ProfileManager.Provider).Application = app;
+                //((ProfileProvider)System.Web.Profile.ProfileManager.Provider).Application = app;
             }
 
             public void Dispose()
@@ -72,7 +75,6 @@ namespace System.BusinessObjects.Membership.Tests
                     configuration = configuration.AddAssembly(assembly);
                 }
                 sessionFactory = configuration.BuildSessionFactory();
-
             }
 
             public ISession CreateSession()
@@ -82,5 +84,14 @@ namespace System.BusinessObjects.Membership.Tests
                 new SchemaExport(configuration).Execute(false, true, false, connection, null);
                 return openSession;
             }
+
+            #region IMembershipRepositoryFactory Members
+
+            public IScopedRepository<T> GetMembershipRepository<T>() where T : DataObject
+            {
+                return new NHLinqRepository<T>(session);
+            }
+
+            #endregion
         }
     }

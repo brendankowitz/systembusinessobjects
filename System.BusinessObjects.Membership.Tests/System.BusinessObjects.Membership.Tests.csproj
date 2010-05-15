@@ -53,6 +53,10 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\Lib\Required_For_LazyLoading\LinFu\NHibernate.ByteCode.LinFu.dll</HintPath>
     </Reference>
+    <Reference Include="NHibernate.Linq, Version=1.1.0.1001, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\Lib\NHibernate.Linq.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.configuration" />
     <Reference Include="System.Core">
@@ -75,6 +79,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Infrastructure\NHLinqRepository.cs" />
     <Compile Include="MembershipProviderTests.cs" />
     <Compile Include="NHibernateInMemoryTestFixtureBase.cs" />
     <Compile Include="ProfileProviderTests.cs" />
