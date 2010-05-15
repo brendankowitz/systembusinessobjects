@@ -1,10 +1,6 @@
 using System;
-using System.Data;
-using System.Collections.Generic;
-using Iesi.Collections.Generic;
 using System.BusinessObjects.Data;
-using System.BusinessObjects.Validation;
-using System.BusinessObjects.Transactions;
+using Iesi.Collections.Generic;
 
 namespace System.BusinessObjects.Membership
 {
@@ -96,7 +92,7 @@ namespace System.BusinessObjects.Membership
             set
             {
                 _profile = value;
-                if (value != null && value.RowState == DataRowState.Detached)
+                if (value != null && !value.IsDeleted)
                     value.User = this;
             }
         }
@@ -110,6 +106,19 @@ namespace System.BusinessObjects.Membership
                 Profile.LastUpdatedDate,
                 Profile.PropertyValuesBinary != null ? Profile.PropertyValuesBinary.Length : 0);
             return retval;
+        }
+
+        private ISet<Role> _roles = new HashedSet<Role>();
+        public virtual ISet<Role> Roles
+        {
+            get
+            {
+                return _roles;
+            }
+            set
+            {
+                _roles = value;
+            }
         }
     }
 }

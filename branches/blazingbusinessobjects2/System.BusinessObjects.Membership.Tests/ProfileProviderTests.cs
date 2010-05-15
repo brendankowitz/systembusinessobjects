@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Web.Profile;
-using System.BusinessObjects.Transactions;
 using Xunit;
 
 namespace System.BusinessObjects.Membership.Tests
@@ -17,7 +16,9 @@ namespace System.BusinessObjects.Membership.Tests
                     IsAnonymous = false,
                     UserName = user
                 };
-                p.Save();
+
+                var repository = GetMembershipRepository<User>();
+                repository.Save(p);
             }
 
             System.Configuration.SettingsContext sc = new System.Configuration.SettingsContext();
@@ -40,7 +41,7 @@ namespace System.BusinessObjects.Membership.Tests
         {
             System.Web.Profile.ProfileManager.DeleteInactiveProfiles(System.Web.Profile.ProfileAuthenticationOption.Anonymous,
                 DateTime.Now);
-            UnitOfWork.CurrentSession.Flush();
+            session.Flush();
         }
 
         [Fact]
@@ -52,7 +53,9 @@ namespace System.BusinessObjects.Membership.Tests
                 IsAnonymous = false,
                 UserName = "user1"
             };
-            p.Save();
+
+            var repository = GetMembershipRepository<User>();
+            repository.Save(p);
 
             System.Configuration.SettingsContext sc = new System.Configuration.SettingsContext();
             sc.Add("UserName", "user1");
@@ -68,9 +71,9 @@ namespace System.BusinessObjects.Membership.Tests
 
             ProfileManager.Provider.SetPropertyValues(sc, properties);
 
-            User.Evict(p.ID);
+            session.Evict(p);
 
-            User u2 = User.Load(p.ID);
+            User u2 = repository.Fetch(p.ID);
 
             Assert.Equal(p.ID, u2.Profile.ID);
         }
@@ -105,7 +108,8 @@ namespace System.BusinessObjects.Membership.Tests
                 IsAnonymous = false,
                 UserName = "user1"
             };
-            p.Save();
+            var repository = GetMembershipRepository<User>();
+            repository.Save(p);
 
             System.Configuration.SettingsContext sc = new System.Configuration.SettingsContext();
             sc.Add("UserName", "user1");
@@ -119,7 +123,8 @@ namespace System.BusinessObjects.Membership.Tests
             propVal.PropertyValue = "test string";
             properties.Add(propVal);
             ProfileManager.Provider.SetPropertyValues(sc, properties);
-            User.Evict(p.ID);
+            
+            session.Evict(p);
 
             System.Configuration.SettingsPropertyCollection outCol = new System.Configuration.SettingsPropertyCollection();
             outCol.Add(new System.Configuration.SettingsProperty("Test") { DefaultValue = "", PropertyType = typeof(string) });

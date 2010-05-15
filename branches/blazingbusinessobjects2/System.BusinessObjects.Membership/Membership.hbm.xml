@@ -23,7 +23,7 @@
     <property name="FailedPasswordAnswerAttemptCount" column="FailedPasswordAnswerAttemptCount" type="System.Int32" not-null="true" />
     <property name="FailedPasswordAnswerAttemptWindowStart" column="FailedPasswordAnswerAttemptWindowStart" type="System.DateTime" not-null="true" />
     <property name="Comment" column="Comment" type="System.String" not-null="false" />
-    <many-to-one name="Application" column="ApplicationId" class="Application" />
+    <!--<many-to-one name="Application" column="ApplicationId" class="Application" />-->
 
   </joined-subclass>
 </hibernate-mapping>

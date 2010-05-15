@@ -45,5 +45,15 @@ namespace BusinessObject.Framework.Tests
         {
             throw new NotImplementedException("Full Linq queries are not implemented by this repository");
         }
+
+        public override IQueryable<T> AsQueryable(params Specification<T>[] specifications)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override IQueryable AsQueryable(Query<T> query)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

@@ -49,5 +49,16 @@ namespace BusinessObject.Framework.Tests
             query.Expression(qry);
             return qry.ToList();
         }
+
+        public override IQueryable<T> AsQueryable(params Specification<T>[] specifications)
+        {
+            return Convert(specifications);
+        }
+
+        public override IQueryable AsQueryable(System.BusinessObjects.Infrastructure.Query<T> query)
+        {
+            var qry = _session.Linq<T>();
+            return query.Expression(qry);
+        }
     }
 }

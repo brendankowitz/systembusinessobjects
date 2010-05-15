@@ -63,23 +63,27 @@
     </Compile>
     <Compile Include="Application.cs" />
     <Compile Include="ApplicationManager.cs" />
-    <Compile Include="Membership.cs" />
+    <Compile Include="Membership.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="MembershipProvider.cs" />
-    <Compile Include="Profile.cs" />
-    <Compile Include="ProfileProvider.cs" />
+    <Compile Include="Profile.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Qry\QryFetchApplicationByName.cs" />
-    <Compile Include="Qry\QryFetchMemberByName.cs" />
-    <Compile Include="Qry\QryFetchRoleByName.cs" />
-    <Compile Include="Qry\QrySearchAllMembers.cs" />
-    <Compile Include="Qry\QrySearchMemberByEmail.cs" />
-    <Compile Include="Qry\QryFetchUserByName.cs" />
-    <Compile Include="Qry\QrySearchMemberByName.cs" />
-    <Compile Include="Qry\QrySearchProfiles.cs" />
-    <Compile Include="Qry\QrySearchRecentlyActiveUsers.cs" />
-    <Compile Include="Qry\QrySearchRoles.cs" />
-    <Compile Include="Qry\QrySearchUsersInRole.cs" />
-    <Compile Include="Role.cs" />
+    <Compile Include="Qry\ApplicationWithNameSpecification.cs" />
+    <Compile Include="Qry\MembersInApplicationSpecification.cs" />
+    <Compile Include="Qry\MembersWithEmailSpecification.cs" />
+    <Compile Include="Qry\MemberWithNameSpecification.cs" />
+    <Compile Include="Qry\RecentlyActiveMembersSpecification.cs" />
+    <Compile Include="Qry\RoleInApplicationSpecification.cs" />
+    <Compile Include="Qry\RoleWithNameSpecification.cs" />
+    <Compile Include="Qry\UserWithNameSpecification.cs" />
+    <Compile Include="Qry\UserWithRoleSpecification.cs" />
+    <Compile Include="RepositoryFactory.cs" />
+    <Compile Include="Role.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="RoleProvider.cs" />
     <Compile Include="User.cs" />
   </ItemGroup>
@@ -103,6 +107,9 @@
     <None Include="..\System.BusinessObjects.Framework\SystemBusinessObjectsPublic.snk">
       <Link>SystemBusinessObjectsPublic.snk</Link>
     </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Qry\Old\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

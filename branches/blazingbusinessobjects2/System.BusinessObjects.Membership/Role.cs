@@ -1,10 +1,6 @@
 using System;
-using System.Data;
-using System.Collections.Generic;
 using Iesi.Collections.Generic;
 using System.BusinessObjects.Data;
-using System.BusinessObjects.Validation;
-using System.BusinessObjects.Transactions;
 
 namespace System.BusinessObjects.Membership
 {
@@ -15,13 +11,6 @@ namespace System.BusinessObjects.Membership
     {
         public Role()
         {
-            OnSaved += Role_OnSaved;
-        }
-
-        void Role_OnSaved(object sender, EventArgs e)
-        {
-            //Flush all saves from this object to the db.
-            UnitOfWork.CurrentSession.Flush();
         }
 
         public virtual Guid ID

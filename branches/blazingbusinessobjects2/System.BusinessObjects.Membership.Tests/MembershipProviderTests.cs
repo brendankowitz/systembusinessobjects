@@ -34,11 +34,16 @@ namespace System.BusinessObjects.Membership.Tests
             MembershipUser user = System.Web.Security.Membership.CreateUser("user1", "password", "test@test.com",
                                                        "question?", "yes", true, out status);
 
-            Application app = Application.Fetch(QryFetchApplicationByName.Query("Blazing.Membership"));
+            var repository = GetMembershipRepository<Application>();
+            var userRepository = GetMembershipRepository<User>();
+
+            Application app = repository.Fetch(new ApplicationWithNameSpecification("Blazing.Membership"));
             
             Assert.NotNull(app);
 
-            User u = User.Fetch(QryFetchUserByName.Query("user1", app.ID));
+            User u = userRepository
+                .Fetch(new UserWithNameSpecification("user1"), 
+                    new UsersInApplicationSpecification(app.ID));
 
             Assert.Equal(u.Application.ID, app.ID);
         }
@@ -53,6 +58,8 @@ namespace System.BusinessObjects.Membership.Tests
                                                        "question?", "yes", true, out status);
 
             Assert.Equal(System.Web.Security.MembershipCreateStatus.Success, status);
+
+            session.Flush();
 
             int total;
             MembershipUserCollection col = System.Web.Security.Membership.GetAllUsers(0, 1, out total);

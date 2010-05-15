@@ -231,14 +231,6 @@ namespace System.BusinessObjects.Data
         }
 
         /// <summary>
-        /// Sets the business object's RowState to Loaded
-        /// </summary>
-        protected virtual internal void SetLoadRowState()
-        {
-            isDirty = false;
-        }
-
-        /// <summary>
         /// Sets the business object's rowstate to indicate the object has been saved
         /// </summary>
         /// <returns></returns>

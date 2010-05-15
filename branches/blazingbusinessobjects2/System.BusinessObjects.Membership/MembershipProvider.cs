@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Collections.Generic;
 using System.Text;
 using System.Web.Configuration;
@@ -7,7 +8,6 @@ using System.Web.Hosting;
 using System.BusinessObjects.Membership.Qry;
 using System.Configuration.Provider;
 using SystemWeb = System.Web.Security;
-using System.BusinessObjects.Transactions;
 
 namespace System.BusinessObjects.Membership
 {
@@ -266,8 +266,10 @@ namespace System.BusinessObjects.Membership
                     }
                 }
 
+                var membershipRepository = RepositoryFactory.GetMembershipRepository();
                 // Get the user from the data store.
-                Membership user = Membership.Fetch<Membership>(QryFetchMemberByName.Query(username, Application.ID));
+                Membership user = membershipRepository.Fetch(new MemberWithNameSpecification(username), 
+                    new MembersInApplicationSpecification(Application.ID));
 
                 if (null != user)
                 {
@@ -279,8 +281,7 @@ namespace System.BusinessObjects.Membership
                         user.LastActivityDate = DateTime.Now;
 
                         // Update user record with the new password.
-                        user.Save();
-                        UnitOfWork.CurrentSession.Flush();
+                        membershipRepository.Save(user);
                         result = true;
                     }
                     catch
@@ -288,6 +289,7 @@ namespace System.BusinessObjects.Membership
                         throw new SystemWeb.MembershipPasswordException("Password change cancelled due to account being locked.");
                     }
                 }
+                membershipRepository.SubmitChanges();
             }
 
             // Return the result of the operation.
@@ -303,7 +305,9 @@ namespace System.BusinessObjects.Membership
             if (ValidateUser(username, password))
             {
                 // Get the user from the data store.
-                Membership user = Membership.Fetch<Membership>(QryFetchMemberByName.Query(username, Application.ID));
+                var membershipRepository = RepositoryFactory.GetMembershipRepository();
+                Membership user = membershipRepository.Fetch(new MemberWithNameSpecification(username), new MembersInApplicationSpecification(Application.ID));
+                
                 if (null != user)
                 {
                     try
@@ -313,9 +317,7 @@ namespace System.BusinessObjects.Membership
                         user.PasswordAnswer = EncodePassword(newPasswordAnswer, user.PasswordSalt);
                         user.LastActivityDate = DateTime.Now;
                         // Update user record with the new password.
-                        user.Save();
-                        UnitOfWork.CurrentSession.Flush();
-                        // Indicate a successful operation.
+                        membershipRepository.Save(user);
                         result = true;
                     }
                     catch
@@ -323,6 +325,7 @@ namespace System.BusinessObjects.Membership
                         throw new SystemWeb.MembershipPasswordException("Unable to change account security question and answer.");
                     }
                 }
+                membershipRepository.SubmitChanges();
             }
 
             // Return the result of the operation.
@@ -347,7 +350,9 @@ namespace System.BusinessObjects.Membership
                 return null;
             }
 
-            if (QryFetchUserByName.QueryCount(username, Application.ID).UniqueResult<int>() > 0)
+            var userRepository = RepositoryFactory.GetUserRepository();
+            if (userRepository.AsQueryable(new UserWithNameSpecification(username), 
+                new UsersInApplicationSpecification(Application.ID)).Count() > 0)
             {
                 status = SystemWeb.MembershipCreateStatus.DuplicateUserName;
             }
@@ -369,15 +374,14 @@ namespace System.BusinessObjects.Membership
 
                 try
                 {
-                    user.Save();
-                    UnitOfWork.CurrentSession.Flush();
+                    userRepository.Save(user);
                     status = SystemWeb.MembershipCreateStatus.Success;
                 }
                 catch (Exception ex)
                 {
                     throw new ProviderException("Failed to create user", ex);
                 }
-
+                userRepository.SubmitChanges();
 
                 return GetUser(username, false);
             }
@@ -392,27 +396,33 @@ namespace System.BusinessObjects.Membership
             // Delete the corresponding user record from the data store.
             try
             {
-                // Get the user information.
-                IList<Membership> members = Membership.Search<Membership>(QryFetchMemberByName.Query(username, Application.ID));
+                var membershipRepository = RepositoryFactory.GetMembershipRepository();
+                var profileRepository = RepositoryFactory.GetProfileRepository();
 
-                if (members != null && members.Count == 1)
+                // Get the user information.
+                IEnumerable<Membership> members = membershipRepository.Search(new MemberWithNameSpecification(username), 
+                    new MembersInApplicationSpecification(Application.ID));
+
+                if (members != null && members.Count() == 1)
                 {
+                    var firstMember = members.First();
+
                     // Process commands to delete all data for the user in the database.
                     if (deleteAllRelatedData)
                     {
-                        if (members[0].Profile != null)
+                        if (firstMember.Profile != null)
                         {
-                            members[0].Profile.Delete();
-                            members[0].Profile.Save();
-                            members[0].Profile = null;
+                            firstMember.Profile.MarkDeleted();
+                            profileRepository.Save(firstMember.Profile);
+                            firstMember.Profile = null;
                         }
                     }
 
                     // Delete the user record.
-                    members[0].Delete();
-                    members[0].Save();
-                    UnitOfWork.CurrentSession.Flush();
+                    firstMember.MarkDeleted();
+                    membershipRepository.Save(firstMember);
                 }
+                membershipRepository.SubmitChanges();
 
                 result = true;
             }
@@ -437,9 +447,12 @@ namespace System.BusinessObjects.Membership
                 emailToMatch = emailToMatch.Replace('*', '%');
                 emailToMatch = emailToMatch.Replace('?', '_');
 
+                var membershipRepository = RepositoryFactory.GetMembershipRepository();
                 // Perform the search.
-                IList<Membership> page = Membership.Search<Membership>(QrySearchMemberByEmail.Query(emailToMatch, Application.ID, pageSize, pageIndex));
-                totalRecords = QrySearchMemberByEmail.QueryCount(emailToMatch, Application.ID).UniqueResult<int>();
+                var membersWithEmail = membershipRepository.AsQueryable(new MembersWithEmailSpecification(emailToMatch), new MembersInApplicationSpecification(Application.ID));
+
+                IEnumerable<Membership> page = membersWithEmail.Skip(pageIndex * pageSize).Take(pageSize).AsEnumerable();
+                totalRecords = membersWithEmail.Count();
 
                 foreach (Membership appUser in page)
                 {
@@ -468,8 +481,12 @@ namespace System.BusinessObjects.Membership
                 usernameToMatch = usernameToMatch.Replace('?', '_');
 
                 // Perform the search.
-                IList<Membership> page = Membership.Search<Membership>(QrySearchMemberByName.Query(usernameToMatch, Application.ID, pageSize, pageIndex));
-                totalRecords = QrySearchMemberByName.QueryCount(usernameToMatch, Application.ID).UniqueResult<int>();
+                var membershipRepository = RepositoryFactory.GetMembershipRepository();
+                // Perform the search.
+                var membersWithUsername = membershipRepository.AsQueryable(new MemberWithNameSpecification(usernameToMatch), new MembersInApplicationSpecification(Application.ID));
+
+                IEnumerable<Membership> page = membersWithUsername.Skip(pageIndex * pageSize).Take(pageSize).AsEnumerable();
+                totalRecords = membersWithUsername.Count();
 
                 foreach (Membership appUser in page)
                 {
@@ -487,13 +504,16 @@ namespace System.BusinessObjects.Membership
 
         public override SystemWeb.MembershipUserCollection GetAllUsers(int pageIndex, int pageSize, out int totalRecords)
         {
-            // Create a placeholder for all user accounts retrived, if any.
+            // Create a placeholder for all user accounts retrieved, if any.
             SystemWeb.MembershipUserCollection users = new SystemWeb.MembershipUserCollection();
 
             try
             {
-                IList<Membership> page = Membership.Search<Membership>(QrySearchAllMembers.Query(Application.ID, pageIndex, pageSize));
-                totalRecords = QrySearchAllMembers.QueryCount(Application.ID).UniqueResult<int>();
+                var membershipRepository = RepositoryFactory.GetMembershipRepository();
+
+                var membersInApplication = membershipRepository.AsQueryable(new MembersInApplicationSpecification(Application.ID));
+                IEnumerable<Membership> page = membersInApplication.Skip(pageIndex * pageSize).Take(pageSize).AsEnumerable();
+                totalRecords = membersInApplication.Count();
 
                 foreach (Membership appUser in page)
                 {
@@ -514,14 +534,19 @@ namespace System.BusinessObjects.Membership
             // Assume there are no users online.
             int numberOfUsersOnline;
 
-            // Get a count of users whose LastActivityDate is greater than the threashold.
+            // Get a count of users whose LastActivityDate is greater than the threshold.
             try
             {
-                // Determine the threashold based on the configured time window against which we'll compare.
+                // Determine the threshold based on the configured time window against which we'll compare.
                 TimeSpan onlineSpan = new TimeSpan(0, SystemWeb.Membership.UserIsOnlineTimeWindow, 0);
                 DateTime compareTime = DateTime.Now.Subtract(onlineSpan);
 
-                numberOfUsersOnline = QrySearchRecentlyActiveUsers.QueryCount(compareTime, Application.ID).UniqueResult<int>();
+                var membershipRepository = RepositoryFactory.GetMembershipRepository();
+
+                var membersOnline = membershipRepository.AsQueryable(new MembersInApplicationSpecification(Application.ID),
+                    new RecentlyActiveMembersSpecification(compareTime));
+
+                numberOfUsersOnline = membersOnline.Count();
             }
             catch (Exception ex)
             {
@@ -549,15 +574,21 @@ namespace System.BusinessObjects.Membership
             }
 
             // Get the user from the data store.
-            Membership user = Membership.Fetch<Membership>(QryFetchMemberByName.Query(username, Application.ID));
+
+            var membershipRepository = RepositoryFactory.GetMembershipRepository();
+
+            // Get the user information.
+            Membership user = membershipRepository.Fetch(new MemberWithNameSpecification(username),
+                new MembersInApplicationSpecification(Application.ID));
+
             if (null != user)
             {
                 // Determine if the user is required to answer a password question.
                 if (RequiresQuestionAndAnswer && !CheckPassword(answer, user.PasswordAnswer, user.PasswordSalt))
                 {
                     user.FailedPasswordAnswerAttemptCount++;
-                    user.Save();
-                    UnitOfWork.CurrentSession.Flush();
+                    membershipRepository.Save(user);
+                    membershipRepository.SubmitChanges();
 
                     throw new System.Web.Security.MembershipPasswordException("Security answer was not correct.");
                 }
@@ -585,16 +616,21 @@ namespace System.BusinessObjects.Membership
             }
 
             // Get the user record from the data store.
+            var membershipRepository = RepositoryFactory.GetMembershipRepository();
+
             try
             {
-                IList<Membership> members = Membership.Search<Membership>(QryFetchMemberByName.Query(username, Application.ID));
+                // Get the user information.
+                IEnumerable<Membership> members = membershipRepository.Search(new MemberWithNameSpecification(username),
+                    new MembersInApplicationSpecification(Application.ID));
 
-                if (members.Count == 1)
+
+                if (members.Count() == 1)
                 {
-                    loadedUser = members[0];
+                    loadedUser = members.First();
                     user = loadedUser.ToMembershipUser(Name);
                 }
-                else if (1 < members.Count)
+                else if (1 < members.Count())
                 {
                     throw new ProviderException(STR_TooManyMatchingUsers);
                 }
@@ -609,8 +645,7 @@ namespace System.BusinessObjects.Membership
             {
                 // Update the last activity timestamp (LastActivityDate).
                 loadedUser.LastActivityDate = DateTime.Now;
-                loadedUser.Save();
-                UnitOfWork.CurrentSession.Flush();
+                membershipRepository.Save(loadedUser);
             }
 
             // Return the resulting user.
@@ -630,9 +665,11 @@ namespace System.BusinessObjects.Membership
             }
 
             // Get the user record from the data store.
+            var membershipRepository = RepositoryFactory.GetMembershipRepository();
+
             try
             {
-                member = Membership.Load<Membership>((Guid)providerUserKey);
+                member = membershipRepository.Fetch((Guid)providerUserKey);
                 if (member != null)
                 {
                     user = member.ToMembershipUser(Name);
@@ -642,7 +679,7 @@ namespace System.BusinessObjects.Membership
                     throw new ProviderException(STR_UnableToGetMembershipUser);
                 }
             }
-            catch (Exception ex)
+            catch
             {
                 throw new ProviderException(STR_UnableToGetMembershipUser);
             }
@@ -652,8 +689,7 @@ namespace System.BusinessObjects.Membership
             {
                 // Update the last activity timestamp (LastActivityDate).
                 member.LastActivityDate = DateTime.Now;
-                member.Save();
-                UnitOfWork.CurrentSession.Flush();
+                membershipRepository.Save(member);
             }
 
             // Return the resulting user.
@@ -674,13 +710,16 @@ namespace System.BusinessObjects.Membership
             // Get the user record from the data store.
             try
             {
-                IList<Membership> list = Membership.Search<Membership>(QrySearchMemberByEmail.Query(email, Application.ID));
+                var membershipRepository = RepositoryFactory.GetMembershipRepository();
 
-                if (1 == list.Count)
+                IEnumerable<Membership> list = membershipRepository.Search(new MembersInApplicationSpecification(Application.ID),
+                    new MembersWithEmailSpecification(email));
+
+                if (list.Count() == 1)
                 {
-                    username = list[0].UserName;
+                    username = list.First().UserName;
                 }
-                else if (1 < list.Count)
+                else if (1 < list.Count())
                 {
                     throw new ProviderException(STR_TooManyMatchingUsers);
                 }
@@ -705,14 +744,16 @@ namespace System.BusinessObjects.Membership
                 throw new SystemWeb.MembershipPasswordException("Password reset is not enabled.");
             }
 
-            Membership user = Membership.Fetch<Membership>(QryFetchMemberByName.Query(username, Application.ID));
+            var membershipRepository = RepositoryFactory.GetMembershipRepository();
+
+            Membership user = membershipRepository.Fetch(new MembersInApplicationSpecification(Application.ID),
+                new MemberWithNameSpecification(username));
 
             // Determine if a valid answer has been given if question and answer is required.
             if ((null == answer) && RequiresQuestionAndAnswer)
             {
                 user.FailedPasswordAnswerAttemptCount++;
-                user.Save();
-                UnitOfWork.CurrentSession.Flush();
+                membershipRepository.Save(user);
 
                 throw new SystemWeb.MembershipPasswordException("Password answer required for reset.");
             }
@@ -748,7 +789,7 @@ namespace System.BusinessObjects.Membership
                 if (RequiresQuestionAndAnswer && !CheckPassword(answer, user.PasswordAnswer, user.PasswordSalt))
                 {
                     user.FailedPasswordAnswerAttemptCount++;
-                    user.Save();
+                    membershipRepository.Save(user);
 
                     throw new SystemWeb.MembershipPasswordException("Password reset cancelled because security answer was incorrect.");
                 }
@@ -759,8 +800,8 @@ namespace System.BusinessObjects.Membership
                     user.Password = EncodePassword(newPassword, user.PasswordSalt);
                     user.LastPasswordChangedDate = DateTime.Now;
                     user.LastActivityDate = DateTime.Now;
-                    user.Save();
-                    UnitOfWork.CurrentSession.Flush();
+                    membershipRepository.Save(user);
+                    membershipRepository.SubmitChanges();
                 }
                 catch
                 {
@@ -780,15 +821,18 @@ namespace System.BusinessObjects.Membership
             try
             {
                 // Get the user record form the data store.
-                Membership member = Membership.Fetch<Membership>(QryFetchMemberByName.Query(userName, Application.ID));
+                var membershipRepository = RepositoryFactory.GetMembershipRepository();
+
+                Membership member = membershipRepository.Fetch(new MembersInApplicationSpecification(Application.ID),
+                    new MemberWithNameSpecification(userName));
 
                 if (member != null)
                 {
                     member.IsLockedOut = false;
                     member.LastLockoutDate = DateTime.Now;
                     member.LastActivityDate = DateTime.Now;
-                    member.Save();
-                    UnitOfWork.CurrentSession.Flush();
+                    membershipRepository.Save(member);
+                    membershipRepository.SubmitChanges();
 
                     result = true;
                 }
@@ -806,10 +850,14 @@ namespace System.BusinessObjects.Membership
         {
             try
             {
-                Membership member = Membership.Fetch<Membership>(QryFetchMemberByName.Query(user.UserName, Application.ID));
+                var membershipRepository = RepositoryFactory.GetMembershipRepository();
+
+                Membership member = membershipRepository.Fetch(new MembersInApplicationSpecification(Application.ID),
+                    new MemberWithNameSpecification(user.UserName));
+
                 member.FromMembershipUser(user);
-                member.Save();
-                UnitOfWork.CurrentSession.Flush();
+                membershipRepository.Save(member);
+                membershipRepository.SubmitChanges();
             }
             catch (Exception ex)
             {
@@ -823,7 +871,10 @@ namespace System.BusinessObjects.Membership
             bool isValid = false;
 
             // Get the password and the flag indicating the user is approved.
-            Membership member = Membership.Fetch<Membership>(QryFetchMemberByName.Query(username, Application.ID));
+            var membershipRepository = RepositoryFactory.GetMembershipRepository();
+
+            Membership member = membershipRepository.Fetch(new MembersInApplicationSpecification(Application.ID),
+                new MemberWithNameSpecification(username));
 
             if (null != member)
             {
@@ -837,17 +888,16 @@ namespace System.BusinessObjects.Membership
                         isValid = true;
                         // Update the user's last login date.
                         member.LastLoginDate = DateTime.Now;
-                        member.Save();
+                        membershipRepository.Save(member);
                     }
                 }
                 else
                 {
                     // Update the failure count.
                     member.FailedPasswordAttemptCount++;
-                    member.Save();
+                    membershipRepository.Save(member);
                 }
             }
-            UnitOfWork.CurrentSession.Flush();
 
             // Return the result of the operation.
             return isValid;
