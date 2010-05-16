@@ -8,9 +8,12 @@ using System.Web.Hosting;
 using System.BusinessObjects.Membership.Qry;
 using System.Configuration.Provider;
 using SystemWeb = System.Web.Security;
+using System.Web;
+using System.Security.Permissions;
 
 namespace System.BusinessObjects.Membership
 {
+    [AspNetHostingPermission(SecurityAction.InheritanceDemand, Level = AspNetHostingPermissionLevel.Minimal), AspNetHostingPermission(SecurityAction.LinkDemand, Level = AspNetHostingPermissionLevel.Minimal)]
     public class MembershipProvider : SystemWeb.MembershipProvider
     {
         private const string STR_UnableToGetMembershipUser = "Unable to get membership user";
@@ -42,7 +45,8 @@ namespace System.BusinessObjects.Membership
         private int minRequiredPasswordLength;
         private int minRequiredNonAlphanumericCharacters;
         private string passwordStrengthRegularExpression;
-        private MachineKeySection machineKey;
+        private string machineDecryptionKey;
+        private string machineValidationKey;
         #endregion Fields
 
         #region Properties
@@ -231,13 +235,25 @@ namespace System.BusinessObjects.Membership
                     throw new ProviderException("password format not supported");
             }
 
-            Configuration.Configuration cfg = WebConfigurationManager.OpenWebConfiguration(HostingEnvironment.ApplicationVirtualPath);
-            machineKey = (MachineKeySection)cfg.GetSection("system.web/machineKey");
-            if ("Auto".Equals(machineKey.Decryption))
+            var decryptionMode = "Auto";
+            try
+            { //if we can access the machine key and its not auto, use it.
+                MachineKeySection machineKey = (MachineKeySection)WebConfigurationManager.GetSection("system.web/machineKey");
+                decryptionMode = machineKey.Decryption;
+                if (!"Auto".Equals(decryptionMode))
+                {
+                    machineDecryptionKey = machineKey.DecryptionKey;
+                    machineValidationKey = machineKey.ValidationKey;
+                }
+            }
+            catch //doesnt work in medium trust
+            {
+            }
+            if ("Auto".Equals(decryptionMode))
             {
                 // Create our own key if one has not been specified.
-                machineKey.DecryptionKey = CreateKey(24);
-                machineKey.ValidationKey = CreateKey(64);
+                machineDecryptionKey = CreateKey(24);
+                machineValidationKey = CreateKey(64);
             }
         }
         #endregion Initialization
@@ -363,14 +379,15 @@ namespace System.BusinessObjects.Membership
                 user.IsAnonymous = false;
                 user.Application = Application;
 
-                user.Password = EncodePassword(password, machineKey.ValidationKey);
+                user.Password = EncodePassword(password, machineValidationKey);
                 user.PasswordFormat = (int)PasswordFormat;
-                user.PasswordSalt = machineKey.ValidationKey;
+                user.PasswordSalt = machineValidationKey;
                 user.Email = email;
                 user.PasswordQuestion = passwordQuestion;
-                user.PasswordAnswer = EncodePassword(passwordAnswer, machineKey.ValidationKey);
+                user.PasswordAnswer = EncodePassword(passwordAnswer, machineValidationKey);
                 user.IsApproved = isApproved;
                 user.CreateDate = DateTime.Now;
+                user.LastActivityDate = DateTime.Now;
 
                 try
                 {
@@ -971,7 +988,7 @@ namespace System.BusinessObjects.Membership
                         {
                             // The machine key will either come from the Web.config file or it will be automatically generate
                             // during initialization.
-                            validationKey = machineKey.ValidationKey;
+                            validationKey = machineValidationKey;
                         }
                         HMACSHA1 hash = new HMACSHA1();
                         hash.Key = HexToByte(validationKey);
@@ -983,8 +1000,9 @@ namespace System.BusinessObjects.Membership
             }
 
             // Return the encoded password.
-            return encodedPassword;
+            return encodedPassword;       
         }
+
         /// <summary>
         /// Decrypts or leaves the password clear based on the <see cref="PasswordFormat"/> property value.
         /// </summary>

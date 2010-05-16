@@ -106,7 +106,6 @@
     <Compile Include="BusinessObjectFactory.cs" />
     <Compile Include="DataObjectTests.cs" />
     <Compile Include="HashtableDataCacheTests.cs" />
-    <Compile Include="Infrastructure\IsolatedTestAttribute.cs" />
     <Compile Include="Infrastructure\NHLinqRepository.cs" />
     <Compile Include="Modules\AutofacTypeFactory.cs" />
     <Compile Include="Infrastructure\NHExpressionsRepository.cs" />
