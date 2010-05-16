@@ -117,9 +117,9 @@ namespace System.BusinessObjects.Membership
             }
         }
 
-        public virtual DateTime LastLoginDate
+        public virtual DateTime? LastLoginDate
         {
-            get { return GetValue<DateTime>("LastLoginDate"); }
+            get { return GetValue<DateTime?>("LastLoginDate"); }
             set
             {
                 BeginEdit();
@@ -127,9 +127,9 @@ namespace System.BusinessObjects.Membership
             }
         }
 
-        public virtual DateTime LastPasswordChangedDate
+        public virtual DateTime? LastPasswordChangedDate
         {
-            get { return GetValue<DateTime>("LastPasswordChangedDate"); }
+            get { return GetValue<DateTime?>("LastPasswordChangedDate"); }
             set
             {
                 BeginEdit();
@@ -137,9 +137,9 @@ namespace System.BusinessObjects.Membership
             }
         }
 
-        public virtual DateTime LastLockoutDate
+        public virtual DateTime? LastLockoutDate
         {
-            get { return GetValue<DateTime>("LastLockoutDate"); }
+            get { return GetValue<DateTime?>("LastLockoutDate"); }
             set
             {
                 BeginEdit();
@@ -157,9 +157,9 @@ namespace System.BusinessObjects.Membership
             }
         }
 
-        public virtual DateTime FailedPasswordAttemptWindowStart
+        public virtual DateTime? FailedPasswordAttemptWindowStart
         {
-            get { return GetValue<DateTime>("FailedPasswordAttemptWindowStart"); }
+            get { return GetValue<DateTime?>("FailedPasswordAttemptWindowStart"); }
             set
             {
                 BeginEdit();
@@ -177,9 +177,9 @@ namespace System.BusinessObjects.Membership
             }
         }
 
-        public virtual DateTime FailedPasswordAnswerAttemptWindowStart
+        public virtual DateTime? FailedPasswordAnswerAttemptWindowStart
         {
-            get { return GetValue<DateTime>("FailedPasswordAnswerAttemptWindowStart"); }
+            get { return GetValue<DateTime?>("FailedPasswordAnswerAttemptWindowStart"); }
             set
             {
                 BeginEdit();
@@ -200,8 +200,8 @@ namespace System.BusinessObjects.Membership
         public virtual System.Web.Security.MembershipUser ToMembershipUser(string providerName)
         {
             return (new System.Web.Security.MembershipUser(providerName, UserName, ID, Email, PasswordQuestion, Comment, IsApproved,
-                                       IsLockedOut, CreateDate, LastLoginDate, LastActivityDate, LastPasswordChangedDate,
-                                       LastLockoutDate));
+                                       IsLockedOut, CreateDate, LastLoginDate ?? DateTime.MinValue, LastActivityDate, LastPasswordChangedDate ?? DateTime.MinValue,
+                                       LastLockoutDate ?? DateTime.MinValue));
         }
         public virtual Membership FromMembershipUser(System.Web.Security.MembershipUser mu)
         {
@@ -215,11 +215,17 @@ namespace System.BusinessObjects.Membership
             CreateDate               = mu.CreationDate;
             UserName                 = mu.UserName;
             LastActivityDate         = mu.LastActivityDate;
-            LastLoginDate            = mu.LastLoginDate;
-            LastPasswordChangedDate  = mu.LastPasswordChangedDate;
-            LastLockoutDate          = mu.LastLockoutDate;
+            LastLoginDate            = ToNullable(mu.LastLoginDate);
+            LastPasswordChangedDate  = ToNullable(mu.LastPasswordChangedDate);
+            LastLockoutDate          = ToNullable(mu.LastLockoutDate);
             return this;
         }
 
+        private DateTime? ToNullable(DateTime dt)
+        {
+            if (dt <= DateTime.MinValue)
+                return null;
+            return dt;
+        }
     }
 }

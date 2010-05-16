@@ -9,7 +9,7 @@
     <property name="LoweredUserName" column="LoweredUserName" type="System.String" not-null="true" length="256"/>
     <property name="MobileAlias" column="MobileAlias" type="System.String" not-null="false" length="16"/>
     <property name="IsAnonymous" column="IsAnonymous" type="System.Boolean" not-null="true" />
-    <property name="LastActivityDate" column="LastActivityDate" type="System.DateTime" not-null="true" />
+    <property name="LastActivityDate" column="LastActivityDate" type="System.DateTime" />
     <many-to-one name="Application" column="ApplicationId" class="Application" />
 
     <one-to-one name="Profile" class="Profile" property-ref="User" constrained="false" cascade="all" />
