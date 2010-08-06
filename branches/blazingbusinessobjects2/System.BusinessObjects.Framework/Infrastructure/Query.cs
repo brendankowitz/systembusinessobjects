@@ -7,6 +7,6 @@ namespace System.BusinessObjects.Infrastructure
 {
     public abstract class Query<T>
     {
-        public abstract IQueryable Expression(IQueryable<T> query);
+        public abstract TReturnType Expression<TReturnType>(IQueryable<T> query) where TReturnType : IQueryable;
     }
 }

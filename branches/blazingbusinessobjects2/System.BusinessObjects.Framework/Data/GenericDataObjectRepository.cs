@@ -6,10 +6,11 @@ using System.Linq;
 using NHibernate.Engine;
 using NHibernate.Impl;
 using System.Data;
+using NHibernate.Type;
 
 namespace System.BusinessObjects.Data
 {
-    public abstract class GenericDataObjectRepository<T> : IDataObjectRepository<T>, IScopedRepository<T>
+    public abstract class GenericDataObjectRepository<T> : IDataObjectRepository<T>
         where T : DataObject
     {
         protected readonly ISession _session;
@@ -21,7 +22,7 @@ namespace System.BusinessObjects.Data
         /// <summary>
         /// Loads a business object with the given ID
         /// </summary>
-        public T Fetch(object Id)
+        public T FetchById<TId>(TId Id)
         {
             T newObj = _session.Get<T>(Id);
             return newObj;
@@ -119,15 +120,42 @@ namespace System.BusinessObjects.Data
 
         public abstract IQueryable<T> AsQueryable(params Specification<T>[] specifications);
 
-        public abstract IQueryable AsQueryable(Query<T> query);
+        public abstract TReturnType AsQueryable<TReturnType>(Query<T> query) where TReturnType : IQueryable;
 
-        #region IDisposable Members
-
-        void IDisposable.Dispose()
+        public virtual T Fetch(CommandQuery query)
         {
-            SubmitChanges();
+            var qry = ConvertQuery(query);
+            return qry.UniqueResult<T>();
         }
 
-        #endregion
+        public virtual IEnumerable<T> Search(CommandQuery query)
+        {
+            IQuery qry = ConvertQuery(query);
+            return qry.List<T>();
+        }
+
+        private IQuery ConvertQuery(CommandQuery query)
+        {
+            var qry = _session.CreateQuery(query.Command);
+            foreach (var p in query.Parameters)
+            {
+                if (p.Value != null)
+                    qry.SetParameter(p.ParameterName, p.Value);
+
+                if (p.ParameterName == "LIMIT")
+                    qry.SetMaxResults(Convert.ToInt32(p.Value));
+                else
+                {
+                    if (p.Value == null)
+                    { //NH will error if passed a null value, so try to figure out the IType from the DbType
+                        IType guessType = NHibernate.Type.TypeFactory.HeuristicType(p.DbType.ToString());
+                        qry.SetParameter(p.ParameterName, p.Value, guessType);
+                    }
+                    else
+                        qry.SetParameter(p.ParameterName, p.Value);
+                }
+            }
+            return qry;
+        }
     }
 }

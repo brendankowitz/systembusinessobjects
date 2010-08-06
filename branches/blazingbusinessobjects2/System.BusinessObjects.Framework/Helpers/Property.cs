@@ -3,11 +3,8 @@ using System.Collections.Generic;
 using System.Text;
 using System.Reflection;
 using System.BusinessObjects.Data;
-
-#if DOT_NET_35
 using System.Linq;
 using System.Linq.Expressions;
-#endif
 
 namespace System.BusinessObjects.Helpers
 {
@@ -18,7 +15,6 @@ namespace System.BusinessObjects.Helpers
             return obj.GetType().GetProperty(name);
         }
 
-#if DOT_NET_35
         /// <summary>
         /// Returns the string name of a property, this allows type / member safety
         /// </summary>
@@ -103,7 +99,5 @@ namespace System.BusinessObjects.Helpers
                 return cachedResult;
             };
         }
-
-#endif
     }
 }

@@ -39,14 +39,14 @@ namespace BusinessObject.Framework.Tests
         public override T Fetch(System.BusinessObjects.Infrastructure.Query<T> query)
         {
             var qry = _session.Linq<T>();
-            query.Expression(qry);
+            query.Expression<IQueryable<T>>(qry);
             return qry.SingleOrDefault();
         }
 
         public override IEnumerable<T> Search(System.BusinessObjects.Infrastructure.Query<T> query)
         {
             var qry = _session.Linq<T>();
-            query.Expression(qry);
+            query.Expression<IQueryable<T>>(qry);
             return qry.ToList();
         }
 
@@ -55,10 +55,11 @@ namespace BusinessObject.Framework.Tests
             return Convert(specifications);
         }
 
-        public override IQueryable AsQueryable(System.BusinessObjects.Infrastructure.Query<T> query)
+
+        public override TReturnType AsQueryable<TReturnType>(System.BusinessObjects.Infrastructure.Query<T> query)
         {
             var qry = _session.Linq<T>();
-            return query.Expression(qry);
+            return query.Expression<TReturnType>(qry);
         }
     }
 }

@@ -100,6 +100,29 @@ namespace System.BusinessObjects.Expressions
             return this;
         }
 
+        public CriteriaExpression<T> Add(Func<T, object> propertyLambda)
+        {
+            //AddCriterion(RestrictBy.Add(propertyLambda));
+            var caller = propertyLambda as MemberAssignment;
+
+            //Type otherType = propertyLambda.GetType();
+
+            // var param = System.Linq.Expressions.Expression.Parameter(typeof(Object), "object");
+            //System.Linq.Expressions.Expression convertedParam = System.Linq.Expressions.Expression.Convert(param, otherType);
+            //var param2 = System.Linq.Expressions.Expression.Parameter(typeof(IntPtr), "intptr");
+            //var convertedParam2 = System.Linq.Expressions.Expression.Convert(param2, typeof(IntPtr));
+            //var constructor = propertyLambda.GetType().GetConstructors()[0];
+            //var mb = new MemberBinding();
+            //var GetPropertyValueExp = System.Linq.Expressions.Expression.MemberBind(propertyLambda.Method, param, param2)
+            //    System.Linq.Expressions.Expression.Lambda<Func<T, object>>()
+                
+            //    //.New(constructor, convertedParam, param2));
+
+            //AddCriterion(RestrictBy.Add(GetPropertyValueExp as Expression<Func<T, bool>>));
+
+            return this;
+        }
+
         /// <summary>
         /// Adds an NHibernate Criterion
         /// </summary>

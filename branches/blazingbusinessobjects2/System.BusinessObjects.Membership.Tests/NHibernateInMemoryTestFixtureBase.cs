@@ -87,7 +87,7 @@ namespace System.BusinessObjects.Membership.Tests
 
             #region IMembershipRepositoryFactory Members
 
-            public IScopedRepository<T> GetMembershipRepository<T>() where T : DataObject
+            public IDataObjectRepository<T> GetMembershipRepository<T>() where T : DataObject
             {
                 return new NHLinqRepository<T>(session);
             }

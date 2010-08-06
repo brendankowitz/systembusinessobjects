@@ -14,7 +14,7 @@ namespace BusinessObject.Framework.Tests
         [Fact]
         public void AddItem_BusinessObject()
         {
-            cache = new HashtableDataCache();
+            cache = new HashtableDataCache(120, true);
             Person p = BusinessObjectFactory.CreateAndFillPerson();
             cache.SetCache("person", p);
 
@@ -24,7 +24,7 @@ namespace BusinessObject.Framework.Tests
         [Fact]
         public void RemoveItem_BusinessObject()
         {
-            cache = new HashtableDataCache();
+            cache = new HashtableDataCache(120, true);
             Person p = BusinessObjectFactory.CreateAndFillPerson();
             cache.SetCache("person", p);
 
@@ -38,7 +38,7 @@ namespace BusinessObject.Framework.Tests
         [Fact]
         public void ExpiresItem_BusinessObject()
         {
-            cache = new HashtableDataCache();
+            cache = new HashtableDataCache(120, true);
             cache.DefaultTimeout = 1;
 
             Person p = BusinessObjectFactory.CreateAndFillPerson();
@@ -53,7 +53,7 @@ namespace BusinessObject.Framework.Tests
         [Fact]
         public void RemovesOldItems()
         {
-            cache = new HashtableDataCache();
+            cache = new HashtableDataCache(120, true);
             cache.DefaultTimeout = 1;
 
             Person p = BusinessObjectFactory.CreateAndFillPerson();

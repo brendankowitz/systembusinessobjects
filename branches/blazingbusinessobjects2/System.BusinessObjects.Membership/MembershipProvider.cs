@@ -686,7 +686,7 @@ namespace System.BusinessObjects.Membership
 
             try
             {
-                member = membershipRepository.Fetch((Guid)providerUserKey);
+                member = membershipRepository.FetchById((Guid)providerUserKey);
                 if (member != null)
                 {
                     user = member.ToMembershipUser(Name);

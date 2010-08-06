@@ -10,12 +10,14 @@ namespace System.BusinessObjects.Data
     {
         T Fetch(params Specification<T>[] specifications);
         T Fetch(Query<T> query);
-        T Fetch(object Id);
+        T Fetch(CommandQuery query);
+        T FetchById<TId>(TId Id);
         IEnumerable<T> Search(params Specification<T>[] specifications);
         IEnumerable<T> Search(Query<T> query);
+        IEnumerable<T> Search(CommandQuery query);
         IEnumerable<T> Search();
         IQueryable<T> AsQueryable(params Specification<T>[] specifications);
-        IQueryable AsQueryable(Query<T> query);
+        TReturnType AsQueryable<TReturnType>(Query<T> query) where TReturnType : IQueryable;
         T Save(T src);
         void SubmitChanges();
     }
