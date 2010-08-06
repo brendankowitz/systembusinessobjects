@@ -51,7 +51,7 @@ namespace BusinessObject.Framework.Tests
             throw new NotImplementedException();
         }
 
-        public override IQueryable AsQueryable(Query<T> query)
+        public override TReturnType AsQueryable<TReturnType>(Query<T> query)
         {
             throw new NotImplementedException();
         }

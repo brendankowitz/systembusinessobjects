@@ -89,9 +89,8 @@
     <Compile Include="Data\GenericDataObjectRepository.cs" />
     <Compile Include="Data\GenericObjectComparer.cs" />
     <Compile Include="Data\IDataObjectRepository.cs" />
-    <Compile Include="Data\IScopedRepository.cs" />
     <Compile Include="Helpers\ConfigSectionHelper.cs" />
-    <Compile Include="Infrastructure\IFactory.cs" />
+    <Compile Include="Infrastructure\CommandQuery.cs" />
     <Compile Include="Infrastructure\Query.cs" />
     <Compile Include="Infrastructure\Specification.cs" />
     <Compile Include="Properties\GlobalAssemblyInfo.cs" />

@@ -18,6 +18,14 @@ namespace System.BusinessObjects.Cache
     {
         static Hashtable _data = new Hashtable();
 
+         public HashtableDataCache(int defaultCacheTimeout, bool useCache)
+             : base(defaultCacheTimeout, useCache)
+        {}
+
+         public HashtableDataCache(string name, System.Collections.Specialized.NameValueCollection config)
+            : base(name, config)
+        {}
+
         public int ItemCount
         {
             get

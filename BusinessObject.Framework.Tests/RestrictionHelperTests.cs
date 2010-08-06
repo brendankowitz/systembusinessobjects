@@ -353,7 +353,7 @@ namespace BusinessObject.Framework.Tests
         {
             //Using expression interface
             ICriteria c = session.CreateExpression<Person>()
-                .Add(p => p.FirstName == "John")
+                .Add(p => p.FirstName = "John")
                 .Alias<Address>(p => p.Addresses)
                     .Add(a => a.Postcode != null)
                     .AddAndReturn(a => a.Address1 == null)

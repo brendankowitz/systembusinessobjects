@@ -20,18 +20,6 @@ namespace System.BusinessObjects.Helpers
             return serializer;
         }
 
-        private static XmlRootAttribute CreateXMLRootAttribute(string psRootName)
-        {
-            // Create an XmlRootAttribute overloaded constructer 
-            //and set its namespace.
-            XmlRootAttribute newXmlRootAttribute = null;
-            if (psRootName != null && psRootName != string.Empty)
-            {
-                newXmlRootAttribute = new XmlRootAttribute(psRootName);
-            }
-            return newXmlRootAttribute;
-        }
-
         public static string SerializeToXML(object obj)
         {
             StringWriter writer = new StringWriter();

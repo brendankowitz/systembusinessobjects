@@ -11,8 +11,6 @@ namespace System.BusinessObjects.Cache
     /// </summary>
     public abstract class CacheBase
     {
-        static CacheBase provider = null;
-
         int _timeout = 60;
         /// <summary>
         /// Returns the default cache timeout
@@ -41,7 +39,13 @@ namespace System.BusinessObjects.Cache
             }
         }
 
-        public void Initialize(string name, System.Collections.Specialized.NameValueCollection config)
+        public CacheBase(int defaultCacheTimeout, bool useCache)
+        {
+            _timeout = defaultCacheTimeout;
+            _usecache = useCache;
+        }
+
+        public CacheBase(string name, System.Collections.Specialized.NameValueCollection config)
         {
             //DefaultCacheTimeout config
             object retval;

@@ -107,7 +107,6 @@
     <Compile Include="DataObjectTests.cs" />
     <Compile Include="HashtableDataCacheTests.cs" />
     <Compile Include="Infrastructure\NHLinqRepository.cs" />
-    <Compile Include="Modules\AutofacTypeFactory.cs" />
     <Compile Include="Infrastructure\NHExpressionsRepository.cs" />
     <Compile Include="NHibernateInMemoryTestFixtureBase.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -134,6 +133,9 @@
       <Link>SystemBusinessObjectsPublic.snk</Link>
     </None>
     <None Include="App.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Modules\" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

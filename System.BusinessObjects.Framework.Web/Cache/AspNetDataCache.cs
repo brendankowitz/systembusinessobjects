@@ -9,10 +9,13 @@ namespace System.BusinessObjects.Cache
 	/// </summary>
 	public class AspNetDataCache : CacheBase
 	{
-        public AspNetDataCache()
-		{
+        public AspNetDataCache(int defaultCacheTimeout, bool useCache)
+             : base(defaultCacheTimeout, useCache)
+        {}
 
-		}
+        public AspNetDataCache(string name, System.Collections.Specialized.NameValueCollection config)
+            : base(name, config)
+        {}
 
 		public override T GetCache<T>(string CacheKey)
 		{

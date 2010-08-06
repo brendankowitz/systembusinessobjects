@@ -73,7 +73,7 @@ namespace System.BusinessObjects.Membership.Tests
 
             session.Evict(p);
 
-            User u2 = repository.Fetch(p.ID);
+            User u2 = repository.FetchById(p.ID);
 
             Assert.Equal(p.ID, u2.Profile.ID);
         }

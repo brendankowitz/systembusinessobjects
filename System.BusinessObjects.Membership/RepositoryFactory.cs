@@ -9,7 +9,7 @@ namespace System.BusinessObjects.Membership
 {
     public interface IMembershipRepositoryFactory
     {
-        IScopedRepository<T> GetMembershipRepository<T>() where T : DataObject;
+        IDataObjectRepository<T> GetMembershipRepository<T>() where T : DataObject;
     }
 
     public sealed class MembershipProviderRepository
@@ -24,27 +24,27 @@ namespace System.BusinessObjects.Membership
     {
         internal static IMembershipRepositoryFactory _factory = null;
 
-        internal static IScopedRepository<Application> GetApplicationRepository()
+        internal static IDataObjectRepository<Application> GetApplicationRepository()
         {
             return _factory.GetMembershipRepository<Application>();
         }
 
-        internal static IScopedRepository<Membership> GetMembershipRepository()
+        internal static IDataObjectRepository<Membership> GetMembershipRepository()
         {
             return _factory.GetMembershipRepository<Membership>();
         }
 
-        internal static IScopedRepository<Profile> GetProfileRepository()
+        internal static IDataObjectRepository<Profile> GetProfileRepository()
         {
             return _factory.GetMembershipRepository<Profile>();
         }
 
-        internal static IScopedRepository<Role> GetRoleRepository()
+        internal static IDataObjectRepository<Role> GetRoleRepository()
         {
             return _factory.GetMembershipRepository<Role>();
         }
 
-        internal static IScopedRepository<User> GetUserRepository()
+        internal static IDataObjectRepository<User> GetUserRepository()
         {
             return _factory.GetMembershipRepository<User>();
         }
